@@ -3,9 +3,10 @@ import * as Matter from 'matter-js'
 
 // Create the application helper and add its render target to the page
 let app = new PIXI.Application({ resizeTo: window, background: '#1099bb' });
+// @ts-ignore
 document.body.appendChild(app.view);
 
-let intervals = []
+let intervals: Array<any> = []
 let FPS = new PIXI.Text()
 FPS.position.set(5, 5)
 app.stage.addChild(FPS)
