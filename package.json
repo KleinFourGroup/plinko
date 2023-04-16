@@ -1,0 +1,21 @@
+{
+  "name": "plinko",
+  "version": "1.0.0",
+  "description": "Messing around with pixi.js, matter.js, and howler.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.79.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "matter-js": "^0.19.0",
+    "pixi.js": "^7.2.4"
+  }
+}
