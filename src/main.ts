@@ -1,19 +1,12 @@
 import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
+import {Point, labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth} from './physics_objects'
 
 // Create the application helper and add its render target to the page
 let app = new PIXI.Application({ resizeTo: window, background: '#1099bb' });
 
 // @ts-ignore
 document.body.appendChild(app.view);
-
-type Point = {
-    x: number,
-    y: number
-}
-
-const labelMap: Map<string, PhysicsObject> = new Map<string, PhysicsObject>()
-let objCount = 0
 
 type Message = {
     back: Array<PIXI.Graphics>,
@@ -51,6 +44,76 @@ function makeMessage(text: string): Message {
     return msg
 }
 
+class DisplayState {
+    zoomStage: PIXI.Container
+    gameStage: PIXI.Container
+    uiStage: PIXI.Container
+    width: number
+    height: number
+    constructor(width: number = 1000, height: number = 1000) {
+        this.width = width
+        this.height = height
+        
+        this.zoomStage = new PIXI.Container()
+        this.zoomStage.pivot.set(width / 2, height / 2)
+        app.stage.addChild(this.zoomStage)
+
+        this.gameStage = new PIXI.Container()
+        this.zoomStage.addChild(this.gameStage)
+
+        this.uiStage = new PIXI.Container()
+        this.zoomStage.addChild(this.uiStage)
+    }
+
+    update() {
+        this.zoomStage.position.set(app.renderer.width / 2, app.renderer.height / 2)
+        let scale = Math.min(app.renderer.width / this.width, app.renderer.height / this.height)
+        this.zoomStage.scale.set(scale, scale)
+    }
+}
+
+class UserInterface {
+    stage: PIXI.Container
+    fpsText: PIXI.Text
+    scoreText: PIXI.Text
+    message: Message
+
+    constructor(uiStage: PIXI.Container) {
+        this.stage = uiStage
+        this.fpsText = new PIXI.Text()
+        this.fpsText.position.set(5, 5)
+        app.stage.addChild(this.fpsText)
+        
+        this.scoreText = new PIXI.Text()
+        this.scoreText.anchor.set(0, 0.5)
+        this.scoreText.position.set(25, 25)
+        this.stage.addChild(this.scoreText)
+        
+        this.message = makeMessage("HAPPYBIRTHDAY")
+        for (let i = 0; i < this.message.back.length; i++) {
+            this.message.back[i].position.set(200 + 50 * i, 0)
+            this.message.text[i].position.set(225 + 50 * i, 25)
+            this.message.front[i].position.set(200 + 50 * i, 0)
+            this.stage.addChild(this.message.back[i])
+            this.stage.addChild(this.message.text[i])
+            this.stage.addChild(this.message.front[i])
+        }
+    }
+
+    update(fps: number, load: number, score: number, target: number) {
+        this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
+
+        let completion = Math.min(score / target, 1)
+        
+        for (let i = 0; i < this.message.back.length; i++) {
+            this.message.front[i].visible = (i >= Math.floor(this.message.back.length * completion))
+        }
+
+        this.scoreText.text = `${score}`
+        
+    }
+}
+
 class GameState {
     stage: PIXI.Container
     width: number
@@ -63,13 +126,11 @@ class GameState {
     goals: Array<GoalRect>
     orbs: Array<Orb>
     pegs: Array<Peg>
-    scoreText: PIXI.Text
     target: number
-    message: Message
 
-    constructor(width: number = 1000, height: number = 1000) {
-        this.stage = new PIXI.Container()
-        this.stage.pivot.set(width / 2, height / 2)
+    constructor(gameStage: PIXI.Container, width: number = 1000, height: number = 1000) {
+        this.stage = gameStage
+
         this.width = width
         this.height = height
         this.spawnBase = {
@@ -87,20 +148,6 @@ class GameState {
 
         this.score = 0
         this.target = 500
-        this.scoreText = new PIXI.Text(this.score)
-        this.scoreText.anchor.set(0, 0.5)
-        this.scoreText.position.set(25, 25)
-        this.stage.addChild(this.scoreText)
-
-        this.message = makeMessage("HAPPYBIRTHDAY")
-        for (let i = 0; i < this.message.back.length; i++) {
-            this.message.back[i].position.set(200 + 50 * i, 0)
-            this.message.text[i].position.set(225 + 50 * i, 25)
-            this.message.front[i].position.set(200 + 50 * i, 0)
-            this.stage.addChild(this.message.back[i])
-            this.stage.addChild(this.message.text[i])
-            this.stage.addChild(this.message.front[i])
-        }
 
         this.spawnDot = new PIXI.Graphics()
         this.spawnDot.beginFill(0x0000F)
@@ -109,24 +156,11 @@ class GameState {
 
         this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
         this.stage.addChild(this.spawnDot)
-
-        app.stage.addChild(this.stage)
     }
     
     updateGraphics() {
-        this.stage.position.set(app.renderer.width / 2, app.renderer.height / 2)
-        let scale = Math.min(app.renderer.width / this.width, app.renderer.height / this.height)
-        this.stage.scale.set(scale, scale)
-        
         this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
 
-        let completion = Math.min(this.score / this.target, 1)
-        
-        for (let i = 0; i < this.message.back.length; i++) {
-            this.message.front[i].visible = (i >= Math.floor(this.message.back.length * completion))
-        }
-
-        this.scoreText.text = `${this.score}`
         for (let wall of this.walls) {
             wall.update()
         }
@@ -142,206 +176,21 @@ class GameState {
     }
 }
 
-class PhysicsObject {
-    world: Matter.World
-    body: Matter.Body
-    graphics: PIXI.DisplayObject
-
-    constructor(world: Matter.World, body: Matter.Body, graphics: PIXI.DisplayObject) {
-        this.world = world
-
-        this.body = body
-        this.body.label = "obj" + objCount
-        objCount += 1
-        Matter.World.addBody(this.world, this.body)
-
-        this.graphics = graphics
-        this.graphics.position.set(this.body.position.x, this.body.position.y)
-        labelMap.set(this.body.label, this)
-    }
-
-    get x(): number {
-        return  this.body.position.x
-    }
-
-    get y(): number {
-        return  this.body.position.y
-    }
-
-    addTo(parent: PIXI.Container) {
-        parent.addChild(this.graphics)
-    }
-
-    removeFrom(parent: PIXI.Container) {
-        parent.removeChild(this.graphics)
-    }
-    
-    delete() {
-        Matter.World.remove(this.world, this.body)
-    }
-
-    update() {
-        this.graphics.position.set(this.body.position.x, this.body.position.y)
-    }
-}
-
-class BarrierRect extends PhysicsObject {
-    width: number
-    height: number
-
-    constructor(world: Matter.World, x: number, y: number, width: number, height: number) {
-        let options: Matter.IBodyDefinition = {
-            isStatic: true
-        }
-        let body = Matter.Bodies.rectangle(x, y, width, height, options)
-
-        let graphics = new PIXI.Graphics()
-        graphics.beginFill(0xFF0000)
-        graphics.drawRect(0, 0, width, height)
-        graphics.endFill()
-        graphics.pivot.set(width / 2, height / 2)
-
-        super(world, body, graphics)
-        this.width = width
-        this.height = height
-    }
-}
-
-class GoalRect extends PhysicsObject {
-    width: number
-    height: number
-    score: number
-
-    constructor(world: Matter.World, x: number, y: number, width: number, height: number, score: number) {
-        let options: Matter.IBodyDefinition = {
-            isStatic: true
-        }
-        let body = Matter.Bodies.rectangle(x, y, width, height, options)
-
-        let graphics = new PIXI.Graphics()
-        graphics.beginFill(0x00FF00)
-        graphics.drawRect(0, 0, width, height)
-        graphics.endFill()
-        graphics.pivot.set(width / 2, height / 2)
-        let text = new PIXI.Text(`${score}`, new PIXI.TextStyle({fontSize: 20}))
-        text.anchor.set(0.5, 0.5)
-        text.position.set(0, 0)
-        let container = new PIXI.Container()
-        container.addChild(graphics)
-        container.addChild(text)
-
-        super(world, body, container)
-        this.width = width
-        this.height = height
-        this.score = score
-    }
-}
-
-class BarrierPoly extends PhysicsObject {
-    points: Array<Point>
-
-    constructor(world: Matter.World, x: number, y: number, ...points: Array<Point>) {
-        let options: Matter.IBodyDefinition = {
-            isStatic: true
-        }
-        let body = Matter.Bodies.fromVertices(x, y, [points], options)
-
-        let minBound = {x: Infinity, y: Infinity}
-
-        let flatPoints: Array<number> = []
-        for (let point of points) {
-            minBound.x = Math.min(minBound.x, point.x)
-            minBound.y = Math.min(minBound.y, point.y)
-            flatPoints.push(point.x, point.y)
-        }
-        let center = {
-            x: minBound.x + body.position.x - body.bounds.min.x,
-            y: minBound.y + body.position.y - body.bounds.min.y
-        }
-
-        Matter.Body.setPosition(body, {x: body.position.x + center.x, y: body.position.y + center.y})
-
-        let graphics = new PIXI.Graphics()
-        graphics.beginFill(0xFF0000)
-        graphics.drawPolygon(...flatPoints)
-        graphics.endFill()
-        graphics.pivot.set(center.x, center.y)
-
-        super(world, body, graphics)
-        this.points = points
-    }
-}
-
-class Tooth extends BarrierPoly {
-    constructor(world: Matter.World, x: number, y: number, width: number, baseHeight: number, maxHeight: number) {
-        let points = [
-            {x: -width / 2, y: 0},
-            {x: -width / 2, y: -baseHeight},
-            {x: 0, y: -maxHeight},
-            {x: width / 2, y: -baseHeight},
-            {x: width / 2, y: 0}
-        ]
-        super(world, x, y, ...points)
-    }
-}
-
-class Orb extends PhysicsObject {
-    radius: number
-
-    constructor(world: Matter.World, x: number, y: number, radius: number) {
-        let options: Matter.IBodyDefinition = {
-            restitution: 0.5,
-            friction: 0.02
-        }
-        let body = Matter.Bodies.circle(x, y, radius, options)
-
-        let graphics = new PIXI.Graphics()
-        graphics.beginFill(0x00FF00)
-        graphics.drawCircle(0, 0, radius)
-        graphics.endFill()
-
-        super(world, body, graphics)
-        this.radius = radius
-    }
-}
-
-class Peg extends PhysicsObject {
-    radius: number
-
-    constructor(world: Matter.World, x: number, y: number, radius: number) {
-        let options: Matter.IBodyDefinition = {
-            isStatic: true
-        }
-        let body = Matter.Bodies.circle(x, y, radius, options)
-
-        let graphics = new PIXI.Graphics()
-        graphics.beginFill(0x0000F)
-        graphics.drawCircle(0, 0, radius)
-        graphics.endFill()
-
-        super(world, body, graphics)
-        this.radius = radius
-    }
-}
-
-let FPS = new PIXI.Text()
+let display = new DisplayState()
+let gameState = new GameState(display.gameStage)
+let ui = new UserInterface(display.uiStage)
 
 let spawn = false
-
-FPS.position.set(5, 5)
-app.stage.addChild(FPS)
 
 let engine = Matter.Engine.create()
 let world = engine.world
 
-function initWorld() {
+function initWorld(state: GameState) {
     let rows = 10
     let cols = 17
     let bins = 8
     let wallWidth = 30
 
-    let state: GameState = new GameState()
-    
     let goalWidth = (state.width - (bins + 1) * wallWidth) / bins
 
     let tooth = new Tooth(world, wallWidth / 2, state.height, wallWidth, 20, 40)
@@ -398,11 +247,9 @@ function initWorld() {
     let firstOrb = new Orb(world, state.spawnPoint.x + (2 * Math.random() - 1), state.spawnPoint.y, 15)
     firstOrb.addTo(state.stage)
     state.orbs.push(firstOrb)
-
-    return state
 }
 
-let state: GameState = initWorld()
+initWorld(gameState)
 
 function collisionDispatch(event: Matter.IEventCollision<Matter.Engine>) {
     for (let pair of event.pairs) {
@@ -410,20 +257,20 @@ function collisionDispatch(event: Matter.IEventCollision<Matter.Engine>) {
         let objB = labelMap.get(pair.bodyB.label)
         if (objA instanceof GoalRect) {
             if (objB instanceof Orb) {
-                objB.removeFrom(state.stage)
+                objB.removeFrom(gameState.stage)
                 labelMap.delete(pair.bodyB.label)
                 objB.delete()
-                state.orbs.splice(state.orbs.indexOf(objB), 1)
-                state.score += objA.score
+                gameState.orbs.splice(gameState.orbs.indexOf(objB), 1)
+                gameState.score += objA.score
             }
         }
         if (objB instanceof GoalRect) {
             if (objA instanceof Orb) {
-                objA.removeFrom(state.stage)
+                objA.removeFrom(gameState.stage)
                 labelMap.delete(pair.bodyA.label)
                 objA.delete()
-                state.orbs.splice(state.orbs.indexOf(objA), 1)
-                state.score += objB.score
+                gameState.orbs.splice(gameState.orbs.indexOf(objA), 1)
+                gameState.score += objB.score
             }
         }
     }
@@ -455,19 +302,19 @@ function update(delta: number) {
         intervalsWork.shift()
     }
 
-    FPS.text = `${Math.round(app.ticker.FPS)} - ${Math.round((intervalsWork.reduce((a, b) => a + b, 0) / intervalsTotal.reduce((a, b) => a + b, 0) * 100))}%` 
+    let load = intervalsWork.reduce((a, b) => a + b, 0) / intervalsTotal.reduce((a, b) => a + b, 0)
     
     elapsed += deltaMS;
 
     let startWork = performance.now()
 
-    let progress = Math.min(state.score / state.target, 1)
+    let progress = Math.min(gameState.score / gameState.target, 1)
 
     let off = Math.abs(Math.sin(spawnTot)) * (1 + 1.5 * progress)
 
     spawnTot += (0.1 + 0.9 * off * off) * 3 * deltaMS / 1000
 
-    state.spawnPoint.x = state.width / 2 + Math.sin(spawnTot) * (state.width - 50) / 2
+    gameState.spawnPoint.x = gameState.width / 2 + Math.sin(spawnTot) * (gameState.width - 50) / 2
 
     if (elapsed - lastStep >= 20) {
         lastStep = Math.floor(elapsed)
@@ -478,13 +325,15 @@ function update(delta: number) {
     if (elapsed - lastTick >= 1000 || spawn) {
         spawn = false
         lastTick = Math.floor(elapsed)
-        if (state.orbs.length < 15) {
-            let newOrb = new Orb(world,  state.spawnPoint.x + (2 * Math.random() - 1), state.spawnPoint.y, 15)
-            newOrb.addTo(state.stage)
-            state.orbs.push(newOrb)}
+        if (gameState.orbs.length < 15) {
+            let newOrb = new Orb(world,  gameState.spawnPoint.x + (2 * Math.random() - 1), gameState.spawnPoint.y, 15)
+            newOrb.addTo(gameState.stage)
+            gameState.orbs.push(newOrb)}
     }
 
-    state.updateGraphics()
+    gameState.updateGraphics()
+    ui.update(app.ticker.FPS, load, gameState.score, gameState.target)
+    display.update()
     
     let endWork = performance.now()
 
@@ -492,6 +341,7 @@ function update(delta: number) {
 }
 
 addEventListener("click", (event) => {spawn = true})
+addEventListener("pointerdown", (event) => {spawn = true})
 addEventListener("keydown", (event) => {spawn = true})
 
 app.ticker.add(update);
