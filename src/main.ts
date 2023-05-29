@@ -114,14 +114,58 @@ class UserInterface {
     }
 }
 
+class Spawner {
+    state: GameState
+    time: number
+    spawnBase: Point
+    spawnPoint: Point
+    spawnDot: PIXI.Graphics
+
+    constructor(gameState: GameState) {
+        this.state = gameState
+        this.time = 0.0
+        this.spawnBase = {
+            x: this.state.width / 2,
+            y: 100
+        }
+        this.spawnPoint = {
+            x: this.state.width / 2,
+            y: 100
+        }
+
+        this.spawnDot = new PIXI.Graphics()
+        this.spawnDot.beginFill(0x0000F)
+        this.spawnDot.drawCircle(0, 0, 5)
+        this.spawnDot.endFill()
+
+        this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
+        this.state.stage.addChild(this.spawnDot)
+    }
+
+    spawnOrb() {
+        let newOrb = new Orb(world,  this.spawnPoint.x + (2 * Math.random() - 1), this.spawnPoint.y, 15)
+        newOrb.addTo(this.state.stage)
+        this.state.orbs.push(newOrb)
+    }
+
+    update(delta: number, progress: number) {
+
+        let off = Math.abs(Math.sin(this.time)) * (1 + 1.5 * progress)
+    
+        this.time += (0.1 + 0.9 * off * off) * 3 * delta / 1000
+    
+        this.spawnPoint.x = this.state.width / 2 + Math.sin(this.time) * (this.state.width - 50) / 2
+
+        this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
+    }
+}
+
 class GameState {
     stage: PIXI.Container
     width: number
     height: number
     score: number
-    spawnBase: Point
-    spawnPoint: Point
-    spawnDot: PIXI.Graphics
+    spawner: Spawner
     walls: Array<BarrierRect | BarrierPoly>
     goals: Array<GoalRect>
     orbs: Array<Orb>
@@ -133,14 +177,7 @@ class GameState {
 
         this.width = width
         this.height = height
-        this.spawnBase = {
-            x: width / 2,
-            y: 100
-        }
-        this.spawnPoint = {
-            x: width / 2,
-            y: 100
-        }
+
         this.walls = []
         this.goals = []
         this.orbs = []
@@ -149,18 +186,10 @@ class GameState {
         this.score = 0
         this.target = 500
 
-        this.spawnDot = new PIXI.Graphics()
-        this.spawnDot.beginFill(0x0000F)
-        this.spawnDot.drawCircle(0, 0, 5)
-        this.spawnDot.endFill()
-
-        this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
-        this.stage.addChild(this.spawnDot)
+        this.spawner = new Spawner(this)
     }
     
     updateGraphics() {
-        this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
-
         for (let wall of this.walls) {
             wall.update()
         }
@@ -244,9 +273,7 @@ function initWorld(state: GameState) {
         }
     }
 
-    let firstOrb = new Orb(world, state.spawnPoint.x + (2 * Math.random() - 1), state.spawnPoint.y, 15)
-    firstOrb.addTo(state.stage)
-    state.orbs.push(firstOrb)
+    state.spawner.spawnOrb()
 }
 
 initWorld(gameState)
@@ -310,11 +337,7 @@ function update(delta: number) {
 
     let progress = Math.min(gameState.score / gameState.target, 1)
 
-    let off = Math.abs(Math.sin(spawnTot)) * (1 + 1.5 * progress)
-
-    spawnTot += (0.1 + 0.9 * off * off) * 3 * deltaMS / 1000
-
-    gameState.spawnPoint.x = gameState.width / 2 + Math.sin(spawnTot) * (gameState.width - 50) / 2
+    gameState.spawner.update(deltaMS, progress)
 
     if (elapsed - lastStep >= 20) {
         lastStep = Math.floor(elapsed)
@@ -326,9 +349,8 @@ function update(delta: number) {
         spawn = false
         lastTick = Math.floor(elapsed)
         if (gameState.orbs.length < 15) {
-            let newOrb = new Orb(world,  gameState.spawnPoint.x + (2 * Math.random() - 1), gameState.spawnPoint.y, 15)
-            newOrb.addTo(gameState.stage)
-            gameState.orbs.push(newOrb)}
+            gameState.spawner.spawnOrb()
+        }
     }
 
     gameState.updateGraphics()
