@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
+import { COLORS } from './colors'
+
 type Point = {
     x: number,
     y: number
@@ -63,7 +65,7 @@ class BarrierRect extends PhysicsObject {
         let body = Matter.Bodies.rectangle(x, y, width, height, options)
 
         let graphics = new PIXI.Graphics()
-        graphics.beginFill(0xFF0000)
+        graphics.beginFill(COLORS["terminal amber"])
         graphics.drawRect(0, 0, width, height)
         graphics.endFill()
         graphics.pivot.set(width / 2, height / 2)
@@ -86,11 +88,14 @@ class GoalRect extends PhysicsObject {
         let body = Matter.Bodies.rectangle(x, y, width, height, options)
 
         let graphics = new PIXI.Graphics()
-        graphics.beginFill(0x00FF00)
+        graphics.lineStyle(2, COLORS["terminal green"])
+        graphics.beginFill(COLORS["dark terminal green"])
         graphics.drawRect(0, 0, width, height)
         graphics.endFill()
         graphics.pivot.set(width / 2, height / 2)
         let text = new PIXI.Text(`${score}`, new PIXI.TextStyle({fontSize: 20}))
+        text.style.fontFamily = "monospace"
+        text.style.fill = COLORS["terminal green"]
         text.anchor.set(0.5, 0.5)
         text.position.set(0, 0)
         let container = new PIXI.Container()
@@ -129,7 +134,7 @@ class BarrierPoly extends PhysicsObject {
         Matter.Body.setPosition(body, {x: body.position.x + center.x, y: body.position.y + center.y})
 
         let graphics = new PIXI.Graphics()
-        graphics.beginFill(0xFF0000)
+        graphics.beginFill(COLORS["terminal amber"])
         graphics.drawPolygon(...flatPoints)
         graphics.endFill()
         graphics.pivot.set(center.x, center.y)
@@ -163,7 +168,7 @@ class Orb extends PhysicsObject {
         let body = Matter.Bodies.circle(x, y, radius, options)
 
         let graphics = new PIXI.Graphics()
-        graphics.beginFill(0x00FF00)
+        graphics.beginFill(COLORS["terminal green"])
         graphics.drawCircle(0, 0, radius)
         graphics.endFill()
 
@@ -182,7 +187,7 @@ class Peg extends PhysicsObject {
         let body = Matter.Bodies.circle(x, y, radius, options)
 
         let graphics = new PIXI.Graphics()
-        graphics.beginFill(0x0000F)
+        graphics.beginFill(COLORS["terminal amber"])
         graphics.drawCircle(0, 0, radius)
         graphics.endFill()
 

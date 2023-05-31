@@ -1,118 +1,15 @@
 import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
-import {Point, labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth} from './physics_objects'
+
+import { COLORS } from './colors'
+import { DisplayState, UserInterface } from './ui'
+import { Point, labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
 
 // Create the application helper and add its render target to the page
-let app = new PIXI.Application({ resizeTo: window, background: '#1099bb' });
+let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal black"], antialias: true });
 
 // @ts-ignore
 document.body.appendChild(app.view);
-
-type Message = {
-    back: Array<PIXI.Graphics>,
-    text: Array<PIXI.Text>,
-    front: Array<PIXI.Graphics>
-}
-
-function makeMessage(text: string): Message {
-
-    let msg: Message = {
-        back: [],
-        text: [],
-        front: []
-    }
-
-    for (let i = 0; i < text.length; i++) {
-        let backSquare = new PIXI.Graphics()
-        backSquare.beginFill(0x00FF00)
-        backSquare.drawRect(2, 2, 48, 48)
-        backSquare.endFill()
-
-        let letter = new PIXI.Text(text.charAt(i))
-        letter.anchor.set(0.5, 0.5)
-
-        let frontSquare = new PIXI.Graphics()
-        frontSquare.beginFill(0xFF0000)
-        frontSquare.drawRect(2, 2, 48, 48)
-        frontSquare.endFill()
-
-        msg.back.push(backSquare)
-        msg.text.push(letter)
-        msg.front.push(frontSquare)
-    }
-
-    return msg
-}
-
-class DisplayState {
-    zoomStage: PIXI.Container
-    gameStage: PIXI.Container
-    uiStage: PIXI.Container
-    width: number
-    height: number
-    constructor(width: number = 1000, height: number = 1000) {
-        this.width = width
-        this.height = height
-        
-        this.zoomStage = new PIXI.Container()
-        this.zoomStage.pivot.set(width / 2, height / 2)
-        app.stage.addChild(this.zoomStage)
-
-        this.gameStage = new PIXI.Container()
-        this.zoomStage.addChild(this.gameStage)
-
-        this.uiStage = new PIXI.Container()
-        this.zoomStage.addChild(this.uiStage)
-    }
-
-    update() {
-        this.zoomStage.position.set(app.renderer.width / 2, app.renderer.height / 2)
-        let scale = Math.min(app.renderer.width / this.width, app.renderer.height / this.height)
-        this.zoomStage.scale.set(scale, scale)
-    }
-}
-
-class UserInterface {
-    stage: PIXI.Container
-    fpsText: PIXI.Text
-    scoreText: PIXI.Text
-    message: Message
-
-    constructor(uiStage: PIXI.Container) {
-        this.stage = uiStage
-        this.fpsText = new PIXI.Text()
-        this.fpsText.position.set(5, 5)
-        app.stage.addChild(this.fpsText)
-        
-        this.scoreText = new PIXI.Text()
-        this.scoreText.anchor.set(0, 0.5)
-        this.scoreText.position.set(25, 25)
-        this.stage.addChild(this.scoreText)
-        
-        this.message = makeMessage("HAPPYBIRTHDAY")
-        for (let i = 0; i < this.message.back.length; i++) {
-            this.message.back[i].position.set(200 + 50 * i, 0)
-            this.message.text[i].position.set(225 + 50 * i, 25)
-            this.message.front[i].position.set(200 + 50 * i, 0)
-            this.stage.addChild(this.message.back[i])
-            this.stage.addChild(this.message.text[i])
-            this.stage.addChild(this.message.front[i])
-        }
-    }
-
-    update(fps: number, load: number, score: number, target: number) {
-        this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
-
-        let completion = Math.min(score / target, 1)
-        
-        for (let i = 0; i < this.message.back.length; i++) {
-            this.message.front[i].visible = (i >= Math.floor(this.message.back.length * completion))
-        }
-
-        this.scoreText.text = `${score}`
-        
-    }
-}
 
 class Spawner {
     state: GameState
@@ -134,7 +31,7 @@ class Spawner {
         }
 
         this.spawnDot = new PIXI.Graphics()
-        this.spawnDot.beginFill(0x0000F)
+        this.spawnDot.beginFill(COLORS["terminal green"])
         this.spawnDot.drawCircle(0, 0, 5)
         this.spawnDot.endFill()
 
@@ -205,7 +102,7 @@ class GameState {
     }
 }
 
-let display = new DisplayState()
+let display = new DisplayState(app)
 let gameState = new GameState(display.gameStage)
 let ui = new UserInterface(display.uiStage)
 
