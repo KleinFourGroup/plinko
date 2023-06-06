@@ -65,8 +65,8 @@ class GameState {
     pegs: Array<Peg>
     target: number
 
-    constructor(gameStage: PIXI.Container, width: number = 1000, height: number = 1000) {
-        this.stage = gameStage
+    constructor(width: number = 1000, height: number = 1000) {
+        this.stage = new PIXI.Container()
 
         this.width = width
         this.height = height

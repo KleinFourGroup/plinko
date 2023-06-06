@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import { COLORS } from './colors'
+import { GameState } from './game_state'
 
 type Message = {
     back: Array<PIXI.Graphics>,
@@ -44,65 +45,77 @@ function makeMessage(text: string): Message {
 
 class DisplayState {
     app: PIXI.Application
-    zoomStage: PIXI.Container
-    gameStage: PIXI.Container
-    uiStage: PIXI.Container
-    width: number
-    height: number
-    constructor(app: PIXI.Application, width: number = 1000, height: number = 1000) {
+    gameState: GameState
+    ui: UserInterface
+    constructor(app: PIXI.Application, gameState: GameState, ui: UserInterface) {
         this.app = app
 
-        this.width = width
-        this.height = height
-        
-        this.zoomStage = new PIXI.Container()
-        this.zoomStage.pivot.set(width / 2, height / 2)
-        this.app.stage.addChild(this.zoomStage)
+        this.gameState = gameState
+        this.app.stage.addChild(this.gameState.stage)
+        this.ui = ui
+        this.app.stage.addChild(this.ui.stage)
 
-        this.gameStage = new PIXI.Container()
-        this.zoomStage.addChild(this.gameStage)
-
-        this.uiStage = new PIXI.Container()
-        this.zoomStage.addChild(this.uiStage)
+        this.update()
     }
 
     update() {
-        this.zoomStage.position.set(this.app.renderer.width / 2, this.app.renderer.height / 2)
-        let scale = Math.min(this.app.renderer.width / this.width, this.app.renderer.height / this.height)
-        this.zoomStage.scale.set(scale, scale)
+        let topBarHeight = 50
+        let bottonBarHeight = 0
+
+        let height = this.app.renderer.height - topBarHeight - bottonBarHeight
+        let width = Math.max(height, this.ui.topBoxWidth)
+
+        let areaX = (this.app.renderer.width - width) / 2
+        let areaY = topBarHeight
+
+        let scale = Math.min(width / this.gameState.width, height / this.gameState.height)
+        this.gameState.stage.scale.set(scale, scale)
+
+        let stageX = areaX + (width - scale * this.gameState.width) / 2
+        let stageY = areaY
+
+        this.gameState.stage.position.set(stageX, stageY)
+        this.ui.topBox.position.set((this.app.renderer.width - this.ui.topBoxWidth) / 2, 0)
     }
 }
 
 class UserInterface {
     stage: PIXI.Container
+    topBox: PIXI.Container
+    topBoxWidth: number
     fpsText: PIXI.Text
     scoreText: PIXI.Text
     message: Message
 
-    constructor(uiStage: PIXI.Container) {
-        this.stage = uiStage
+    constructor() {
+        this.stage = new PIXI.Container()
         this.fpsText = new PIXI.Text()
         this.fpsText.style.fontFamily = "monospace"
         this.fpsText.style.fill = COLORS["terminal green"]
         this.fpsText.position.set(5, 5)
-        this.stage.parent.parent.addChild(this.fpsText)
+        this.stage.addChild(this.fpsText)
+       
         
+        this.topBox = new PIXI.Container()
+        this.stage.addChild(this.topBox)
         this.scoreText = new PIXI.Text()
         this.scoreText.style.fontFamily = "monospace"
         this.scoreText.style.fill = COLORS["terminal green"]
         this.scoreText.anchor.set(0, 0.5)
         this.scoreText.position.set(25, 25)
-        this.stage.addChild(this.scoreText)
+        this.topBox.addChild(this.scoreText)
         
         this.message = makeMessage("HAPPYBIRTHDAY")
         for (let i = 0; i < this.message.back.length; i++) {
             this.message.back[i].position.set(200 + 50 * i, 0)
             this.message.text[i].position.set(225 + 50 * i, 25)
             this.message.front[i].position.set(200 + 50 * i, 0)
-            this.stage.addChild(this.message.back[i])
-            this.stage.addChild(this.message.text[i])
-            this.stage.addChild(this.message.front[i])
+            this.topBox.addChild(this.message.back[i])
+            this.topBox.addChild(this.message.text[i])
+            this.topBox.addChild(this.message.front[i])
         }
+
+        this.topBoxWidth = 200 + 50 * this.message.back.length
     }
 
     update(fps: number, load: number, score: number, target: number) {

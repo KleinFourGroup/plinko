@@ -13,9 +13,9 @@ let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal 
 // @ts-ignore
 document.body.appendChild(app.view);
 
-let display = new DisplayState(app)
-let gameState = new GameState(display.gameStage)
-let ui = new UserInterface(display.uiStage)
+let gameState = new GameState()
+let ui = new UserInterface()
+let display = new DisplayState(app, gameState, ui)
 
 let spawn = false
 
