@@ -156,15 +156,15 @@ class UserInterface {
         this.topBox.addChild(this.progressBar.bar)
     }
 
-    update(fps: number, load: number, score: number, level: number, target: number) {
+    update(fps: number, load: number, gameState: GameState) {
         this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
 
-        let completion = Math.min(score / target, 1)
+        let completion = Math.min((gameState.levelState.score - gameState.levelState.lastTarget) / (gameState.levelState.target - gameState.levelState.lastTarget), 1)
         
         this.progressBar.update(completion)
 
-        this.scoreText.text = `Score: ${score}`
-        this.levelText.text = `Level: ${level}`
+        this.scoreText.text = `Score: ${gameState.levelState.score}`
+        this.levelText.text = `Level: ${gameState.levelState.level}`
         
         this.progressBar.updateBounds(this.scoreText.width + 10,
             5,

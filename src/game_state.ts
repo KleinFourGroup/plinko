@@ -4,15 +4,31 @@ import * as Matter from 'matter-js'
 import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
 import { Spawner } from './spawner'
 
+function nextLevel(level: number) {
+    return Math.round(Math.pow(level * 4, 2))
+}
+
 class LevelManager {
     score: number
     level: number
+    lastTarget: number
     target: number
 
     constructor() {
         this.score = 0
         this.level = 1
-        this.target = 500
+        this.lastTarget = 0
+        this.target = nextLevel(this.level)
+    }
+
+    add(score: number) {
+        this.score += score
+
+        while(this.score >= this.target) {
+            this.level++
+            this.lastTarget = this.target
+            this.target = nextLevel(this.level)
+        }
     }
 }
 
