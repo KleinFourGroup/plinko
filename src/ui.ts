@@ -3,46 +3,6 @@ import * as PIXI from 'pixi.js'
 import { COLORS } from './colors'
 import { GameState } from './game_state'
 
-type Message = {
-    back: Array<PIXI.Graphics>,
-    text: Array<PIXI.Text>,
-    front: Array<PIXI.Graphics>
-}
-
-function makeMessage(text: string): Message {
-
-    let msg: Message = {
-        back: [],
-        text: [],
-        front: []
-    }
-
-    for (let i = 0; i < text.length; i++) {
-        let backSquare = new PIXI.Graphics()
-        backSquare.lineStyle(2, COLORS["terminal amber"])
-        backSquare.beginFill(COLORS["dark terminal green"])
-        backSquare.drawRect(5, 5, 45, 45)
-        backSquare.endFill()
-
-        let letter = new PIXI.Text(text.charAt(i))
-        letter.style.fontFamily = "monospace"
-        letter.style.fill = COLORS["terminal green"]
-        letter.style.align = "center"
-        letter.anchor.set(0.5, 0.5)
-
-        let frontSquare = new PIXI.Graphics()
-        frontSquare.beginFill(COLORS["terminal amber"])
-        frontSquare.drawRect(2, 2, 48, 48)
-        frontSquare.endFill()
-
-        msg.back.push(backSquare)
-        msg.text.push(letter)
-        msg.front.push(frontSquare)
-    }
-
-    return msg
-}
-
 class DisplayState {
     app: PIXI.Application
     gameState: GameState
@@ -75,7 +35,81 @@ class DisplayState {
         let stageY = areaY
 
         this.gameState.stage.position.set(stageX, stageY)
-        this.ui.topBox.position.set((this.app.renderer.width - this.ui.topBoxWidth) / 2, 0)
+        this.ui.topBox.position.set((this.app.renderer.width - width) / 2, 0)
+        this.ui.levelText.x = width
+    }
+}
+
+class ProgressBar {
+    bar: PIXI.Container
+    foreBar: PIXI.Graphics
+    backBar: PIXI.Graphics
+    progress: number
+    x: number
+    y: number
+    width: number
+    height: number
+
+    constructor(x: number, y: number, width: number, height: number) {
+        this.x = x
+        this.y = y
+        this.width = width
+        this.height = height
+
+        this.bar = new PIXI.Container()
+
+        this.foreBar = new PIXI.Graphics()
+        this.foreBar.beginFill(COLORS["flourescent blue"])
+        this.foreBar.drawRect(0, 0, this.width, this.height)
+        this.foreBar.endFill()
+        this.foreBar.pivot.set(0, 0)
+
+        this.backBar = new PIXI.Graphics()
+        this.backBar.beginFill(COLORS["dark flourescent blue"])
+        this.backBar.drawRect(0, 0, this.width, this.height)
+        this.backBar.endFill()
+        this.backBar.position.set(0, 0)
+
+        this.bar.addChild(this.backBar)
+        this.bar.addChild(this.foreBar)
+        this.foreBar.width = 0
+
+        this.bar.position.set(this.x, this.y)
+
+        this.progress = 0
+    }
+
+    updateBounds(x: number, y: number, width: number, height: number) {
+        if (this.x !== x || this.y !== y) {
+            this.x = x
+            this.y = y
+
+            this.bar.position.set(this.x, this.y)
+        }
+
+        if (this.width !== width || this.height !== height) {
+            this.width = width
+            this.height = height
+    
+            this.foreBar.clear()
+            this.foreBar.beginFill(COLORS["flourescent blue"])
+            this.foreBar.drawRect(0, 0, this.width, this.height)
+            this.foreBar.endFill()
+            this.foreBar.pivot.set(0, 0)
+    
+            this.backBar.clear()
+            this.backBar.beginFill(COLORS["dark flourescent blue"])
+            this.backBar.drawRect(0, 0, this.width, this.height)
+            this.backBar.endFill()
+            this.backBar.position.set(0, 0)
+
+            this.foreBar.width = this.progress * this.width
+        }
+    }
+
+    update(progress: number) {
+        this.progress = progress
+        this.foreBar.width = this.progress * this.width
     }
 }
 
@@ -85,7 +119,8 @@ class UserInterface {
     topBoxWidth: number
     fpsText: PIXI.Text
     scoreText: PIXI.Text
-    message: Message
+    levelText: PIXI.Text
+    progressBar: ProgressBar
 
     constructor() {
         this.stage = new PIXI.Container()
@@ -97,38 +132,44 @@ class UserInterface {
        
         
         this.topBox = new PIXI.Container()
+        this.topBoxWidth = 500
+
         this.stage.addChild(this.topBox)
         this.scoreText = new PIXI.Text()
         this.scoreText.style.fontFamily = "monospace"
         this.scoreText.style.fill = COLORS["terminal green"]
         this.scoreText.anchor.set(0, 0.5)
-        this.scoreText.position.set(25, 25)
+        this.scoreText.position.set(0, 25)
         this.topBox.addChild(this.scoreText)
         
-        this.message = makeMessage("HAPPYBIRTHDAY")
-        for (let i = 0; i < this.message.back.length; i++) {
-            this.message.back[i].position.set(200 + 50 * i, 0)
-            this.message.text[i].position.set(225 + 50 * i, 25)
-            this.message.front[i].position.set(200 + 50 * i, 0)
-            this.topBox.addChild(this.message.back[i])
-            this.topBox.addChild(this.message.text[i])
-            this.topBox.addChild(this.message.front[i])
-        }
+        this.levelText = new PIXI.Text()
+        this.levelText.style.fontFamily = "monospace"
+        this.levelText.style.fill = COLORS["terminal green"]
+        this.levelText.anchor.set(1, 0.5)
+        this.levelText.position.set(this.topBoxWidth, 25)
+        this.topBox.addChild(this.levelText)
 
-        this.topBoxWidth = 200 + 50 * this.message.back.length
+        this.progressBar = new ProgressBar(this.scoreText.width + 10,
+            5,
+            this.topBoxWidth - (this.scoreText.width + this.levelText.width + 20),
+            40)
+        this.topBox.addChild(this.progressBar.bar)
     }
 
-    update(fps: number, load: number, score: number, target: number) {
+    update(fps: number, load: number, score: number, level: number, target: number) {
         this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
 
         let completion = Math.min(score / target, 1)
         
-        for (let i = 0; i < this.message.back.length; i++) {
-            this.message.front[i].visible = (i >= Math.floor(this.message.back.length * completion))
-        }
+        this.progressBar.update(completion)
 
-        this.scoreText.text = `${score}`
+        this.scoreText.text = `Score: ${score}`
+        this.levelText.text = `Level: ${level}`
         
+        this.progressBar.updateBounds(this.scoreText.width + 10,
+            5,
+            this.levelText.x - (this.scoreText.width + this.levelText.width + 20),
+            40)
     }
 }
 

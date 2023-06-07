@@ -55,7 +55,7 @@ function update(delta: number) {
 
     let startWork = performance.now()
 
-    let progress = Math.min(gameState.score / gameState.target, 1)
+    let progress = Math.min(gameState.levelState.score / gameState.levelState.target, 1)
 
     gameState.spawner.update(deltaMS, progress)
 
@@ -74,7 +74,7 @@ function update(delta: number) {
     }
 
     gameState.updateGraphics()
-    ui.update(app.ticker.FPS, load, gameState.score, gameState.target)
+    ui.update(app.ticker.FPS, load, gameState.levelState.score, gameState.levelState.level, gameState.levelState.target)
     display.update()
     
     let endWork = performance.now()

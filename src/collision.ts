@@ -13,7 +13,7 @@ function collisionHandler(event: Matter.IEventCollision<Matter.Engine>, labelMap
                 labelMap.delete(pair.bodyB.label)
                 objB.delete()
                 gameState.orbs.splice(gameState.orbs.indexOf(objB), 1)
-                gameState.score += objA.score
+                gameState.levelState.score += objA.score
             }
         }
         if (objB instanceof GoalRect) {
@@ -22,7 +22,7 @@ function collisionHandler(event: Matter.IEventCollision<Matter.Engine>, labelMap
                 labelMap.delete(pair.bodyA.label)
                 objA.delete()
                 gameState.orbs.splice(gameState.orbs.indexOf(objA), 1)
-                gameState.score += objB.score
+                gameState.levelState.score += objB.score
             }
         }
     }
