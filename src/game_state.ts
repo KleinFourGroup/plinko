@@ -3,9 +3,10 @@ import * as Matter from 'matter-js'
 
 import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
 import { Spawner } from './spawner'
+import { ScoreCollision, SimEvent } from './collision'
 
 function nextLevel(level: number) {
-    return Math.round(Math.pow(level * 4, 2))
+    return Math.round(Math.pow(level * 4, 1.75))
 }
 
 class LevelManager {
@@ -38,6 +39,7 @@ class GameState {
     height: number
     engine: Matter.Engine
     world: Matter.World
+    eventQueue: Array<SimEvent>
     spawner: Spawner
     levelState: LevelManager
     walls: Array<BarrierRect | BarrierPoly>
@@ -59,9 +61,34 @@ class GameState {
         this.orbs = []
         this.pegs = []
 
+        this.eventQueue = []
+
         this.levelState = new LevelManager()
 
         this.spawner = new Spawner(this)
+    }
+
+    enqueueEvent(event: SimEvent) {
+        this.eventQueue.push(event)
+    }
+
+    parseEvents() {
+        while (this.eventQueue.length > 0) {
+            let event = this.eventQueue[0]
+            this.eventQueue.splice(0, 1)
+            switch (event.typeStr) {
+                case "score":
+                    let score = (event as ScoreCollision)
+                    
+                    score.orb.removeFrom(this.stage)
+                    score.orb.delete()
+                    this.orbs.splice(this.orbs.indexOf(score.orb), 1)
+                    this.levelState.add(score.goal.score)
+                    break
+                default:
+                    console.error("Unknown event type: " + event.typeStr)
+            }
+        }
     }
     
     updateGraphics() {

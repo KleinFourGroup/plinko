@@ -40,7 +40,8 @@ class Spawner {
         this.state.orbs.push(newOrb)
     }
 
-    update(delta: number, progress: number) {
+    update(delta: number, level: number) {
+        let progress = Math.min((level - 1) / 9, 1)
 
         let off = Math.abs(Math.sin(this.time)) * (1 + 1.5 * progress)
     

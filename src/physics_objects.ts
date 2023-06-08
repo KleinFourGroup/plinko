@@ -47,6 +47,7 @@ class PhysicsObject {
     
     delete() {
         Matter.World.remove(this.world, this.body)
+        labelMap.delete(this.body.label)
     }
 
     update() {

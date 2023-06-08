@@ -55,9 +55,9 @@ function update(delta: number) {
 
     let startWork = performance.now()
 
-    let progress = Math.min((gameState.levelState.score - gameState.levelState.lastTarget) / (gameState.levelState.target - gameState.levelState.lastTarget), 1)
+    gameState.parseEvents()
 
-    gameState.spawner.update(deltaMS, progress)
+    gameState.spawner.update(deltaMS, gameState.levelState.level)
 
     if (elapsed - lastStep >= 20) {
         lastStep = Math.floor(elapsed)
