@@ -197,6 +197,25 @@ class Peg extends PhysicsObject {
     }
 }
 
+class Bouncer extends PhysicsObject {
+    radius: number
+
+    constructor(world: Matter.World, x: number, y: number, radius: number) {
+        let options: Matter.IBodyDefinition = {
+            isStatic: true
+        }
+        let body = Matter.Bodies.circle(x, y, radius, options)
+
+        let graphics = new PIXI.Graphics()
+        graphics.beginFill(COLORS["neon red"])
+        graphics.drawCircle(0, 0, radius)
+        graphics.endFill()
+
+        super(world, body, graphics)
+        this.radius = radius
+    }
+}
+
 export {Point}
 export {labelMap}
-export {PhysicsObject, BarrierRect, BarrierPoly, Tooth, GoalRect, Orb, Peg}
+export {PhysicsObject, BarrierRect, BarrierPoly, Tooth, GoalRect, Orb, Peg, Bouncer}

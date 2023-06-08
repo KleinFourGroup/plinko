@@ -1,24 +1,8 @@
 import * as Matter from 'matter-js'
 
 import { GameState } from './game_state'
-import { Point, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
-
-class SimEvent {
-    typeStr: string
-    constructor(typeStr: string) {
-        this.typeStr = typeStr
-    }
-}
-
-class ScoreCollision extends SimEvent {
-    orb: Orb
-    goal: GoalRect
-    constructor(orb: Orb, goal: GoalRect) {
-        super("score")
-        this.orb = orb
-        this.goal = goal
-    }
-}
+import { Point, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
+import { BouncerCollision, ScoreCollision } from './events'
 
 function collisionHandler(event: Matter.IEventCollision<Matter.Engine>, labelMap: Map<string, PhysicsObject>, gameState: GameState) {
     for (let pair of event.pairs) {
@@ -36,6 +20,19 @@ function collisionHandler(event: Matter.IEventCollision<Matter.Engine>, labelMap
                 gameState.enqueueEvent(event)
             }
         }
+        
+        if (objA instanceof Bouncer) {
+            if (objB instanceof Orb) {
+                let event = new BouncerCollision(objB, objA)
+                gameState.enqueueEvent(event)
+            }
+        }
+        if (objB instanceof Bouncer) {
+            if (objA instanceof Orb) {
+                let event = new BouncerCollision(objA, objB)
+                gameState.enqueueEvent(event)
+            }
+        }
     }
 }
 
@@ -47,5 +44,4 @@ function getCollisionHandler(labelMap: Map<string, PhysicsObject>, gameState: Ga
     return handle
 }
 
-export {SimEvent, ScoreCollision}
 export {getCollisionHandler}

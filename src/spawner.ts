@@ -47,7 +47,7 @@ class Spawner {
     
         this.time += (0.1 + 0.9 * off * off) * 3 * delta / 1000
     
-        this.spawnPoint.x = this.state.width / 2 + Math.sin(this.time) * (this.state.width - 50) / 2
+        this.spawnPoint.x = this.state.width / 2 + Math.sin(this.time) * (this.state.width - 60) / 2
 
         this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
     }

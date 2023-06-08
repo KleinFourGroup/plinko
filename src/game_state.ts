@@ -1,21 +1,23 @@
 import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
-import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
+import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, SimEvent } from './collision'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision } from './events'
 
 function nextLevel(level: number) {
     return Math.round(Math.pow(level * 4, 1.75))
 }
 
 class LevelManager {
+    gameState: GameState
     score: number
     level: number
     lastTarget: number
     target: number
 
-    constructor() {
+    constructor(gameState: GameState) {
+        this.gameState = gameState
         this.score = 0
         this.level = 1
         this.lastTarget = 0
@@ -23,13 +25,46 @@ class LevelManager {
     }
 
     add(score: number) {
+        let oldScore = this.score
         this.score += score
 
-        while(this.score >= this.target) {
-            this.level++
-            this.lastTarget = this.target
-            this.target = nextLevel(this.level)
+        if (this.score >= this.target && oldScore < this.target) {
+            this.gameState.enqueueEvent(new LevelUp(this.level + 1))
         }
+    }
+
+    check() {
+        if (this.score >= this.target) {
+            this.gameState.enqueueEvent(new LevelUp(this.level + 1))
+        }
+    }
+
+    levelUp() {
+        this.level++
+        this.lastTarget = this.target
+        this.target = nextLevel(this.level)
+    }
+}
+
+class PegArray {
+    gameState: GameState
+    pegs: Array<Peg | Bouncer>
+    constructor(gameState: GameState) {
+        this.gameState = gameState
+        this.pegs = []
+    }
+
+    add(peg: Peg | Bouncer) {
+        peg.addTo(this.gameState.stage)
+        this.pegs.push(peg)
+    }
+
+    replace(index: number, newPeg: Peg | Bouncer) {
+        let oldPeg = this.pegs[index]
+        oldPeg.removeFrom(this.gameState.stage)
+        oldPeg.delete()
+        newPeg.addTo(this.gameState.stage)
+        this.pegs[index] = newPeg
     }
 }
 
@@ -39,13 +74,13 @@ class GameState {
     height: number
     engine: Matter.Engine
     world: Matter.World
-    eventQueue: Array<SimEvent>
+    eventQueue: Array<GameEvent>
     spawner: Spawner
     levelState: LevelManager
     walls: Array<BarrierRect | BarrierPoly>
     goals: Array<GoalRect>
     orbs: Array<Orb>
-    pegs: Array<Peg>
+    pegArray: PegArray
 
     constructor(width: number = 1000, height: number = 1000) {
         this.stage = new PIXI.Container()
@@ -59,16 +94,15 @@ class GameState {
         this.walls = []
         this.goals = []
         this.orbs = []
-        this.pegs = []
 
         this.eventQueue = []
 
-        this.levelState = new LevelManager()
-
+        this.levelState = new LevelManager(this)
         this.spawner = new Spawner(this)
+        this.pegArray = new PegArray(this)
     }
 
-    enqueueEvent(event: SimEvent) {
+    enqueueEvent(event: GameEvent) {
         this.eventQueue.push(event)
     }
 
@@ -79,11 +113,29 @@ class GameState {
             switch (event.typeStr) {
                 case "score":
                     let score = (event as ScoreCollision)
-                    
                     score.orb.removeFrom(this.stage)
                     score.orb.delete()
                     this.orbs.splice(this.orbs.indexOf(score.orb), 1)
                     this.levelState.add(score.goal.score)
+                    break
+                case "bouncer":
+                    let bounce = (event as BouncerCollision)
+                    let dirX = bounce.orb.body.position.x - bounce.bouncer.body.position.x
+                    let dirY = bounce.orb.body.position.y - bounce.bouncer.body.position.y
+                    let dist = Math.hypot(dirX, dirY)
+                    let oldVelX = bounce.orb.body.velocity.x
+                    let oldVelY = bounce.orb.body.velocity.y
+                    Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
+                    console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
+                    break
+                case "levelup":
+                    let levelup = (event as LevelUp)
+                    this.levelState.levelUp()
+                    this.levelState.check()
+                    let index = Math.floor(Math.random() * this.pegArray.pegs.length)
+                    let oldPeg = this.pegArray.pegs[index]
+                    let bouncer = new Bouncer(this.world, oldPeg.body.position.x, oldPeg.body.position.y, 10)
+                    this.pegArray.replace(index, bouncer)
                     break
                 default:
                     console.error("Unknown event type: " + event.typeStr)
@@ -98,7 +150,7 @@ class GameState {
         for (let goal of this.goals) {
             goal.update()
         }
-        for (let peg of this.pegs) {
+        for (let peg of this.pegArray.pegs) {
             peg.update()
         }
         for (let orb of this.orbs) {
@@ -133,8 +185,8 @@ function initWorld(state: GameState) {
     let leftWallVerts = [
         {x: 0, y: state.height - 20},
         {x: wallWidth / 2, y: state.height - 40},
-        {x: wallWidth / 4, y: 50 + wallWidth / 4},
-        {x: 0, y: 50}
+        {x: wallWidth / 4, y: wallWidth / 4},
+        {x: 0, y: 0}
     ]
 
     let leftWall = new BarrierPoly(state.world, 0, 0, ...leftWallVerts)
@@ -144,8 +196,8 @@ function initWorld(state: GameState) {
     let rightWallVerts = [
         {x: 0, y: state.height - 20},
         {x: -wallWidth / 2, y: state.height - 40},
-        {x: -wallWidth / 4, y: 50 + wallWidth / 4},
-        {x: 0, y: 50}
+        {x: -wallWidth / 4, y: wallWidth / 4},
+        {x: 0, y: 0}
     ]
 
     let rightWall = new BarrierPoly(state.world, state.width, 0, ...rightWallVerts)
@@ -160,8 +212,7 @@ function initWorld(state: GameState) {
                 let x = (state.width - pegWidth) / 2 + (pegWidth / (cols - 1)) * col
                 let y = state.height - 100 - 50 * row
                 let peg = new Peg(state.world, x, y, 5)
-                peg.addTo(state.stage)
-                state.pegs.push(peg)
+                state.pegArray.add(peg)
             }
         }
     }
