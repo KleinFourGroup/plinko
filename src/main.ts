@@ -15,6 +15,7 @@ document.body.appendChild(app.view);
 
 let gameState = new GameState()
 let ui = new UserInterface()
+gameState.ui = ui
 let display = new DisplayState(app, gameState, ui)
 
 let spawn = false

@@ -4,6 +4,8 @@ import * as Matter from 'matter-js'
 import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
 import { ScoreCollision, GameEvent, LevelUp, BouncerCollision } from './events'
+import { Upgrade } from './upgrade'
+import { UserInterface } from './ui'
 
 function nextLevel(level: number) {
     return Math.round(Math.pow(level * 4, 1.75))
@@ -81,9 +83,11 @@ class GameState {
     goals: Array<GoalRect>
     orbs: Array<Orb>
     pegArray: PegArray
+    ui: UserInterface
 
     constructor(width: number = 1000, height: number = 1000) {
         this.stage = new PIXI.Container()
+        this.ui = null
 
         this.width = width
         this.height = height
@@ -136,6 +140,8 @@ class GameState {
                     let oldPeg = this.pegArray.pegs[index]
                     let bouncer = new Bouncer(this.world, oldPeg.body.position.x, oldPeg.body.position.y, 10)
                     this.pegArray.replace(index, bouncer)
+                    let upgrade = new Upgrade("Test", "Testing...")
+                    this.ui.upgradeSelect.addChoices(upgrade)
                     break
                 default:
                     console.error("Unknown event type: " + event.typeStr)

@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import { COLORS } from './colors'
 import { GameState } from './game_state'
+import { Upgrade } from './upgrade'
 
 class DisplayState {
     app: PIXI.Application
@@ -37,6 +38,11 @@ class DisplayState {
         this.gameState.stage.position.set(stageX, stageY)
         this.ui.topBox.position.set((this.app.renderer.width - width) / 2, 0)
         this.ui.levelText.x = width
+
+        this.ui.upgradeSelect.box.position.set(
+            (this.app.renderer.width - this.ui.upgradeSelect.box.width) / 2,
+            (this.app.renderer.height - this.ui.upgradeSelect.box.height) / 2
+        )
     }
 }
 
@@ -113,6 +119,38 @@ class ProgressBar {
     }
 }
 
+class UpgradeSelect {
+    choices: Array<Upgrade>
+    box: PIXI.Container
+    constructor() {
+        this.choices = []
+        this.box = new PIXI.Container()
+    }
+
+    addChoices(...upgrades: Array<Upgrade>) {
+        for (let upgrade of upgrades) {
+            this.choices.push(upgrade)
+            let height = this.box.height
+            this.box.addChild(upgrade.graphics)
+            upgrade.graphics.position.set(0, (height !== 0 ? 15 : 0) + height)
+
+            upgrade.graphics.on("pointerdown", (event) => {
+                console.log("Click!")
+                this.clear()
+            })
+        }
+    }
+
+    clear() {
+        console.log("Clear!")
+        for (let upgrade of this.choices) {
+            this.box.removeChild(upgrade.graphics)
+        }
+
+        this.choices.splice(0, this.choices.length)
+    }
+}
+
 class UserInterface {
     stage: PIXI.Container
     topBox: PIXI.Container
@@ -121,6 +159,7 @@ class UserInterface {
     scoreText: PIXI.Text
     levelText: PIXI.Text
     progressBar: ProgressBar
+    upgradeSelect: UpgradeSelect
 
     constructor() {
         this.stage = new PIXI.Container()
@@ -154,6 +193,9 @@ class UserInterface {
             this.topBoxWidth - (this.scoreText.width + this.levelText.width + 20),
             40)
         this.topBox.addChild(this.progressBar.bar)
+
+        this.upgradeSelect = new UpgradeSelect()
+        this.stage.addChild(this.upgradeSelect.box)
     }
 
     update(fps: number, load: number, gameState: GameState) {
