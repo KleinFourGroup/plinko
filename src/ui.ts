@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import { COLORS } from './colors'
 import { GameState } from './game_state'
-import { Upgrade } from './upgrade'
+import { UpgradeSelect } from './upgrade_select'
 
 class DisplayState {
     app: PIXI.Application
@@ -116,38 +116,6 @@ class ProgressBar {
     update(progress: number) {
         this.progress = progress
         this.foreBar.width = this.progress * this.width
-    }
-}
-
-class UpgradeSelect {
-    choices: Array<Upgrade>
-    box: PIXI.Container
-    constructor() {
-        this.choices = []
-        this.box = new PIXI.Container()
-    }
-
-    addChoices(...upgrades: Array<Upgrade>) {
-        for (let upgrade of upgrades) {
-            this.choices.push(upgrade)
-            let height = this.box.height
-            this.box.addChild(upgrade.graphics)
-            upgrade.graphics.position.set(0, (height !== 0 ? 15 : 0) + height)
-
-            upgrade.graphics.on("pointerdown", (event) => {
-                console.log("Click!")
-                this.clear()
-            })
-        }
-    }
-
-    clear() {
-        console.log("Clear!")
-        for (let upgrade of this.choices) {
-            this.box.removeChild(upgrade.graphics)
-        }
-
-        this.choices.splice(0, this.choices.length)
     }
 }
 

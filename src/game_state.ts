@@ -6,6 +6,7 @@ import { Spawner } from './spawner'
 import { ScoreCollision, GameEvent, LevelUp, BouncerCollision } from './events'
 import { Upgrade } from './upgrade'
 import { UserInterface } from './ui'
+import { UpgradeSelect } from './upgrade_select'
 
 function nextLevel(level: number) {
     return Math.round(Math.pow(level * 4, 1.75))
@@ -83,11 +84,12 @@ class GameState {
     goals: Array<GoalRect>
     orbs: Array<Orb>
     pegArray: PegArray
-    ui: UserInterface
+    upgradeSelect: UpgradeSelect
+    running: boolean
 
     constructor(width: number = 1000, height: number = 1000) {
         this.stage = new PIXI.Container()
-        this.ui = null
+        this.upgradeSelect = null
 
         this.width = width
         this.height = height
@@ -100,6 +102,7 @@ class GameState {
         this.orbs = []
 
         this.eventQueue = []
+        this.running = true
 
         this.levelState = new LevelManager(this)
         this.spawner = new Spawner(this)
@@ -141,7 +144,8 @@ class GameState {
                     let bouncer = new Bouncer(this.world, oldPeg.body.position.x, oldPeg.body.position.y, 10)
                     this.pegArray.replace(index, bouncer)
                     let upgrade = new Upgrade("Test", "Testing...")
-                    this.ui.upgradeSelect.addChoices(upgrade)
+                    this.upgradeSelect.addChoices(upgrade)
+                    this.running = false
                     break
                 default:
                     console.error("Unknown event type: " + event.typeStr)

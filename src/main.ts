@@ -15,7 +15,8 @@ document.body.appendChild(app.view);
 
 let gameState = new GameState()
 let ui = new UserInterface()
-gameState.ui = ui
+gameState.upgradeSelect = ui.upgradeSelect
+ui.upgradeSelect.gameState = gameState
 let display = new DisplayState(app, gameState, ui)
 
 let spawn = false
@@ -60,13 +61,13 @@ function update(delta: number) {
 
     gameState.spawner.update(deltaMS, gameState.levelState.level)
 
-    if (elapsed - lastStep >= 20) {
+    if (gameState.running && elapsed - lastStep >= 20) {
         lastStep = Math.floor(elapsed)
         Matter.Engine.update(gameState.engine, 20)
     }
 
     // if (spawn) {
-    if (elapsed - lastTick >= 1000 || spawn) {
+    if (gameState.running && (elapsed - lastTick >= 1000 || spawn)) {
         spawn = false
         lastTick = Math.floor(elapsed)
         if (gameState.orbs.length < 15) {
