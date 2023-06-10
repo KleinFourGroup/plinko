@@ -128,8 +128,11 @@ class UserInterface {
     levelText: PIXI.Text
     progressBar: ProgressBar
     upgradeSelect: UpgradeSelect
+    gameState: GameState
 
-    constructor() {
+    constructor(gameState: GameState) {
+        this.gameState = gameState
+
         this.stage = new PIXI.Container()
         this.fpsText = new PIXI.Text()
         this.fpsText.style.fontFamily = "monospace"
@@ -162,19 +165,19 @@ class UserInterface {
             40)
         this.topBox.addChild(this.progressBar.bar)
 
-        this.upgradeSelect = new UpgradeSelect()
+        this.upgradeSelect = new UpgradeSelect(gameState)
         this.stage.addChild(this.upgradeSelect.box)
     }
 
-    update(fps: number, load: number, gameState: GameState) {
+    update(fps: number, load: number) {
         this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
 
-        let completion = Math.min((gameState.levelState.score - gameState.levelState.lastTarget) / (gameState.levelState.target - gameState.levelState.lastTarget), 1)
+        let completion = Math.min((this.gameState.levelState.score - this.gameState.levelState.lastTarget) / (this.gameState.levelState.target - this.gameState.levelState.lastTarget), 1)
         
         this.progressBar.update(completion)
 
-        this.scoreText.text = `Score: ${gameState.levelState.score}`
-        this.levelText.text = `Level: ${gameState.levelState.level}`
+        this.scoreText.text = `Score: ${this.gameState.levelState.score}`
+        this.levelText.text = `Level: ${this.gameState.levelState.level}`
         
         this.progressBar.updateBounds(this.scoreText.width + 10,
             5,

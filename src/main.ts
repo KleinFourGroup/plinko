@@ -6,6 +6,7 @@ import { DisplayState, UserInterface } from './ui'
 import { GameState, initWorld } from './game_state'
 import { getCollisionHandler } from './collision'
 import { Point, labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
+import { TimingManager } from './timing'
 
 // Create the application helper and add its render target to the page
 let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal black"], antialias: true });
@@ -14,9 +15,8 @@ let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal 
 document.body.appendChild(app.view);
 
 let gameState = new GameState()
-let ui = new UserInterface()
+let ui = new UserInterface(gameState)
 gameState.upgradeSelect = ui.upgradeSelect
-ui.upgradeSelect.gameState = gameState
 let display = new DisplayState(app, gameState, ui)
 
 let spawn = false
@@ -27,61 +27,36 @@ let collisionHandler = getCollisionHandler(labelMap, gameState)
 
 Matter.Events.on(gameState.engine, "collisionStart", collisionHandler)
 
-let intervalsTotal: Array<number> = []
-let intervalsWork: Array<number> = []
 
-let lastWork = 0
-
-// Add a ticker callback to move the sprite back and forth
-let lastStep = 0
-let lastTick = 0
-let elapsed = 0.0;
-
-let spawnTot = 0.0
+let timing = new TimingManager(app)
 
 // delta is in frames, not ms =()
 function update(delta: number) {
-    let deltaMS: number = app.ticker.deltaMS
+    timing.beginFrame()
 
-    intervalsTotal.push(deltaMS)
-    intervalsWork.push(lastWork)
-
-    if (intervalsTotal.length > 20) {
-        intervalsTotal.shift()
-        intervalsWork.shift()
-    }
-
-    let load = intervalsWork.reduce((a, b) => a + b, 0) / intervalsTotal.reduce((a, b) => a + b, 0)
-    
-    elapsed += deltaMS;
-
-    let startWork = performance.now()
+    timing.beginWork()
 
     gameState.parseEvents()
 
-    gameState.spawner.update(deltaMS, gameState.levelState.level)
+    gameState.spawner.update(timing.delta, gameState.levelState.level)
 
-    if (gameState.running && elapsed - lastStep >= 20) {
-        lastStep = Math.floor(elapsed)
+    if (gameState.running && timing.needsStep(20)) {
+        timing.step()
         Matter.Engine.update(gameState.engine, 20)
     }
 
-    // if (spawn) {
-    if (gameState.running && (elapsed - lastTick >= 1000 || spawn)) {
+    if (spawn) {
         spawn = false
-        lastTick = Math.floor(elapsed)
-        if (gameState.orbs.length < 15) {
+        if (gameState.running && gameState.orbs.length == 0) {
             gameState.spawner.spawnOrb()
         }
     }
 
     display.update()
     gameState.updateGraphics()
-    ui.update(app.ticker.FPS, load, gameState)
+    ui.update(app.ticker.FPS, timing.load)
     
-    let endWork = performance.now()
-
-    lastWork = endWork - startWork
+    timing.endWork()
 }
 
 addEventListener("click", (event) => {spawn = true})

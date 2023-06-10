@@ -45,7 +45,7 @@ class Upgrade {
         title.position.set(margin, margin)
         card.addChild(description)
         description.position.set(margin, title.height + 2 * margin)
-        card.interactive = true
+        card.eventMode = "static"
 
         return card
     }

@@ -8,10 +8,10 @@ class UpgradeSelect {
     choices: Array<Upgrade>
     box: PIXI.Container
     gameState: GameState
-    constructor() {
+    constructor(gameState: GameState) {
         this.choices = []
         this.box = new PIXI.Container()
-        this.gameState = null
+        this.gameState = gameState
     }
 
     addChoices(...upgrades: Array<Upgrade>) {
