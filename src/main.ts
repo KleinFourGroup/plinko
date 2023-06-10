@@ -15,6 +15,7 @@ let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal 
 document.body.appendChild(app.view);
 
 let gameState = new GameState()
+gameState.autoControl = true
 let ui = new UserInterface(gameState)
 gameState.upgradeSelect = ui.upgradeSelect
 let display = new DisplayState(app, gameState, ui)
@@ -29,6 +30,7 @@ Matter.Events.on(gameState.engine, "collisionStart", collisionHandler)
 
 
 let timing = new TimingManager(app)
+gameState.timing = timing
 
 // delta is in frames, not ms =()
 function update(delta: number) {
@@ -38,18 +40,11 @@ function update(delta: number) {
 
     gameState.parseEvents()
 
-    gameState.spawner.update(timing.delta, gameState.levelState.level)
+    gameState.updateFrame(timing.delta)
 
-    if (gameState.running && timing.needsStep(20)) {
-        timing.step()
-        Matter.Engine.update(gameState.engine, 20)
-    }
-
-    if (spawn) {
-        spawn = false
-        if (gameState.running && gameState.orbs.length == 0) {
-            gameState.spawner.spawnOrb()
-        }
+    if (timing.needsStep(20)) {
+        let stepped = gameState.updateStep()
+        if (stepped) timing.step()
     }
 
     display.update()
@@ -59,8 +54,8 @@ function update(delta: number) {
     timing.endWork()
 }
 
-addEventListener("click", (event) => {spawn = true})
-addEventListener("pointerdown", (event) => {spawn = true})
-addEventListener("keydown", (event) => {spawn = true})
+addEventListener("click", (event) => {gameState.spawn = true})
+addEventListener("pointerdown", (event) => {gameState.spawn = true})
+addEventListener("keydown", (event) => {gameState.spawn = true})
 
 app.ticker.add(update);

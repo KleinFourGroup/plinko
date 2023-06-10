@@ -7,6 +7,7 @@ import { ScoreCollision, GameEvent, LevelUp, BouncerCollision } from './events'
 import { Upgrade } from './upgrade'
 import { UserInterface } from './ui'
 import { UpgradeSelect } from './upgrade_select'
+import { TimingManager } from './timing'
 
 function nextLevel(level: number) {
     return Math.round(Math.pow(level * 4, 1.75))
@@ -71,10 +72,23 @@ class PegArray {
     }
 }
 
+// TODO: Rework for back-to-back level ups
+function selectRandom(gameState: GameState) {
+    if (gameState.upgradeSelect.choices.length > 0) {
+        let index = Math.floor(Math.random() * gameState.upgradeSelect.choices.length)
+        let choice = gameState.upgradeSelect.choices[index]
+        gameState.upgradeSelect.select(choice)
+    }
+}
+
 class GameState {
     stage: PIXI.Container
     width: number
     height: number
+    running: boolean
+    spawn: boolean
+    autoControl: boolean
+    timing: TimingManager
     engine: Matter.Engine
     world: Matter.World
     eventQueue: Array<GameEvent>
@@ -85,14 +99,15 @@ class GameState {
     orbs: Array<Orb>
     pegArray: PegArray
     upgradeSelect: UpgradeSelect
-    running: boolean
 
-    constructor(width: number = 1000, height: number = 1000) {
+    constructor(width: number = 1000, height: number = 1000, autoControl: boolean = false) {
         this.stage = new PIXI.Container()
         this.upgradeSelect = null
 
         this.width = width
         this.height = height
+
+        this.timing = null
 
         this.engine = Matter.Engine.create()
         this.world = this.engine.world
@@ -103,6 +118,8 @@ class GameState {
 
         this.eventQueue = []
         this.running = true
+        this.spawn = false
+        this.autoControl = autoControl
 
         this.levelState = new LevelManager(this)
         this.spawner = new Spawner(this)
@@ -146,11 +163,32 @@ class GameState {
                     let upgrade = new Upgrade("Test", "Testing...")
                     this.upgradeSelect.addChoices(upgrade)
                     this.running = false
+                    if (this.autoControl) this.timing.createTimer("autopick", 1000, selectRandom)
                     break
                 default:
                     console.error("Unknown event type: " + event.typeStr)
             }
         }
+    }
+
+    updateFrame(deltaMS: number) {
+        this.timing.runTimers(this)
+
+        if (this.running) this.spawner.update(this.timing.delta, this.levelState.level)
+    
+        if (this.autoControl || this.spawn) {
+            this.spawn = false
+            if (this.running && this.orbs.length == 0) {
+                this.spawner.spawnOrb()
+            }
+        }
+    }
+
+    updateStep() {
+        if (this.running) {
+            Matter.Engine.update(this.engine, 20)
+        }
+        return this.running
     }
     
     updateGraphics() {

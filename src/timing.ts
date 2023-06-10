@@ -1,4 +1,12 @@
 import * as PIXI from 'pixi.js'
+import { GameState } from './game_state'
+
+type TimerSignature = {
+    id: string,
+    start: number,
+    duration: number
+    callback: (state: GameState) => void
+}
 
 class TimingManager {
     app: PIXI.Application
@@ -9,6 +17,8 @@ class TimingManager {
     intervalsWork: Array<number>
     intervalsTotal: Array<number>
 
+    timers: Array<TimerSignature>
+
     constructor(app: PIXI.Application) {
         this.app = app
         this.elapsed = 0.0
@@ -16,6 +26,7 @@ class TimingManager {
         this.prevWork = 0
         this.intervalsWork = []
         this.intervalsTotal = []
+        this.timers = []
     }
 
     get load() {
@@ -28,6 +39,8 @@ class TimingManager {
 
     beginFrame() {
         let deltaMS = this.app.ticker.deltaMS
+        this.elapsed += deltaMS
+
         this.intervalsTotal.push(deltaMS)
         this.intervalsWork.push(this.prevWork)
 
@@ -35,12 +48,20 @@ class TimingManager {
             this.intervalsTotal.shift()
             this.intervalsWork.shift()
         }
-
-        this.elapsed += deltaMS
     }
 
     beginWork() {
         this.startWork = performance.now()
+    }
+
+    runTimers(gameState: GameState) {
+        for (let timer of this.timers) {
+            if (this.elapsed - timer.start >=  timer.duration) {
+                if (timer.callback !== null) timer.callback(gameState)
+            }
+        }
+
+        this.timers = this.timers.filter((timer: TimerSignature) => (this.elapsed - timer.start <  timer.duration))
     }
 
     endWork() {
@@ -53,6 +74,17 @@ class TimingManager {
 
     step() {
         this.lastStep = Math.floor(this.elapsed)
+    }
+
+    createTimer(id: string, duration: number, callback: (state: GameState) => void = null) {
+        let sig: TimerSignature = {
+            id: id,
+            start: this.elapsed,
+            duration: duration,
+            callback: callback
+        }
+
+        this.timers.push(sig)
     }
 }
 
