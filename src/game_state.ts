@@ -8,6 +8,7 @@ import { Upgrade } from './upgrade'
 import { UserInterface } from './ui'
 import { UpgradeSelect } from './upgrade_select'
 import { TimingManager } from './timing'
+import { UpgradeManager } from './upgrade_manager'
 
 function nextLevel(level: number) {
     return Math.round(Math.pow(level * 4, 1.75))
@@ -98,6 +99,7 @@ class GameState {
     goals: Array<GoalRect>
     orbs: Array<Orb>
     pegArray: PegArray
+    upgradeManager: UpgradeManager
     upgradeSelect: UpgradeSelect
 
     constructor(width: number = 1000, height: number = 1000, autoControl: boolean = false) {
@@ -124,6 +126,7 @@ class GameState {
         this.levelState = new LevelManager(this)
         this.spawner = new Spawner(this)
         this.pegArray = new PegArray(this)
+        this.upgradeManager = new UpgradeManager(this)
     }
 
     enqueueEvent(event: GameEvent) {
@@ -150,20 +153,15 @@ class GameState {
                     let oldVelX = bounce.orb.body.velocity.x
                     let oldVelY = bounce.orb.body.velocity.y
                     Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
-                    console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
+                    // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break
                 case "levelup":
                     let levelup = (event as LevelUp)
                     this.levelState.levelUp()
                     this.levelState.check()
-                    let index = Math.floor(Math.random() * this.pegArray.pegs.length)
-                    let oldPeg = this.pegArray.pegs[index]
-                    let bouncer = new Bouncer(this.world, oldPeg.body.position.x, oldPeg.body.position.y, 10)
-                    this.pegArray.replace(index, bouncer)
-                    let upgrade = new Upgrade("Test", "Testing...")
-                    this.upgradeSelect.addChoices(upgrade)
+                    this.upgradeManager.generate()
                     this.running = false
-                    if (this.autoControl) this.timing.createTimer("autopick", 1000, selectRandom)
+                    if (this.autoControl) this.timing.createTimer("autopick", 3000, selectRandom)
                     break
                 default:
                     console.error("Unknown event type: " + event.typeStr)

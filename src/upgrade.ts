@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js'
 
 import { COLORS } from './colors'
 import { GameState } from './game_state'
-import { Bouncer } from './physics_objects'
 
 class Upgrade {
     title: string
@@ -57,13 +56,6 @@ class Upgrade {
             console.error("Upgrade has no effect!")
         }
     }
-}
-
-function addBouncer(gameState: GameState) {
-    let index = Math.floor(Math.random() * gameState.pegArray.pegs.length)
-    let oldPeg = gameState.pegArray.pegs[index]
-    let bouncer = new Bouncer(this.world, oldPeg.body.position.x, oldPeg.body.position.y, 10)
-    gameState.pegArray.replace(index, bouncer)
 }
 
 export {Upgrade}
