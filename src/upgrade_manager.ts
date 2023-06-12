@@ -19,6 +19,24 @@ function addBouncers(times: number, gameState: GameState) {
     }
 }
 
+function dropSpeed(amount: number, gameState: GameState) {
+    gameState.spawner.addSpeed(-amount)
+}
+
+function getUpgradeLevel(ratio: number, levels: number) {
+    let seed = Math.random()
+    for (let level = 1; level <= levels; levels++) {
+        if (seed < ratio) {
+            return level
+        }
+        else {
+            seed = (seed - ratio) / (1 - ratio)
+        }
+    }
+
+    return levels
+}
+
 class UpgradeManager {
     gameState: GameState
     constructor(gameState: GameState) {
@@ -26,14 +44,19 @@ class UpgradeManager {
     }
 
     generate() {
-        let rand = Math.floor(Math.random() * 9)
-        let times = (rand < 6) ? 1 : ((rand < 8) ? 2 : 3)
+        let times = 1 + getUpgradeLevel(2 / 3, 3)
         let bouncerUpgrade = new Upgrade(
             `Bouncers +${times}`,
             `Replace ${times} pegs with bouncers`,
             (state: GameState) => {addBouncers(times, state)}
         )
-        this.gameState.upgradeSelect.addChoices(bouncerUpgrade)
+        let slow = getUpgradeLevel(0.8, 3)
+        let speedUpgrade = new Upgrade(
+            `Speed -${slow}`,
+            `Decrease the spawner's speed by ${slow}`,
+            (state: GameState) => {dropSpeed(slow, state)}
+        )
+        this.gameState.upgradeSelect.addChoices(bouncerUpgrade, speedUpgrade)
     }
 }
 

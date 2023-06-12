@@ -203,7 +203,7 @@ class UserInterface {
 
         this.scoreText.text = `Score: ${this.gameState.levelState.score}`
         this.nextText.text = `Target: ${this.gameState.levelState.target}`
-        this.levelText.text = `Level: ${this.gameState.levelState.lastTarget}`
+        this.levelText.text = `Level: ${this.gameState.levelState.level}`
         this.speedText.text = `Speed: ${this.gameState.spawner.speed}`
         
         this.progressBar.updateBounds(this.topLeft.width + 10,
