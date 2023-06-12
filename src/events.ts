@@ -26,6 +26,16 @@ class ScoreCollision extends GameEvent {
     }
 }
 
+class PegCollision extends GameEvent {
+    orb: Orb
+    peg: Peg
+    constructor(orb: Orb, peg: Peg) {
+        super("peg")
+        this.orb = orb
+        this.peg = peg
+    }
+}
+
 class BouncerCollision extends GameEvent {
     orb: Orb
     bouncer: Bouncer
@@ -36,4 +46,4 @@ class BouncerCollision extends GameEvent {
     }
 }
 
-export {GameEvent, LevelUp, ScoreCollision, BouncerCollision}
+export {GameEvent, LevelUp, ScoreCollision, PegCollision, BouncerCollision}

@@ -3,7 +3,7 @@ import * as Matter from 'matter-js'
 
 import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision } from './events'
 import { Upgrade } from './upgrade'
 import { UserInterface } from './ui'
 import { UpgradeSelect } from './upgrade_select'
@@ -11,7 +11,7 @@ import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
 
 function nextLevel(level: number) {
-    return Math.round(Math.pow(level * 4, 1.75))
+    return Math.round(Math.pow(level * 11.1, 1.625))
 }
 
 class LevelManager {
@@ -145,6 +145,10 @@ class GameState {
                     this.orbs.splice(this.orbs.indexOf(score.orb), 1)
                     this.levelState.add(score.goal.score)
                     break
+                case "peg":
+                    let peg = (event as PegCollision)
+                    this.levelState.add(1)
+                    break
                 case "bouncer":
                     let bounce = (event as BouncerCollision)
                     let dirX = bounce.orb.body.position.x - bounce.bouncer.body.position.x
@@ -153,12 +157,14 @@ class GameState {
                     let oldVelX = bounce.orb.body.velocity.x
                     let oldVelY = bounce.orb.body.velocity.y
                     Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
+                    this.levelState.add(1)
                     // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break
                 case "levelup":
                     let levelup = (event as LevelUp)
                     this.levelState.levelUp()
                     this.levelState.check()
+                    this.spawner.addSpeed(1)
                     this.upgradeManager.generate()
                     this.running = false
                     if (this.autoControl) this.timing.createTimer("autopick", 3000, selectRandom)
@@ -172,7 +178,7 @@ class GameState {
     updateFrame(deltaMS: number) {
         this.timing.runTimers(this)
 
-        if (this.running) this.spawner.update(this.timing.delta, this.levelState.level)
+        if (this.running) this.spawner.update(this.timing.delta)
     
         if (this.autoControl || this.spawn) {
             this.spawn = false
@@ -219,7 +225,7 @@ function initWorld(state: GameState) {
 
     for (let binNum = 0; binNum < bins; binNum++) {
         let off = wallWidth + binNum * (wallWidth + goalWidth)
-        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - 10, goalWidth, 20, 2 * Math.abs(binNum - (bins - 1) / 2))
+        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - 10, goalWidth, 20, 20 * Math.abs(binNum - (bins - 1) / 2))
         goal.addTo(state.stage)
         state.goals.push(goal)
         

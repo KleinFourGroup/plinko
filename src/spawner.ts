@@ -5,10 +5,12 @@ import { COLORS } from './colors'
 import { Point, labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
 import { GameState } from './game_state'
 
+const MAX_SPEED = 10
 
 class Spawner {
     state: GameState
     time: number
+    speed: number
     spawnBase: Point
     spawnPoint: Point
     spawnDot: PIXI.Graphics
@@ -16,6 +18,7 @@ class Spawner {
     constructor(gameState: GameState) {
         this.state = gameState
         this.time = 0.0
+        this.speed = 0
         this.spawnBase = {
             x: this.state.width / 2,
             y: 100
@@ -34,14 +37,19 @@ class Spawner {
         this.state.stage.addChild(this.spawnDot)
     }
 
+    addSpeed(difference: number) {
+        this.speed += difference
+        this.speed = Math.max(Math.min(this.speed, MAX_SPEED), 0)
+    }
+
     spawnOrb() {
         let newOrb = new Orb(this.state.world,  this.spawnPoint.x + (2 * Math.random() - 1), this.spawnPoint.y, 15)
         newOrb.addTo(this.state.stage)
         this.state.orbs.push(newOrb)
     }
 
-    update(delta: number, level: number) {
-        let progress = Math.min((level - 1) / 9, 1)
+    update(delta: number) {
+        let progress = this.speed / MAX_SPEED
 
         let off = Math.abs(Math.sin(this.time)) * (1 + 1.5 * progress)
     

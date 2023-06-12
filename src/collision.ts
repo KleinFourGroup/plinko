@@ -2,7 +2,7 @@ import * as Matter from 'matter-js'
 
 import { GameState } from './game_state'
 import { Point, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
-import { BouncerCollision, ScoreCollision } from './events'
+import { BouncerCollision, PegCollision, ScoreCollision } from './events'
 
 function collisionHandler(event: Matter.IEventCollision<Matter.Engine>, labelMap: Map<string, PhysicsObject>, gameState: GameState) {
     for (let pair of event.pairs) {
@@ -17,6 +17,19 @@ function collisionHandler(event: Matter.IEventCollision<Matter.Engine>, labelMap
         if (objB instanceof GoalRect) {
             if (objA instanceof Orb) {
                 let event = new ScoreCollision(objA, objB)
+                gameState.enqueueEvent(event)
+            }
+        }
+        
+        if (objA instanceof Peg) {
+            if (objB instanceof Orb) {
+                let event = new PegCollision(objB, objA)
+                gameState.enqueueEvent(event)
+            }
+        }
+        if (objB instanceof Peg) {
+            if (objA instanceof Orb) {
+                let event = new PegCollision(objA, objB)
                 gameState.enqueueEvent(event)
             }
         }
