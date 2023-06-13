@@ -47,9 +47,11 @@ function update(delta: number) {
         if (stepped) timing.step()
     // }
 
-    display.update()
     gameState.updateGraphics()
-    ui.update(app.ticker.FPS, timing.load)
+    
+    ui.fetch(app.ticker.FPS, timing.load)
+    display.update()
+    ui.draw()
     
     timing.endWork()
 }

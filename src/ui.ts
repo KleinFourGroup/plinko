@@ -20,24 +20,23 @@ class DisplayState {
     }
 
     update() {
-        let topBarHeight = Math.max(this.ui.topLeft.height, this.ui.topRight.height) + 20
+        let topBarHeight = this.ui.topBar.height + 20
         let bottonBarHeight = 0
 
         let height = this.app.renderer.height - topBarHeight - bottonBarHeight
-        let width = Math.max(height, this.ui.topBoxMinWidth)
+        this.ui.topBar.setWidth(height)
 
-        let areaX = (this.app.renderer.width - width) / 2
+        let areaX = (this.app.renderer.width - this.ui.topBar.width) / 2
         let areaY = topBarHeight
 
-        let scale = Math.min(width / this.gameState.width, height / this.gameState.height)
+        let scale = Math.min(this.ui.topBar.width / this.gameState.width, height / this.gameState.height)
         this.gameState.stage.scale.set(scale, scale)
 
-        let stageX = areaX + (width - scale * this.gameState.width) / 2
+        let stageX = areaX + (this.ui.topBar.width - scale * this.gameState.width) / 2
         let stageY = areaY
 
         this.gameState.stage.position.set(stageX, stageY)
-        this.ui.topBox.position.set((this.app.renderer.width - width) / 2, 0)
-        this.ui.topRight.x = width
+        this.ui.topBar.stage.position.set((this.app.renderer.width - this.ui.topBar.width) / 2, 0)
 
         this.ui.upgradeSelect.box.position.set(
             (this.app.renderer.width - this.ui.upgradeSelect.box.width) / 2,
@@ -119,20 +118,105 @@ class ProgressBar {
     }
 }
 
-class UserInterface {
+class TopBar {
+    parent: UserInterface
+    gameState: GameState
     stage: PIXI.Container
-    topBox: PIXI.Container
-    topLeft: PIXI.Container
-    topRight: PIXI.Container
-    topBoxMinWidth: number
-    bottomBox: PIXI.Container
-    bottomBoxMinWidth: number
-    fpsText: PIXI.Text
+    left: PIXI.Container
+    right: PIXI.Container
+    width: number
+    minWidth: number
     scoreText: PIXI.Text
     levelText: PIXI.Text
     nextText: PIXI.Text
     ballsText: PIXI.Text
     progressBar: ProgressBar
+
+    constructor(parent: UserInterface) {
+        this.parent = parent
+        this.gameState = this.parent.gameState
+        this.stage = new PIXI.Container()
+        this.parent.stage.addChild(this.stage)
+
+        this.width = 500
+        this.minWidth = 500
+
+        this.left = new PIXI.Container()
+        this.left.position.set(0, 10)
+        this.right = new PIXI.Container()
+        this.right.position.set(this.minWidth, 10)
+        this.stage.addChild(this.left)
+        this.stage.addChild(this.right)
+
+        this.scoreText = new PIXI.Text()
+        this.scoreText.style.fontFamily = "monospace"
+        this.scoreText.style.fill = COLORS["terminal green"]
+        this.scoreText.anchor.set(0, 0)
+        this.scoreText.position.set(0, 0)
+        this.left.addChild(this.scoreText)
+
+        this.nextText = new PIXI.Text()
+        this.nextText.style.fontFamily = "monospace"
+        this.nextText.style.fill = COLORS["terminal green"]
+        this.nextText.anchor.set(0, 0)
+        this.nextText.position.set(0, this.scoreText.height + 10)
+        this.left.addChild(this.nextText)
+        
+        this.levelText = new PIXI.Text()
+        this.levelText.style.fontFamily = "monospace"
+        this.levelText.style.fill = COLORS["terminal green"]
+        this.levelText.anchor.set(1, 0)
+        this.levelText.position.set(0, 0)
+        this.right.addChild(this.levelText)
+        
+        this.ballsText = new PIXI.Text()
+        this.ballsText.style.fontFamily = "monospace"
+        this.ballsText.style.fill = COLORS["terminal green"]
+        this.ballsText.anchor.set(1, 0)
+        this.ballsText.position.set(0, this.levelText.height + 10)
+        this.right.addChild(this.ballsText)
+
+        this.progressBar = new ProgressBar(this.scoreText.width + 10,
+            5,
+            this.minWidth - (this.scoreText.width + this.levelText.width + 20),
+            40)
+        this.stage.addChild(this.progressBar.bar)
+    }
+
+    get height() {
+        return Math.max(this.left.height, this.right.height)
+    }
+
+    setWidth(width: number) {
+        this.width = Math.max(width, this.minWidth)
+    }
+
+    fetch() {
+        let completion = Math.min((this.gameState.levelState.score - this.gameState.levelState.lastTarget) / (this.gameState.levelState.target - this.gameState.levelState.lastTarget), 1)
+        
+        this.progressBar.update(completion)
+
+        this.scoreText.text = `Score: ${this.gameState.levelState.score}`
+        this.nextText.text = `Target: ${this.gameState.levelState.target}`
+        this.levelText.text = `Level: ${this.gameState.levelState.level}`
+        this.ballsText.text = `Balls: ∞`
+    }
+
+    draw() {
+        this.right.x = this.width
+        this.progressBar.updateBounds(this.left.width + 10,
+            (Math.max(this.left.height, this.right.height) - 30) / 2,
+            this.right.x - (this.left.width + this.right.width + 20),
+            50)
+    }
+}
+
+class UserInterface {
+    stage: PIXI.Container
+    topBar: TopBar
+    bottomBox: PIXI.Container
+    bottomBoxMinWidth: number
+    fpsText: PIXI.Text
     upgradeSelect: UpgradeSelect
     gameState: GameState
 
@@ -146,75 +230,23 @@ class UserInterface {
         this.fpsText.position.set(5, 5)
         this.stage.addChild(this.fpsText)
 
-        this.topBox = new PIXI.Container()
-        this.topBoxMinWidth = 500
-        this.stage.addChild(this.topBox)
+        this.topBar = new TopBar(this)
 
         this.bottomBox = new PIXI.Container()
         this.bottomBoxMinWidth = 500
         this.stage.addChild(this.bottomBox)
-
-        this.topLeft = new PIXI.Container()
-        this.topLeft.position.set(0, 10)
-        this.topRight = new PIXI.Container()
-        this.topRight.position.set(this.topBoxMinWidth, 10)
-        this.topBox.addChild(this.topLeft)
-        this.topBox.addChild(this.topRight)
-
-        this.scoreText = new PIXI.Text()
-        this.scoreText.style.fontFamily = "monospace"
-        this.scoreText.style.fill = COLORS["terminal green"]
-        this.scoreText.anchor.set(0, 0)
-        this.scoreText.position.set(0, 0)
-        this.topLeft.addChild(this.scoreText)
-
-        this.nextText = new PIXI.Text()
-        this.nextText.style.fontFamily = "monospace"
-        this.nextText.style.fill = COLORS["terminal green"]
-        this.nextText.anchor.set(0, 0)
-        this.nextText.position.set(0, this.scoreText.height + 10)
-        this.topLeft.addChild(this.nextText)
-        
-        this.levelText = new PIXI.Text()
-        this.levelText.style.fontFamily = "monospace"
-        this.levelText.style.fill = COLORS["terminal green"]
-        this.levelText.anchor.set(1, 0)
-        this.levelText.position.set(0, 0)
-        this.topRight.addChild(this.levelText)
-        
-        this.ballsText = new PIXI.Text()
-        this.ballsText.style.fontFamily = "monospace"
-        this.ballsText.style.fill = COLORS["terminal green"]
-        this.ballsText.anchor.set(1, 0)
-        this.ballsText.position.set(0, this.levelText.height + 10)
-        this.topRight.addChild(this.ballsText)
-
-        this.progressBar = new ProgressBar(this.scoreText.width + 10,
-            5,
-            this.topBoxMinWidth - (this.scoreText.width + this.levelText.width + 20),
-            40)
-        this.topBox.addChild(this.progressBar.bar)
-
         this.upgradeSelect = new UpgradeSelect(gameState)
         this.stage.addChild(this.upgradeSelect.box)
     }
 
-    update(fps: number, load: number) {
+    fetch(fps: number, load: number) {
         this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
 
-        let completion = Math.min((this.gameState.levelState.score - this.gameState.levelState.lastTarget) / (this.gameState.levelState.target - this.gameState.levelState.lastTarget), 1)
-        
-        this.progressBar.update(completion)
+        this.topBar.fetch()
+    }
 
-        this.scoreText.text = `Score: ${this.gameState.levelState.score}`
-        this.nextText.text = `Target: ${this.gameState.levelState.target}`
-        this.levelText.text = `Level: ${this.gameState.levelState.level}`
-        this.ballsText.text = `Balls: ∞`
-        
-        this.progressBar.updateBounds(this.topLeft.width + 10,
-            (Math.max(this.topLeft.height, this.topRight.height) - 30) / 2,
-            this.topRight.x - (this.topLeft.width + this.topRight.width + 20),
-            50)
+    draw() {
+        this.topBar.draw()
     }
 }
 
