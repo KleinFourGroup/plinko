@@ -30,7 +30,7 @@ class PegCollision extends GameEvent {
     orb: Orb
     peg: Peg
     constructor(orb: Orb, peg: Peg) {
-        super("peg")
+        super("peghit")
         this.orb = orb
         this.peg = peg
     }
@@ -40,10 +40,18 @@ class BouncerCollision extends GameEvent {
     orb: Orb
     bouncer: Bouncer
     constructor(orb: Orb, bouncer: Bouncer) {
-        super("bouncer")
+        super("bouncerhit")
         this.orb = orb
         this.bouncer = bouncer
     }
 }
 
-export {GameEvent, LevelUp, ScoreCollision, PegCollision, BouncerCollision}
+class OutOfBounds extends GameEvent {
+    orb: Orb
+    constructor(orb: Orb) {
+        super("outofbounds")
+        this.orb = orb
+    }
+}
+
+export {GameEvent, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds}

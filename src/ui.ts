@@ -24,7 +24,7 @@ class DisplayState {
         let bottonBarHeight = 0
 
         let height = this.app.renderer.height - topBarHeight - bottonBarHeight
-        let width = Math.max(height, this.ui.topBoxWidth)
+        let width = Math.max(height, this.ui.topBoxMinWidth)
 
         let areaX = (this.app.renderer.width - width) / 2
         let areaY = topBarHeight
@@ -124,12 +124,14 @@ class UserInterface {
     topBox: PIXI.Container
     topLeft: PIXI.Container
     topRight: PIXI.Container
-    topBoxWidth: number
+    topBoxMinWidth: number
+    bottomBox: PIXI.Container
+    bottomBoxMinWidth: number
     fpsText: PIXI.Text
     scoreText: PIXI.Text
     levelText: PIXI.Text
     nextText: PIXI.Text
-    speedText: PIXI.Text
+    ballsText: PIXI.Text
     progressBar: ProgressBar
     upgradeSelect: UpgradeSelect
     gameState: GameState
@@ -143,16 +145,19 @@ class UserInterface {
         this.fpsText.style.fill = COLORS["terminal green"]
         this.fpsText.position.set(5, 5)
         this.stage.addChild(this.fpsText)
-       
-        
+
         this.topBox = new PIXI.Container()
-        this.topBoxWidth = 500
+        this.topBoxMinWidth = 500
         this.stage.addChild(this.topBox)
+
+        this.bottomBox = new PIXI.Container()
+        this.bottomBoxMinWidth = 500
+        this.stage.addChild(this.bottomBox)
 
         this.topLeft = new PIXI.Container()
         this.topLeft.position.set(0, 10)
         this.topRight = new PIXI.Container()
-        this.topRight.position.set(this.topBoxWidth, 10)
+        this.topRight.position.set(this.topBoxMinWidth, 10)
         this.topBox.addChild(this.topLeft)
         this.topBox.addChild(this.topRight)
 
@@ -177,16 +182,16 @@ class UserInterface {
         this.levelText.position.set(0, 0)
         this.topRight.addChild(this.levelText)
         
-        this.speedText = new PIXI.Text()
-        this.speedText.style.fontFamily = "monospace"
-        this.speedText.style.fill = COLORS["terminal green"]
-        this.speedText.anchor.set(1, 0)
-        this.speedText.position.set(0, this.levelText.height + 10)
-        this.topRight.addChild(this.speedText)
+        this.ballsText = new PIXI.Text()
+        this.ballsText.style.fontFamily = "monospace"
+        this.ballsText.style.fill = COLORS["terminal green"]
+        this.ballsText.anchor.set(1, 0)
+        this.ballsText.position.set(0, this.levelText.height + 10)
+        this.topRight.addChild(this.ballsText)
 
         this.progressBar = new ProgressBar(this.scoreText.width + 10,
             5,
-            this.topBoxWidth - (this.scoreText.width + this.levelText.width + 20),
+            this.topBoxMinWidth - (this.scoreText.width + this.levelText.width + 20),
             40)
         this.topBox.addChild(this.progressBar.bar)
 
@@ -204,7 +209,7 @@ class UserInterface {
         this.scoreText.text = `Score: ${this.gameState.levelState.score}`
         this.nextText.text = `Target: ${this.gameState.levelState.target}`
         this.levelText.text = `Level: ${this.gameState.levelState.level}`
-        this.speedText.text = `Speed: ${this.gameState.spawner.speed}`
+        this.ballsText.text = `Balls: ∞`
         
         this.progressBar.updateBounds(this.topLeft.width + 10,
             (Math.max(this.topLeft.height, this.topRight.height) - 30) / 2,

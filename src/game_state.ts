@@ -3,7 +3,7 @@ import * as Matter from 'matter-js'
 
 import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds } from './events'
 import { Upgrade } from './upgrade'
 import { UserInterface } from './ui'
 import { UpgradeSelect } from './upgrade_select'
@@ -145,11 +145,11 @@ class GameState {
                     this.orbs.splice(this.orbs.indexOf(score.orb), 1)
                     this.levelState.add(score.goal.score)
                     break
-                case "peg":
+                case "peghit":
                     let peg = (event as PegCollision)
                     this.levelState.add(1)
                     break
-                case "bouncer":
+                case "bouncerhit":
                     let bounce = (event as BouncerCollision)
                     let dirX = bounce.orb.body.position.x - bounce.bouncer.body.position.x
                     let dirY = bounce.orb.body.position.y - bounce.bouncer.body.position.y
@@ -168,6 +168,13 @@ class GameState {
                     this.upgradeManager.generate()
                     this.running = false
                     if (this.autoControl) this.timing.createTimer("autopick", 3000, selectRandom)
+                    break
+                case "outofbounds":
+                    let bounds = (event as OutOfBounds)
+                    bounds.orb.removeFrom(this.stage)
+                    bounds.orb.delete()
+                    this.orbs.splice(this.orbs.indexOf(bounds.orb), 1)
+                    console.error("Orb went out of bounds")
                     break
                 default:
                     console.error("Unknown event type: " + event.typeStr)
@@ -190,7 +197,14 @@ class GameState {
 
     updateStep() {
         if (this.running) {
-            Matter.Engine.update(this.engine, 20)
+            Matter.Engine.update(this.engine, 16.67)
+            
+            for (let orb of this.orbs) {
+                if (orb.body.position.x < -10 || orb.body.position.x > this.width + 10 || orb.body.position.y < -10 || orb.body.position.y > this.height + 10) {
+                    let bounds = new OutOfBounds(orb)
+                    this.enqueueEvent(bounds)
+                }
+            }
         }
         return this.running
     }
@@ -213,30 +227,30 @@ class GameState {
 
 function initWorld(state: GameState) {
     let rows = 10
-    let cols = 17
-    let bins = 8
-    let wallWidth = 30
+    let cols = 15
+    let bins = 7
+    let wallWidth = 40
 
     let goalWidth = (state.width - (bins + 1) * wallWidth) / bins
 
-    let tooth = new Tooth(state.world, wallWidth / 2, state.height, wallWidth, 20, 40)
+    let tooth = new Tooth(state.world, wallWidth / 2, state.height, wallWidth, wallWidth * 3 / 4, wallWidth * 3 /2)
     tooth.addTo(state.stage)
     state.walls.push(tooth)
 
     for (let binNum = 0; binNum < bins; binNum++) {
         let off = wallWidth + binNum * (wallWidth + goalWidth)
-        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - 10, goalWidth, 20, 20 * Math.abs(binNum - (bins - 1) / 2))
+        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - 10, goalWidth, wallWidth * 3 / 4, 10 + 10 * Math.abs(binNum - (bins - 1) / 2))
         goal.addTo(state.stage)
         state.goals.push(goal)
         
-        let tooth = new Tooth(state.world, off + goalWidth + wallWidth / 2, state.height, wallWidth, 20, 40)
+        let tooth = new Tooth(state.world, off + goalWidth + wallWidth / 2, state.height, wallWidth, wallWidth * 3 / 4, wallWidth * 3 /2)
         tooth.addTo(state.stage)
         state.walls.push(tooth)
     }
 
     let leftWallVerts = [
-        {x: 0, y: state.height - 20},
-        {x: wallWidth / 2, y: state.height - 40},
+        {x: 0, y: state.height - wallWidth * 3 / 4},
+        {x: wallWidth / 2, y: state.height - wallWidth * 3 / 2},
         {x: wallWidth / 4, y: wallWidth / 4},
         {x: 0, y: 0}
     ]
@@ -246,8 +260,8 @@ function initWorld(state: GameState) {
     state.walls.push(leftWall)
 
     let rightWallVerts = [
-        {x: 0, y: state.height - 20},
-        {x: -wallWidth / 2, y: state.height - 40},
+        {x: 0, y: state.height - wallWidth * 3 / 4},
+        {x: -wallWidth / 2, y: state.height - wallWidth * 3 / 2},
         {x: -wallWidth / 4, y: wallWidth / 4},
         {x: 0, y: 0}
     ]
@@ -262,14 +276,12 @@ function initWorld(state: GameState) {
         for (let col = 0; col < cols; col++) {
             if (col % 2 == row % 2) {
                 let x = (state.width - pegWidth) / 2 + (pegWidth / (cols - 1)) * col
-                let y = state.height - 100 - 50 * row
+                let y = state.height - wallWidth * 3 / 2 - 60 - (pegWidth / (cols - 1)) * row
                 let peg = new Peg(state.world, x, y, 5)
                 state.pegArray.add(peg)
             }
         }
     }
-
-    state.spawner.spawnOrb()
 }
 
 export {GameState}

@@ -42,10 +42,10 @@ function update(delta: number) {
 
     gameState.updateFrame(timing.delta)
 
-    if (timing.needsStep(20)) {
+    // if (timing.needsStep(20)) {
         let stepped = gameState.updateStep()
         if (stepped) timing.step()
-    }
+    // }
 
     display.update()
     gameState.updateGraphics()
