@@ -21,22 +21,25 @@ class DisplayState {
 
     update() {
         let topBarHeight = this.ui.topBar.height + 20
-        let bottonBarHeight = 0
+        let bottonBarHeight = this.ui.bottomBar.height + 20
 
         let height = this.app.renderer.height - topBarHeight - bottonBarHeight
         this.ui.topBar.setWidth(height)
+        this.ui.bottomBar.setWidth(height)
+        let width = Math.max(this.ui.topBar.width, this.ui.bottomBar.width)
 
-        let areaX = (this.app.renderer.width - this.ui.topBar.width) / 2
+        let areaX = (this.app.renderer.width - width) / 2
         let areaY = topBarHeight
 
-        let scale = Math.min(this.ui.topBar.width / this.gameState.width, height / this.gameState.height)
+        let scale = Math.min(width / this.gameState.width, height / this.gameState.height)
         this.gameState.stage.scale.set(scale, scale)
 
-        let stageX = areaX + (this.ui.topBar.width - scale * this.gameState.width) / 2
+        let stageX = areaX + (width - scale * this.gameState.width) / 2
         let stageY = areaY
 
         this.gameState.stage.position.set(stageX, stageY)
         this.ui.topBar.stage.position.set((this.app.renderer.width - this.ui.topBar.width) / 2, 0)
+        this.ui.bottomBar.stage.position.set((this.app.renderer.width - this.ui.bottomBar.width) / 2, this.app.renderer.height - bottonBarHeight)
 
         this.ui.upgradeSelect.box.position.set(
             (this.app.renderer.width - this.ui.upgradeSelect.box.width) / 2,
@@ -211,11 +214,95 @@ class TopBar {
     }
 }
 
+
+
+class StatsBar {
+    parent: UserInterface
+    gameState: GameState
+    stage: PIXI.Container
+    left: PIXI.Container
+    middle: PIXI.Container
+    right: PIXI.Container
+    width: number
+    minWidth: number
+    speedText: PIXI.Text
+    accuracyText: PIXI.Text
+    pegText: PIXI.Text
+    bounceText: PIXI.Text
+
+    constructor(parent: UserInterface) {
+        this.parent = parent
+        this.gameState = this.parent.gameState
+        this.stage = new PIXI.Container()
+        this.parent.stage.addChild(this.stage)
+
+        this.width = 500
+        this.minWidth = 500
+
+        this.left = new PIXI.Container()
+        this.left.position.set(0, 10)
+        this.middle = new PIXI.Container()
+        this.middle.position.set(this.width / 2, 10)
+        this.right = new PIXI.Container()
+        this.right.position.set(this.minWidth, 10)
+        this.stage.addChild(this.left)
+        this.stage.addChild(this.middle)
+        this.stage.addChild(this.right)
+
+        this.speedText = new PIXI.Text()
+        this.speedText.style.fontFamily = "monospace"
+        this.speedText.style.fill = COLORS["terminal green"]
+        this.speedText.anchor.set(0, 0)
+        this.speedText.position.set(0, 0)
+        this.left.addChild(this.speedText)
+
+        this.accuracyText = new PIXI.Text()
+        this.accuracyText.style.fontFamily = "monospace"
+        this.accuracyText.style.fill = COLORS["terminal green"]
+        this.accuracyText.anchor.set(0, 0)
+        this.accuracyText.position.set(0, this.speedText.height + 10)
+        this.left.addChild(this.accuracyText)
+        
+        this.pegText = new PIXI.Text()
+        this.pegText.style.fontFamily = "monospace"
+        this.pegText.style.fill = COLORS["terminal green"]
+        this.pegText.anchor.set(1, 0)
+        this.pegText.position.set(0, 0)
+        this.right.addChild(this.pegText)
+        
+        this.bounceText = new PIXI.Text()
+        this.bounceText.style.fontFamily = "monospace"
+        this.bounceText.style.fill = COLORS["terminal green"]
+        this.bounceText.anchor.set(1, 0)
+        this.bounceText.position.set(0, this.pegText.height + 10)
+        this.right.addChild(this.bounceText)
+    }
+
+    get height() {
+        return Math.max(this.left.height, this.right.height)
+    }
+
+    setWidth(width: number) {
+        this.width = Math.max(width, this.minWidth)
+    }
+
+    fetch() {
+        this.speedText.text = `Speed: ${this.gameState.spawner.speed}`
+        this.accuracyText.text = `Accuracy: ${this.gameState.spawner.accuracy}`
+        this.pegText.text = `Peg Value: 1`
+        this.bounceText.text = `Bouncer Value: 1`
+    }
+
+    draw() {
+        this.right.x = this.width
+        this.middle.x = this.width / 2
+    }
+}
+
 class UserInterface {
     stage: PIXI.Container
     topBar: TopBar
-    bottomBox: PIXI.Container
-    bottomBoxMinWidth: number
+    bottomBar: StatsBar
     fpsText: PIXI.Text
     upgradeSelect: UpgradeSelect
     gameState: GameState
@@ -231,10 +318,8 @@ class UserInterface {
         this.stage.addChild(this.fpsText)
 
         this.topBar = new TopBar(this)
+        this.bottomBar = new StatsBar(this)
 
-        this.bottomBox = new PIXI.Container()
-        this.bottomBoxMinWidth = 500
-        this.stage.addChild(this.bottomBox)
         this.upgradeSelect = new UpgradeSelect(gameState)
         this.stage.addChild(this.upgradeSelect.box)
     }
@@ -243,10 +328,12 @@ class UserInterface {
         this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
 
         this.topBar.fetch()
+        this.bottomBar.fetch()
     }
 
     draw() {
         this.topBar.draw()
+        this.bottomBar.draw()
     }
 }
 
