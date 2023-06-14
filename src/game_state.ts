@@ -230,27 +230,32 @@ function initWorld(state: GameState) {
     let cols = 15
     let bins = 7
     let wallWidth = 40
+    let toothMinHeight = wallWidth * 3 / 4
+    let toothMaxHeight = wallWidth * 3 / 2
 
     let goalWidth = (state.width - (bins + 1) * wallWidth) / bins
 
-    let tooth = new Tooth(state.world, wallWidth / 2, state.height, wallWidth, wallWidth * 3 / 4, wallWidth * 3 /2)
+    let tooth = new Tooth(state.world, wallWidth / 2, state.height, wallWidth, toothMinHeight, toothMaxHeight)
     tooth.addTo(state.stage)
     state.walls.push(tooth)
 
     for (let binNum = 0; binNum < bins; binNum++) {
         let off = wallWidth + binNum * (wallWidth + goalWidth)
-        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - 10, goalWidth, wallWidth * 3 / 4, 10 + 10 * Math.abs(binNum - (bins - 1) / 2))
-        goal.addTo(state.stage)
-        state.goals.push(goal)
-        
-        let tooth = new Tooth(state.world, off + goalWidth + wallWidth / 2, state.height, wallWidth, wallWidth * 3 / 4, wallWidth * 3 /2)
+        let tooth = new Tooth(state.world, off + goalWidth + wallWidth / 2, state.height, wallWidth, toothMinHeight, toothMaxHeight)
         tooth.addTo(state.stage)
         state.walls.push(tooth)
     }
 
+    for (let binNum = 0; binNum < bins; binNum++) {
+        let off = wallWidth + binNum * (wallWidth + goalWidth)
+        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - toothMinHeight / 2, goalWidth, toothMinHeight, 10 + 10 * Math.abs(binNum - (bins - 1) / 2))
+        goal.addTo(state.stage)
+        state.goals.push(goal)
+    }
+
     let leftWallVerts = [
-        {x: 0, y: state.height - wallWidth * 3 / 4},
-        {x: wallWidth / 2, y: state.height - wallWidth * 3 / 2},
+        {x: 0, y: state.height - toothMinHeight},
+        {x: wallWidth / 2, y: state.height - toothMaxHeight},
         {x: wallWidth / 4, y: wallWidth / 4},
         {x: 0, y: 0}
     ]
@@ -260,8 +265,8 @@ function initWorld(state: GameState) {
     state.walls.push(leftWall)
 
     let rightWallVerts = [
-        {x: 0, y: state.height - wallWidth * 3 / 4},
-        {x: -wallWidth / 2, y: state.height - wallWidth * 3 / 2},
+        {x: 0, y: state.height - toothMinHeight},
+        {x: -wallWidth / 2, y: state.height - toothMaxHeight},
         {x: -wallWidth / 4, y: wallWidth / 4},
         {x: 0, y: 0}
     ]

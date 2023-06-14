@@ -151,30 +151,27 @@ class TopBar {
         this.stage.addChild(this.left)
         this.stage.addChild(this.right)
 
-        this.scoreText = new PIXI.Text()
-        this.scoreText.style.fontFamily = "monospace"
-        this.scoreText.style.fill = COLORS["terminal green"]
+        let textStyle = new PIXI.TextStyle({
+            fontFamily: "monospace",
+            fill: COLORS["terminal green"]
+        })
+
+        this.scoreText = new PIXI.Text("", textStyle)
         this.scoreText.anchor.set(0, 0)
         this.scoreText.position.set(0, 0)
         this.left.addChild(this.scoreText)
 
-        this.nextText = new PIXI.Text()
-        this.nextText.style.fontFamily = "monospace"
-        this.nextText.style.fill = COLORS["terminal green"]
+        this.nextText = new PIXI.Text("", textStyle)
         this.nextText.anchor.set(0, 0)
         this.nextText.position.set(0, this.scoreText.height + 10)
         this.left.addChild(this.nextText)
         
-        this.levelText = new PIXI.Text()
-        this.levelText.style.fontFamily = "monospace"
-        this.levelText.style.fill = COLORS["terminal green"]
+        this.levelText = new PIXI.Text("", textStyle)
         this.levelText.anchor.set(1, 0)
         this.levelText.position.set(0, 0)
         this.right.addChild(this.levelText)
         
-        this.ballsText = new PIXI.Text()
-        this.ballsText.style.fontFamily = "monospace"
-        this.ballsText.style.fill = COLORS["terminal green"]
+        this.ballsText = new PIXI.Text("", textStyle)
         this.ballsText.anchor.set(1, 0)
         this.ballsText.position.set(0, this.levelText.height + 10)
         this.right.addChild(this.ballsText)
@@ -249,30 +246,28 @@ class StatsBar {
         this.stage.addChild(this.middle)
         this.stage.addChild(this.right)
 
-        this.speedText = new PIXI.Text()
-        this.speedText.style.fontFamily = "monospace"
-        this.speedText.style.fill = COLORS["terminal green"]
+        let textStyle = new PIXI.TextStyle({
+            fontFamily: "monospace",
+            fill: COLORS["terminal green"],
+            fontSize: 16
+        })
+
+        this.speedText = new PIXI.Text("", textStyle)
         this.speedText.anchor.set(0, 0)
         this.speedText.position.set(0, 0)
         this.left.addChild(this.speedText)
 
-        this.accuracyText = new PIXI.Text()
-        this.accuracyText.style.fontFamily = "monospace"
-        this.accuracyText.style.fill = COLORS["terminal green"]
+        this.accuracyText = new PIXI.Text("", textStyle)
         this.accuracyText.anchor.set(0, 0)
         this.accuracyText.position.set(0, this.speedText.height + 10)
         this.left.addChild(this.accuracyText)
         
-        this.pegText = new PIXI.Text()
-        this.pegText.style.fontFamily = "monospace"
-        this.pegText.style.fill = COLORS["terminal green"]
+        this.pegText = new PIXI.Text("", textStyle)
         this.pegText.anchor.set(1, 0)
         this.pegText.position.set(0, 0)
         this.right.addChild(this.pegText)
         
-        this.bounceText = new PIXI.Text()
-        this.bounceText.style.fontFamily = "monospace"
-        this.bounceText.style.fill = COLORS["terminal green"]
+        this.bounceText = new PIXI.Text("", textStyle)
         this.bounceText.anchor.set(1, 0)
         this.bounceText.position.set(0, this.pegText.height + 10)
         this.right.addChild(this.bounceText)
@@ -288,7 +283,7 @@ class StatsBar {
 
     fetch() {
         this.speedText.text = `Speed: ${this.gameState.spawner.speed}`
-        this.accuracyText.text = `Accuracy: ${this.gameState.spawner.accuracy}`
+        this.accuracyText.text = `Accuracy: ${this.gameState.spawner.accuracy}%`
         this.pegText.text = `Peg Value: 1`
         this.bounceText.text = `Bouncer Value: 1`
     }
