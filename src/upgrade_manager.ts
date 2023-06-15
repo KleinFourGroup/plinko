@@ -1,62 +1,46 @@
-
 import { GameState } from "./game_state"
-import { Bouncer, Peg } from "./physics_objects"
-import { Upgrade } from "./upgrade"
+import { UpgradeSignature, Upgrade } from "./upgrade"
 
-
-function addBouncers(times: number, gameState: GameState) {
-    for (let ctr = 0; ctr < times; ctr++) {
-        let pegs = gameState.pegArray.pegs.filter((peg: Peg | Bouncer) => (peg instanceof Peg))
-        if (pegs.length > 0) {
-            let pegsIndex = Math.floor(Math.random() * pegs.length)
-            let oldPeg = pegs[pegsIndex]
-            let index = gameState.pegArray.pegs.indexOf(oldPeg)
-            let bouncer = new Bouncer(gameState.world, oldPeg.body.position.x, oldPeg.body.position.y, 10)
-            gameState.pegArray.replace(index, bouncer)
-        } else {
-            console.error("No pegs to replace!")
-        }
-    }
-}
-
-function dropSpeed(amount: number, gameState: GameState) {
-    gameState.spawner.addSpeed(-amount)
-}
-
-function getUpgradeLevel(ratio: number, levels: number) {
-    let seed = Math.random()
-    for (let level = 1; level <= levels; levels++) {
-        if (seed < ratio) {
-            return level
-        }
-        else {
-            seed = (seed - ratio) / (1 - ratio)
-        }
-    }
-
-    return levels
-}
+import { UPGRADE_LIST } from "./upgrades"
 
 class UpgradeManager {
     gameState: GameState
+    options: number
     constructor(gameState: GameState) {
         this.gameState = gameState
+        this.options = 3
     }
 
     generate() {
-        let times = 1 + getUpgradeLevel(2 / 3, 3)
-        let bouncerUpgrade = new Upgrade(
-            `Bouncers +${times}`,
-            `Replace ${times} pegs with bouncers`,
-            (state: GameState) => {addBouncers(times, state)}
-        )
-        let slow = getUpgradeLevel(0.8, 3)
-        let speedUpgrade = new Upgrade(
-            `Speed -${slow}`,
-            `Decrease the spawner's speed by ${slow}`,
-            (state: GameState) => {dropSpeed(slow, state)}
-        )
-        this.gameState.upgradeSelect.addChoices(bouncerUpgrade, speedUpgrade)
+        let upgrades: Array<Upgrade> = []
+        let upgradeList = [...UPGRADE_LIST]
+        while (upgrades.length < this.options && upgradeList.length > 0) {
+            let totalWeight = upgradeList.map<number>(
+                (upgrade: UpgradeSignature) => upgrade.weight
+            ).reduce((a, b) => a + b, 0)
+            let weightedIndex = Math.random() * totalWeight
+
+            let realIndex = 0
+            while (upgradeList[realIndex].weight < weightedIndex && realIndex < upgradeList.length) {
+                weightedIndex -= upgradeList[realIndex].weight
+                realIndex++
+            }
+            if (realIndex === upgradeList.length) {
+                console.error("Bad index")
+                realIndex = upgradeList.length -1
+            }
+
+            let upgradeGenerator = upgradeList[realIndex]
+            upgradeList.splice(realIndex, 1)
+
+            let magnitude = upgradeGenerator.magnitude(this.gameState)
+            let title = upgradeGenerator.title(magnitude, this.gameState)
+            let description = upgradeGenerator.description(magnitude, this.gameState)
+            let effect = upgradeGenerator.effect(magnitude, this.gameState)
+            let upgrade = new Upgrade(title, description, effect)
+            upgrades.push(upgrade)
+        }
+        this.gameState.upgradeSelect.addChoices(...upgrades)
     }
 }
 

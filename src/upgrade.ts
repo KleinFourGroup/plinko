@@ -3,6 +3,14 @@ import * as PIXI from 'pixi.js'
 import { COLORS } from './colors'
 import { GameState } from './game_state'
 
+type UpgradeSignature = {
+    weight: number
+    magnitude: (state: GameState) => number
+    title: (magnitude: number, state: GameState) => string
+    description: (magnitude: number, state: GameState) => string
+    effect: (magnitude: number, state: GameState) => (state: GameState) => void
+}
+
 class Upgrade {
     title: string
     description: string
@@ -53,9 +61,10 @@ class Upgrade {
         if (this.effect !== null) {
             this.effect(gameState)
         } else {
-            console.error("Upgrade has no effect!")
+            console.log("Upgrade has no effect!")
         }
     }
+
 }
 
-export {Upgrade}
+export {UpgradeSignature, Upgrade}
