@@ -284,8 +284,8 @@ class StatsBar {
     fetch() {
         this.speedText.text = `Speed: ${this.gameState.spawner.speed}`
         this.accuracyText.text = `Accuracy: ${this.gameState.spawner.accuracy}%`
-        this.pegText.text = `Peg Value: 1`
-        this.bounceText.text = `Bouncer Value: 1`
+        this.pegText.text = `Peg Value: ${this.gameState.pegArray.pegValue}`
+        this.bounceText.text = `Bouncer Value: ${this.gameState.pegArray.bouncerValue}`
     }
 
     draw() {

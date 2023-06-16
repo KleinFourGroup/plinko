@@ -32,7 +32,8 @@ class Upgrade {
 
         let descStyle = new PIXI.TextStyle({
             wordWrap: true,
-            wordWrapWidth: 400
+            wordWrapWidth: 400,
+            fontSize: 20
         })
         let description = new PIXI.Text(this.description, descStyle)
 

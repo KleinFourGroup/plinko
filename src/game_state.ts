@@ -54,9 +54,13 @@ class LevelManager {
 class PegArray {
     gameState: GameState
     pegs: Array<Peg | Bouncer>
+    pegValue: number
+    bouncerValue: number
     constructor(gameState: GameState) {
         this.gameState = gameState
         this.pegs = []
+        this.pegValue = 1
+        this.bouncerValue = 1
     }
 
     add(peg: Peg | Bouncer) {
@@ -147,7 +151,7 @@ class GameState {
                     break
                 case "peghit":
                     let peg = (event as PegCollision)
-                    this.levelState.add(1)
+                    this.levelState.add(this.pegArray.pegValue)
                     break
                 case "bouncerhit":
                     let bounce = (event as BouncerCollision)
@@ -157,7 +161,7 @@ class GameState {
                     let oldVelX = bounce.orb.body.velocity.x
                     let oldVelY = bounce.orb.body.velocity.y
                     Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
-                    this.levelState.add(1)
+                    this.levelState.add(this.pegArray.bouncerValue)
                     // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break
                 case "levelup":
@@ -167,7 +171,7 @@ class GameState {
                     this.spawner.addSpeed(1)
                     this.upgradeManager.generate()
                     this.running = false
-                    if (this.autoControl) this.timing.createTimer("autopick", 3000, selectRandom)
+                    if (this.autoControl) this.timing.createTimer("autopick", 5000, selectRandom)
                     break
                 case "outofbounds":
                     let bounds = (event as OutOfBounds)

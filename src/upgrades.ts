@@ -31,11 +31,7 @@ function addBouncers(times: number, gameState: GameState) {
     }
 }
 
-function dropSpeed(amount: number, gameState: GameState) {
-    gameState.spawner.addSpeed(-amount)
-}
-
-let bouncerUpgrade: UpgradeSignature = {
+let bouncerCreateUpgrade: UpgradeSignature = {
     weight: 1,
     magnitude: (state: GameState) => {
         return 1 + getUpgradeLevel(2 / 3, 3)
@@ -66,14 +62,71 @@ let speedUpgrade: UpgradeSignature = {
     },
     effect: (magnitude: number, state: GameState) => {
         return (state: GameState) => {
-            dropSpeed(magnitude, state)
+            state.spawner.addSpeed(-magnitude)
+        }
+    }
+}
+
+let accuracyUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return 5 * getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Accuracy +${magnitude}%`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Increase the spawner's accuracy by ${magnitude}%`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.spawner.addAccuracy(magnitude)
+        }
+    }
+}
+
+let pegValueUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return 1 + 2 * getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Peg value +${magnitude}`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Increase the value of hitting a peg by ${magnitude}`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.pegArray.pegValue += magnitude
+        }
+    }
+}
+
+let bouncerValueUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return 1 + 2 * getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Bouncer value +${magnitude}`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Increase the value of hitting a bouncer by ${magnitude}`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.pegArray.bouncerValue += magnitude
         }
     }
 }
 
 const UPGRADE_LIST = [
-    bouncerUpgrade,
-    speedUpgrade
+    bouncerCreateUpgrade,
+    speedUpgrade,
+    accuracyUpgrade,
+    pegValueUpgrade,
+    bouncerValueUpgrade
 ]
 
 export {UPGRADE_LIST}
