@@ -81,6 +81,7 @@ class GoalRect extends PhysicsObject {
     width: number
     height: number
     score: number
+    label: PIXI.Text
 
     constructor(world: Matter.World, x: number, y: number, width: number, height: number, score: number) {
         let options: Matter.IBodyDefinition = {
@@ -107,6 +108,12 @@ class GoalRect extends PhysicsObject {
         this.width = width
         this.height = height
         this.score = score
+        this.label = text
+    }
+
+    update() {
+        this.graphics.position.set(this.body.position.x, this.body.position.y)
+        this.label.text = `${this.score}`
     }
 }
 

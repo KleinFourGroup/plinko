@@ -121,12 +121,69 @@ let bouncerValueUpgrade: UpgradeSignature = {
     }
 }
 
+let goalAddUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return 10 * getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Goal value +${magnitude}`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Increase the value of hitting a goal by ${magnitude}`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.goalArray.addFlatScore(magnitude)
+        }
+    }
+}
+
+let goalMultiplyUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return 5 * getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Goal value +${magnitude}%`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Increase the value of hitting a goal by ${magnitude}%`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.goalArray.multiplyScore(1 + magnitude / 100)
+        }
+    }
+}
+
+let goalShuffleUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return 1
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Shuffle goals`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Randomly rearrange the values of the goals`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.goalArray.shuffleScore()
+        }
+    }
+}
+
 const UPGRADE_LIST = [
     bouncerCreateUpgrade,
     speedUpgrade,
     accuracyUpgrade,
     pegValueUpgrade,
-    bouncerValueUpgrade
+    bouncerValueUpgrade,
+    goalAddUpgrade,
+    goalMultiplyUpgrade,
+    goalShuffleUpgrade
 ]
 
 export {UPGRADE_LIST}

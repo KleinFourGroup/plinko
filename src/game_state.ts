@@ -77,6 +77,46 @@ class PegArray {
     }
 }
 
+class GoalArray {
+    gameState: GameState
+    goals: Array<GoalRect>
+    constructor(gameState: GameState) {
+        this.gameState = gameState
+        this.goals = []
+    }
+
+    add(goal: GoalRect) {
+        goal.addTo(this.gameState.stage)
+        this.goals.push(goal)
+    }
+
+    addFlatScore(amount: number) {
+        for (let goal of this.goals) {
+            goal.score += amount
+        }
+    }
+
+    multiplyScore(amount: number) {
+        for (let goal of this.goals) {
+            goal.score = Math.round(goal.score * amount)
+        }
+    }
+
+    shuffleScore() {
+        let scores = this.goals.map((goal) => goal.score)
+        for (let index = scores.length - 1; index > 0; index--) {
+            let swap = Math.floor(Math.random() * (index + 1));
+            let temp = scores[index]
+            scores[index] = scores [swap]
+            scores[swap] = temp
+        }
+
+        for (let index = 0; index < scores.length; index++) {
+            this.goals[index].score = scores[index]
+        }
+    }
+}
+
 // TODO: Rework for back-to-back level ups
 function selectRandom(gameState: GameState) {
     if (gameState.upgradeSelect.choices.length > 0) {
@@ -100,9 +140,9 @@ class GameState {
     spawner: Spawner
     levelState: LevelManager
     walls: Array<BarrierRect | BarrierPoly>
-    goals: Array<GoalRect>
     orbs: Array<Orb>
     pegArray: PegArray
+    goalArray: GoalArray
     upgradeManager: UpgradeManager
     upgradeSelect: UpgradeSelect
 
@@ -119,7 +159,6 @@ class GameState {
         this.world = this.engine.world
 
         this.walls = []
-        this.goals = []
         this.orbs = []
 
         this.eventQueue = []
@@ -130,6 +169,7 @@ class GameState {
         this.levelState = new LevelManager(this)
         this.spawner = new Spawner(this)
         this.pegArray = new PegArray(this)
+        this.goalArray = new GoalArray(this)
         this.upgradeManager = new UpgradeManager(this)
     }
 
@@ -217,7 +257,7 @@ class GameState {
         for (let wall of this.walls) {
             wall.update()
         }
-        for (let goal of this.goals) {
+        for (let goal of this.goalArray.goals) {
             goal.update()
         }
         for (let peg of this.pegArray.pegs) {
@@ -253,8 +293,7 @@ function initWorld(state: GameState) {
     for (let binNum = 0; binNum < bins; binNum++) {
         let off = wallWidth + binNum * (wallWidth + goalWidth)
         let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - toothMinHeight / 2, goalWidth, toothMinHeight, 10 + 10 * Math.abs(binNum - (bins - 1) / 2))
-        goal.addTo(state.stage)
-        state.goals.push(goal)
+        state.goalArray.add(goal)
     }
 
     let leftWallVerts = [

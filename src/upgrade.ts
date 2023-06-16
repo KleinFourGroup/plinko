@@ -26,13 +26,17 @@ class Upgrade {
     makeGraphics() {
         let titleStyle = new PIXI.TextStyle({
             wordWrap: true,
-            wordWrapWidth: 400
+            wordWrapWidth: 400,
+            fontFamily: "monospace",
+            fill: COLORS["terminal green"]
         })
         let title = new PIXI.Text(this.title, titleStyle)
 
         let descStyle = new PIXI.TextStyle({
             wordWrap: true,
             wordWrapWidth: 400,
+            fontFamily: "monospace",
+            fill: COLORS["terminal green"],
             fontSize: 20
         })
         let description = new PIXI.Text(this.description, descStyle)
@@ -43,7 +47,8 @@ class Upgrade {
 
         let backBox = new PIXI.Graphics()
 
-        backBox.beginFill(COLORS["dark terminal amber"])
+        backBox.lineStyle(3, COLORS["terminal green"])
+        backBox.beginFill(COLORS["dark terminal green"])
         backBox.drawRect(0, 0, width, height)
         backBox.endFill()
 
