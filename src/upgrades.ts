@@ -175,6 +175,42 @@ let goalShuffleUpgrade: UpgradeSignature = {
     }
 }
 
+let multiDropUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return getUpgradeLevel(4 / 5, 2)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Drop count +${magnitude}%`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Increase the number of balls dropped per spawn by ${magnitude}%`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.spawner.dropCount += magnitude
+        }
+    }
+}
+
+let freePointsUpgrade: UpgradeSignature = {
+    weight: 1,
+    magnitude: (state: GameState) => {
+        return 1
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Happy Father's Day!`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Adds 500 points to your score`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.levelState.add(500)
+        }
+    }
+}
+
 const UPGRADE_LIST = [
     bouncerCreateUpgrade,
     speedUpgrade,
@@ -183,7 +219,9 @@ const UPGRADE_LIST = [
     bouncerValueUpgrade,
     goalAddUpgrade,
     goalMultiplyUpgrade,
-    goalShuffleUpgrade
+    goalShuffleUpgrade,
+    multiDropUpgrade,
+    freePointsUpgrade
 ]
 
 export {UPGRADE_LIST}

@@ -13,6 +13,7 @@ class Spawner {
     state: GameState
     time: number
     speed: number
+    dropCount: number
     velocity: number
     accuracy: number
     spawnBase: Point
@@ -22,6 +23,7 @@ class Spawner {
     constructor(gameState: GameState) {
         this.state = gameState
         this.time = 0.0
+        this.dropCount = 1
         this.accuracy = 0
         this.velocity = 0
         this.speed = 0
@@ -54,11 +56,13 @@ class Spawner {
     }
 
     spawnOrb() {
-        let newOrb = new Orb(this.state.world,  this.spawnPoint.x + (2 * Math.random() - 1), this.spawnPoint.y, 15)
-        let sigVel = Math.sign(this.velocity) * (2 * MAX_VELOCITY / (1 + Math.exp(-2 * Math.abs(this.velocity) / MAX_VELOCITY)) - MAX_VELOCITY)
-        Matter.Body.setVelocity(newOrb.body, {x: sigVel * (MAX_ACCURACY - this.accuracy) / MAX_ACCURACY, y: 0})
-        newOrb.addTo(this.state.stage)
-        this.state.orbs.push(newOrb)
+        for (let count = 0; count < this.dropCount; count++) {
+            let newOrb = new Orb(this.state.world,  this.spawnPoint.x + (2 * Math.random() - 1), this.spawnPoint.y + (2 * Math.random() - 1), 15)
+            let sigVel = Math.sign(this.velocity) * (2 * MAX_VELOCITY / (1 + Math.exp(-2 * Math.abs(this.velocity) / MAX_VELOCITY)) - MAX_VELOCITY)
+            Matter.Body.setVelocity(newOrb.body, {x: sigVel * (0.95 + 0.05 * Math.random()) * (MAX_ACCURACY - this.accuracy) / MAX_ACCURACY, y: 0})
+            newOrb.addTo(this.state.stage)
+            this.state.orbs.push(newOrb)
+        }
     }
 
     update(delta: number) {

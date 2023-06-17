@@ -224,8 +224,10 @@ class StatsBar {
     minWidth: number
     speedText: PIXI.Text
     accuracyText: PIXI.Text
-    pegText: PIXI.Text
-    bounceText: PIXI.Text
+    multiText: PIXI.Text
+    pegValText: PIXI.Text
+    bounceValText: PIXI.Text
+    pegCountText: PIXI.Text
 
     constructor(parent: UserInterface) {
         this.parent = parent
@@ -261,16 +263,26 @@ class StatsBar {
         this.accuracyText.anchor.set(0, 0)
         this.accuracyText.position.set(0, this.speedText.height + 10)
         this.left.addChild(this.accuracyText)
+
+        this.multiText = new PIXI.Text("", textStyle)
+        this.multiText.anchor.set(0, 0)
+        this.multiText.position.set(0, this.accuracyText.y + this.accuracyText.height + 10)
+        this.left.addChild(this.multiText)
         
-        this.pegText = new PIXI.Text("", textStyle)
-        this.pegText.anchor.set(1, 0)
-        this.pegText.position.set(0, 0)
-        this.right.addChild(this.pegText)
+        this.pegValText = new PIXI.Text("", textStyle)
+        this.pegValText.anchor.set(1, 0)
+        this.pegValText.position.set(0, 0)
+        this.right.addChild(this.pegValText)
         
-        this.bounceText = new PIXI.Text("", textStyle)
-        this.bounceText.anchor.set(1, 0)
-        this.bounceText.position.set(0, this.pegText.height + 10)
-        this.right.addChild(this.bounceText)
+        this.bounceValText = new PIXI.Text("", textStyle)
+        this.bounceValText.anchor.set(1, 0)
+        this.bounceValText.position.set(0, this.pegValText.height + 10)
+        this.right.addChild(this.bounceValText)
+
+        this.pegCountText = new PIXI.Text("", textStyle)
+        this.pegCountText.anchor.set(1, 0)
+        this.pegCountText.position.set(0, this.bounceValText.y + this.bounceValText.height + 10)
+        this.right.addChild(this.pegCountText)
     }
 
     get height() {
@@ -284,8 +296,10 @@ class StatsBar {
     fetch() {
         this.speedText.text = `Speed: ${this.gameState.spawner.speed}`
         this.accuracyText.text = `Accuracy: ${this.gameState.spawner.accuracy}%`
-        this.pegText.text = `Peg Value: ${this.gameState.pegArray.pegValue}`
-        this.bounceText.text = `Bouncer Value: ${this.gameState.pegArray.bouncerValue}`
+        this.multiText.text = `Drop Count: ${this.gameState.spawner.dropCount}`
+        this.pegValText.text = `Peg Value: ${this.gameState.pegArray.pegValue}`
+        this.bounceValText.text = `Bouncer Value: ${this.gameState.pegArray.bouncerValue}`
+        this.pegCountText.text = `Pegs/Bouncers: ${this.gameState.pegArray.pegCount}/${this.gameState.pegArray.bouncerCount}`
     }
 
     draw() {

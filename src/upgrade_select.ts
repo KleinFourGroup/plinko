@@ -30,6 +30,7 @@ class UpgradeSelect {
     select(upgrade: Upgrade) {
         upgrade.apply(this.gameState)
         this.clear()
+        this.gameState.levelState.check()
     }
 
     clear() {

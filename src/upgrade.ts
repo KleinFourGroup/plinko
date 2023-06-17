@@ -64,6 +64,7 @@ class Upgrade {
     }
 
     apply(gameState: GameState) {
+        console.log(`Applying upgrade '${this.title}'`)
         if (this.effect !== null) {
             this.effect(gameState)
         } else {

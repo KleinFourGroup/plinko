@@ -75,6 +75,16 @@ class PegArray {
         newPeg.addTo(this.gameState.stage)
         this.pegs[index] = newPeg
     }
+
+    get pegCount() {
+        let pegsArr = this.pegs.filter((peg) => peg instanceof Peg)
+        return pegsArr.length
+    }
+
+    get bouncerCount() {
+        let bouncersArr = this.pegs.filter((peg) => peg instanceof Bouncer)
+        return bouncersArr.length
+    }
 }
 
 class GoalArray {
@@ -118,11 +128,13 @@ class GoalArray {
 }
 
 // TODO: Rework for back-to-back level ups
-function selectRandom(gameState: GameState) {
-    if (gameState.upgradeSelect.choices.length > 0) {
+function selectRandom(level: number, gameState: GameState) {
+    if (gameState.upgradeSelect.choices.length > 0 && gameState.levelState.level === level) {
         let index = Math.floor(Math.random() * gameState.upgradeSelect.choices.length)
         let choice = gameState.upgradeSelect.choices[index]
         gameState.upgradeSelect.select(choice)
+    } else {
+        console.error(`Skipping random upgrade selection: choice for level ${level} already made`)
     }
 }
 
@@ -206,12 +218,18 @@ class GameState {
                     break
                 case "levelup":
                     let levelup = (event as LevelUp)
-                    this.levelState.levelUp()
-                    this.levelState.check()
-                    this.spawner.addSpeed(1)
-                    this.upgradeManager.generate()
-                    this.running = false
-                    if (this.autoControl) this.timing.createTimer("autopick", 5000, selectRandom)
+                    if (levelup.level === 1 + this.levelState.level) {
+                        this.levelState.levelUp()
+                        this.spawner.addSpeed(1)
+                        this.upgradeManager.generate()
+                        this.running = false
+                        if (this.autoControl) this.timing.createTimer("autopick", 5000, (state: GameState) => {
+                            selectRandom(levelup.level, state)
+                        })
+                    } else {
+                        // Not really an error; add and check can double-fire a level
+                        console.error(`LevelUp mismatch - expected ${this.levelState.level + 1}; got ${levelup.level}`)
+                    }
                     break
                 case "outofbounds":
                     let bounds = (event as OutOfBounds)
