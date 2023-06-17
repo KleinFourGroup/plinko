@@ -28,7 +28,6 @@ let collisionHandler = getCollisionHandler(labelMap, gameState)
 
 Matter.Events.on(gameState.engine, "collisionStart", collisionHandler)
 
-
 let timing = new TimingManager(app)
 gameState.timing = timing
 
@@ -55,9 +54,6 @@ function update(delta: number) {
     
     timing.endWork()
 }
-
-addEventListener("click", (event) => {gameState.spawn = true})
-addEventListener("pointerdown", (event) => {gameState.spawn = true})
 addEventListener("keydown", (event) => {gameState.spawn = true})
 
 app.ticker.add(update);

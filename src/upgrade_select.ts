@@ -22,6 +22,7 @@ class UpgradeSelect {
             upgrade.graphics.position.set(0, (height !== 0 ? 15 : 0) + height)
 
             upgrade.graphics.on("pointerdown", (event) => {
+                event.stopPropagation()
                 this.select(upgrade)
             })
         }

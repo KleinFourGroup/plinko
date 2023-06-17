@@ -181,7 +181,7 @@ let multiDropUpgrade: UpgradeSignature = {
         return getUpgradeLevel(4 / 5, 2)
     },
     title: (magnitude: number, state: GameState) => {
-        return `Drop count +${magnitude}%`
+        return `Drop count +${magnitude}`
     },
     description: (magnitude: number, state: GameState) => {
         return `Increase the number of balls dropped per spawn by ${magnitude}%`
