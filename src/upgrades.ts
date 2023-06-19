@@ -32,9 +32,9 @@ function addBouncers(times: number, gameState: GameState) {
 }
 
 let bouncerCreateUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 10,
     magnitude: (state: GameState) => {
-        return 1 + getUpgradeLevel(2 / 3, 3)
+        return 2 + getUpgradeLevel(2 / 3, 3)
     },
     title: (magnitude: number, state: GameState) => {
         return `Bouncers +${magnitude}`
@@ -50,9 +50,9 @@ let bouncerCreateUpgrade: UpgradeSignature = {
 }
 
 let speedUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 10,
     magnitude: (state: GameState) => {
-        return 1 + getUpgradeLevel(2 / 3, 3)
+        return 2 + getUpgradeLevel(2 / 3, 3)
     },
     title: (magnitude: number, state: GameState) => {
         return `Speed -${magnitude}`
@@ -68,9 +68,9 @@ let speedUpgrade: UpgradeSignature = {
 }
 
 let accuracyUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 10,
     magnitude: (state: GameState) => {
-        return 5 * getUpgradeLevel(2 / 3, 3)
+        return 10 * getUpgradeLevel(2 / 3, 3)
     },
     title: (magnitude: number, state: GameState) => {
         return `Accuracy +${magnitude}%`
@@ -211,6 +211,24 @@ let freePointsUpgrade: UpgradeSignature = {
     }
 }
 
+let ballExtraUpgrade: UpgradeSignature = {
+    weight: 10,
+    magnitude: (state: GameState) => {
+        return 1 + getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Balls +${magnitude}`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Adds ${magnitude} balls to your arsenal`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.spawner.balls += magnitude
+        }
+    }
+}
+
 const UPGRADE_LIST = [
     bouncerCreateUpgrade,
     speedUpgrade,
@@ -221,7 +239,8 @@ const UPGRADE_LIST = [
     goalMultiplyUpgrade,
     goalShuffleUpgrade,
     multiDropUpgrade,
-    freePointsUpgrade
+    freePointsUpgrade,
+    ballExtraUpgrade
 ]
 
 export {UPGRADE_LIST}

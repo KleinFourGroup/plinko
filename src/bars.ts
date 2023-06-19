@@ -155,7 +155,7 @@ class TopBar {
         this.scoreText.text = `Score: ${this.gameState.levelState.score}`
         this.nextText.text = `Target: ${this.gameState.levelState.target}`
         this.levelText.text = `Level: ${this.gameState.levelState.level}`
-        this.ballsText.text = `Balls: ∞`
+        this.ballsText.text = `Balls: ${this.gameState.spawner.balls - this.gameState.spawner.ballsUsed}/${this.gameState.spawner.balls}`
     }
 
     draw() {

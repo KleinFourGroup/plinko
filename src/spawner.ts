@@ -16,6 +16,8 @@ class Spawner {
     dropCount: number
     velocity: number
     accuracy: number
+    balls: number
+    ballsUsed: number
     spawnBase: Point
     spawnPoint: Point
     spawnDot: PIXI.Graphics
@@ -27,6 +29,10 @@ class Spawner {
         this.accuracy = 0
         this.velocity = 0
         this.speed = 0
+        
+        this.balls = 5
+        this.ballsUsed = 0
+
         this.spawnBase = {
             x: this.state.width / 2,
             y: 100
@@ -62,6 +68,7 @@ class Spawner {
             Matter.Body.setVelocity(newOrb.body, {x: sigVel * (0.95 + 0.05 * Math.random()) * (MAX_ACCURACY - this.accuracy) / MAX_ACCURACY, y: 0})
             newOrb.addTo(this.state.stage)
             this.state.orbs.push(newOrb)
+            this.ballsUsed++
         }
     }
 

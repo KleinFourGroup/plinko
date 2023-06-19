@@ -8,6 +8,12 @@ class GameEvent {
     }
 }
 
+class GameOver extends GameEvent {
+    constructor() {
+        super("gameover")
+    }
+}
+
 class LevelUp extends GameEvent {
     level: number
     constructor(level: number) {
@@ -54,4 +60,4 @@ class OutOfBounds extends GameEvent {
     }
 }
 
-export {GameEvent, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds}
+export {GameEvent, GameOver, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds}

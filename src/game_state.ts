@@ -108,6 +108,7 @@ class GameState {
                     let levelup = (event as LevelUp)
                     if (levelup.level === 1 + this.levelState.level) {
                         this.levelState.levelUp()
+                        this.spawner.ballsUsed = 0
                         this.spawner.addSpeed(1)
                         this.upgradeManager.generate()
                         this.running = false
