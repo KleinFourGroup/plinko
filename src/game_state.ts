@@ -10,7 +10,7 @@ import { UpgradeManager } from './upgrade_manager'
 import { LevelManager } from './level_manager'
 import { PegArray, GoalArray } from './arrays'
 
-// TODO: Rework for back-to-back level ups
+// Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
     if (gameState.upgradeSelect.choices.length > 0 && gameState.levelState.level === level) {
         let index = Math.floor(Math.random() * gameState.upgradeSelect.choices.length)
@@ -21,6 +21,7 @@ function selectRandom(level: number, gameState: GameState) {
     }
 }
 
+// Main class for holding the game's state
 class GameState {
     stage: PIXI.Container
     width: number
