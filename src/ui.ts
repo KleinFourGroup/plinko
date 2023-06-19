@@ -80,6 +80,7 @@ class UserInterface {
         this.bottomBar = new StatsBar(this)
 
         this.upgradeSelect = new UpgradeSelect(gameState)
+        this.gameState.upgradeSelect = this.upgradeSelect
         this.stage.addChild(this.upgradeSelect.box)
     }
 

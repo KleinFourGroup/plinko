@@ -1,7 +1,8 @@
 import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
-import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
+import { getCollisionHandler } from './collision'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
 import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds } from './events'
 import { UpgradeSelect } from './upgrade_select'
@@ -53,6 +54,9 @@ class GameState {
 
         this.engine = Matter.Engine.create()
         this.world = this.engine.world
+
+        let collisionHandler = getCollisionHandler(labelMap, this)
+        Matter.Events.on(this.engine, "collisionStart", collisionHandler)
 
         this.walls = []
         this.orbs = []
@@ -171,6 +175,8 @@ class GameState {
     }
 }
 
+type WorldInitializer = (state: GameState) => void
+
 function initWorld(state: GameState) {
     let rows = 10
     let cols = 15
@@ -194,7 +200,7 @@ function initWorld(state: GameState) {
 
     for (let binNum = 0; binNum < bins; binNum++) {
         let off = wallWidth + binNum * (wallWidth + goalWidth)
-        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - toothMinHeight / 2, goalWidth, toothMinHeight, 10 + 10 * Math.abs(binNum - (bins - 1) / 2))
+        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - toothMinHeight / 2, goalWidth, toothMinHeight, 50 + 50 * Math.abs(binNum - (bins - 1) / 2))
         state.goalArray.add(goal)
     }
 
@@ -234,5 +240,5 @@ function initWorld(state: GameState) {
     }
 }
 
-export {GameState}
+export {GameState, WorldInitializer}
 export {initWorld}

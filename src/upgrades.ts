@@ -124,7 +124,7 @@ let bouncerValueUpgrade: UpgradeSignature = {
 let goalAddUpgrade: UpgradeSignature = {
     weight: 1,
     magnitude: (state: GameState) => {
-        return 10 * getUpgradeLevel(2 / 3, 3)
+        return 50 * getUpgradeLevel(2 / 3, 3)
     },
     title: (magnitude: number, state: GameState) => {
         return `Goal value +${magnitude}`
@@ -199,14 +199,14 @@ let freePointsUpgrade: UpgradeSignature = {
         return 1
     },
     title: (magnitude: number, state: GameState) => {
-        return `Happy Father's Day!`
+        return `Free points!`
     },
     description: (magnitude: number, state: GameState) => {
-        return `Adds 500 points to your score`
+        return `Adds 2500 points to your score`
     },
     effect: (magnitude: number, state: GameState) => {
         return (state: GameState) => {
-            state.levelState.add(500)
+            state.levelState.add(2500)
         }
     }
 }
