@@ -14,6 +14,14 @@ class GameOver extends GameEvent {
     }
 }
 
+class ContinueGame extends GameEvent {
+    cc: number
+    constructor(cc: number) {
+        super("continue")
+        this.cc = cc
+    }
+}
+
 class LevelUp extends GameEvent {
     level: number
     constructor(level: number) {
@@ -60,4 +68,4 @@ class OutOfBounds extends GameEvent {
     }
 }
 
-export {GameEvent, GameOver, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds}
+export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds}

@@ -40,7 +40,7 @@ class UpgradeSelect {
         }
 
         this.choices.splice(0, this.choices.length)
-        this.gameState.running = true
+        this.gameState.setRunning(true)
     }
 }
 

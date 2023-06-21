@@ -62,7 +62,7 @@ class Spawner {
     }
 
     spawnOrb() {
-        for (let count = 0; count < this.dropCount; count++) {
+        for (let count = 0; count < this.dropCount && this.ballsUsed < this.balls; count++) {
             let newOrb = new Orb(this.state.world,  this.spawnPoint.x + (2 * Math.random() - 1), this.spawnPoint.y + (2 * Math.random() - 1), 15)
             let sigVel = Math.sign(this.velocity) * (2 * MAX_VELOCITY / (1 + Math.exp(-2 * Math.abs(this.velocity) / MAX_VELOCITY)) - MAX_VELOCITY)
             Matter.Body.setVelocity(newOrb.body, {x: sigVel * (0.95 + 0.05 * Math.random()) * (MAX_ACCURACY - this.accuracy) / MAX_ACCURACY, y: 0})

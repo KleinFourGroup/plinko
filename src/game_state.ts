@@ -4,7 +4,7 @@ import * as Matter from 'matter-js'
 import { getCollisionHandler } from './collision'
 import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame } from './events'
 import { UpgradeSelect } from './upgrade_select'
 import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
@@ -30,6 +30,7 @@ class GameState {
     running: boolean
     spawn: boolean
     autoControl: boolean
+    continues: number
     timing: TimingManager
     engine: Matter.Engine
     world: Matter.World
@@ -52,6 +53,8 @@ class GameState {
 
         this.timing = null
 
+        this.continues = 0
+
         this.engine = Matter.Engine.create()
         this.world = this.engine.world
 
@@ -71,6 +74,11 @@ class GameState {
         this.pegArray = new PegArray(this)
         this.goalArray = new GoalArray(this)
         this.upgradeManager = new UpgradeManager(this)
+    }
+
+    setRunning(shouldRun: boolean) {
+        console.log(`Game is now ${shouldRun ? "running" : "paused"}`)
+        this.running = shouldRun
     }
 
     enqueueEvent(event: GameEvent) {
@@ -111,7 +119,7 @@ class GameState {
                         this.spawner.ballsUsed = 0
                         this.spawner.addSpeed(1)
                         this.upgradeManager.generate()
-                        this.running = false
+                        this.setRunning(false)
                         if (this.autoControl) this.timing.createTimer("autopick", 5000, (state: GameState) => {
                             selectRandom(levelup.level, state)
                         })
@@ -127,8 +135,36 @@ class GameState {
                     this.orbs.splice(this.orbs.indexOf(bounds.orb), 1)
                     console.error("Orb went out of bounds")
                     break
+                case "gameover":
+                    console.log("Game over!")
+                    this.setRunning(false)
+                    if (this.autoControl) this.timing.createTimer("continue", 5000, (state: GameState) => {
+                        state.enqueueEvent(new ContinueGame(state.continues + 1))
+                    })
+                    break
+                case "continue":
+                    let continueGame = (event as ContinueGame)
+                    if (continueGame.cc === 1 + this.continues) {
+                        this.spawner.ballsUsed = 0
+                        this.continues++
+                        this.setRunning(true)
+                    } else {
+                        console.error(`ContinueGame mismatch - expected ${this.continues + 1}; got ${continueGame.cc}`)
+                    }
+                    break
                 default:
                     console.error("Unknown event type: " + event.typeStr)
+            }
+        }
+    }
+
+    checkGameOver() {
+        if (this.running) {
+            let noBalls = (this.spawner.balls === this.spawner.ballsUsed) && (this.orbs.length ===0)
+            let noEvents = (this.eventQueue.length === 0)
+            let noPending = (this.upgradeSelect.choices.length == 0)
+            if (noBalls && noEvents && noPending) {
+                this.enqueueEvent(new GameOver())
             }
         }
     }

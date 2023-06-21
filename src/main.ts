@@ -35,6 +35,8 @@ function update(delta: number) {
         if (stepped) game.timing.step()
     // }
 
+    game.gameState.checkGameOver()
+
     //  Match sprites to physics representation
     game.gameState.updateGraphics()
     
