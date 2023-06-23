@@ -11,6 +11,7 @@ import { UpgradeManager } from './upgrade_manager'
 import { LevelManager } from './level_manager'
 import { PegArray, GoalArray } from './arrays'
 import { RestartSelect } from './restart_select'
+import { AppState } from './app'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
@@ -26,7 +27,7 @@ function selectRandom(level: number, gameState: GameState) {
 function autoContinue(cc: number, gameState: GameState) {
     if (gameState.continues === cc) {
         gameState.enqueueEvent(new ContinueGame(gameState.continues + 1))
-        gameState.restartSelect.deativate()
+        gameState.restartSelect.deactivate()
     } else {
         console.error(`Skipping auto continue: choice already made`)
     }
@@ -34,6 +35,8 @@ function autoContinue(cc: number, gameState: GameState) {
 
 // Main class for holding the game's state
 class GameState {
+    gameApp: AppState
+    initializer: WorldInitializer
     stage: PIXI.Container
     width: number
     height: number
@@ -55,7 +58,10 @@ class GameState {
     upgradeSelect: UpgradeSelect
     restartSelect: RestartSelect
 
-    constructor(width: number = 1000, height: number = 1000, autoControl: boolean = false) {
+    constructor(gameApp: AppState, width: number = 1000, height: number = 1000, autoControl: boolean = false) {
+        this.gameApp = gameApp
+        this.initializer = null
+
         this.stage = new PIXI.Container()
         this.upgradeSelect = null
         this.restartSelect = null
@@ -88,8 +94,12 @@ class GameState {
         this.upgradeManager = new UpgradeManager(this)
     }
 
+    destroy() {
+        // TODO
+    }
+
     setRunning(shouldRun: boolean) {
-        console.log(`Game is now ${shouldRun ? "running" : "paused"}`)
+        // console.log(`Game is now ${shouldRun ? "running" : "paused"}`)
         this.running = shouldRun
     }
 
@@ -157,6 +167,7 @@ class GameState {
                     })
                     break
                 case "continue":
+                    console.log("Continuing...")
                     let continueGame = (event as ContinueGame)
                     if (continueGame.cc === 1 + this.continues) {
                         this.spawner.ballsUsed = 0
@@ -165,6 +176,12 @@ class GameState {
                     } else {
                         console.error(`ContinueGame mismatch - expected ${this.continues + 1}; got ${continueGame.cc}`)
                     }
+                    break
+                case "restart":
+                    console.log("Restarting...")
+                    this.destroy()
+                    this.gameApp.replaceWorld(this.initializer)
+                    return
                     break
                 default:
                     console.error("Unknown event type: " + event.typeStr)

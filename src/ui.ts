@@ -21,6 +21,16 @@ class DisplayState {
         this.update()
     }
 
+    replaceWorld(gameState: GameState) {
+        this.app.stage.removeChild(this.gameState.stage)
+        this.app.stage.removeChild(this.ui.stage)
+
+        this.gameState = gameState
+
+        this.app.stage.addChild(this.gameState.stage)
+        this.app.stage.addChild(this.ui.stage)
+    }
+
     update() {
         // Wow--semicolons are needed
         (this.ui.stage.hitArea as PIXI.Rectangle).width = this.app.renderer.width;
@@ -93,6 +103,19 @@ class UserInterface {
         this.restartSelect = new RestartSelect(gameState)
         this.gameState.restartSelect = this.restartSelect
         this.stage.addChild(this.restartSelect.box)
+    }
+
+    replaceWorld(gameState: GameState) {
+        this.gameState = gameState
+
+        this.topBar.gameState = this.gameState
+        this.bottomBar.gameState = this.gameState
+        
+        this.upgradeSelect.gameState = this.gameState
+        this.gameState.upgradeSelect = this.upgradeSelect
+        
+        this.restartSelect.gameState = this.gameState
+        this.gameState.restartSelect = this.restartSelect
     }
 
     fetch(fps: number, load: number) {

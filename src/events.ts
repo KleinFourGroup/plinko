@@ -68,4 +68,10 @@ class OutOfBounds extends GameEvent {
     }
 }
 
-export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds}
+class RestartEvent extends GameEvent {
+    constructor() {
+        super("restart")
+    }
+}
+
+export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds, RestartEvent}
