@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js'
 import { COLORS } from './colors'
 import { GameState } from './game_state'
 import { Upgrade } from './upgrade'
+import { ContinueGame } from './events'
 
 function makeBox(text: string) {
     let textBox = new PIXI.Container()
@@ -47,6 +48,26 @@ class RestartSelect {
         this.restartGraphics.position.set(0, 0)
         this.continueGraphics = makeBox("Continue")
         this.continueGraphics.position.set(0, 15 + this.restartGraphics.height)
+
+        this.restartGraphics.on("pointerdown", (event) => {
+            event.stopPropagation()
+            console.error("Restart")
+        })
+        this.continueGraphics.on("pointerdown", (event) => {
+            event.stopPropagation()
+            this.gameState.enqueueEvent(new ContinueGame(this.gameState.continues + 1))
+            this.deativate()
+        })
+    }
+
+    activate() {
+        this.box.addChild(this.restartGraphics)
+        this.box.addChild(this.continueGraphics)
+    }
+
+    deativate() {
+        this.box.removeChild(this.restartGraphics)
+        this.box.removeChild(this.continueGraphics)
     }
 }
 

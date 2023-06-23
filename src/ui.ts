@@ -4,6 +4,7 @@ import { COLORS } from './colors'
 import { GameState } from './game_state'
 import { TopBar, StatsBar } from './bars'
 import { UpgradeSelect } from './upgrade_select'
+import { RestartSelect } from './restart_select'
 
 class DisplayState {
     app: PIXI.Application
@@ -50,6 +51,11 @@ class DisplayState {
             (this.app.renderer.width - this.ui.upgradeSelect.box.width) / 2,
             (this.app.renderer.height - this.ui.upgradeSelect.box.height) / 2
         )
+
+        this.ui.restartSelect.box.position.set(
+            (this.app.renderer.width - this.ui.restartSelect.box.width) / 2,
+            (this.app.renderer.height - this.ui.restartSelect.box.height) / 2
+        )
     }
 }
 
@@ -59,6 +65,7 @@ class UserInterface {
     bottomBar: StatsBar
     fpsText: PIXI.Text
     upgradeSelect: UpgradeSelect
+    restartSelect: RestartSelect
     gameState: GameState
 
     constructor(gameState: GameState) {
@@ -82,6 +89,10 @@ class UserInterface {
         this.upgradeSelect = new UpgradeSelect(gameState)
         this.gameState.upgradeSelect = this.upgradeSelect
         this.stage.addChild(this.upgradeSelect.box)
+
+        this.restartSelect = new RestartSelect(gameState)
+        this.gameState.restartSelect = this.restartSelect
+        this.stage.addChild(this.restartSelect.box)
     }
 
     fetch(fps: number, load: number) {

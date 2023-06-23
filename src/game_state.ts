@@ -10,6 +10,7 @@ import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
 import { LevelManager } from './level_manager'
 import { PegArray, GoalArray } from './arrays'
+import { RestartSelect } from './restart_select'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
@@ -19,6 +20,15 @@ function selectRandom(level: number, gameState: GameState) {
         gameState.upgradeSelect.select(choice)
     } else {
         console.error(`Skipping random upgrade selection: choice for level ${level} already made`)
+    } 
+}
+
+function autoContinue(cc: number, gameState: GameState) {
+    if (gameState.continues === cc) {
+        gameState.enqueueEvent(new ContinueGame(gameState.continues + 1))
+        gameState.restartSelect.deativate()
+    } else {
+        console.error(`Skipping auto continue: choice already made`)
     }
 }
 
@@ -43,10 +53,12 @@ class GameState {
     goalArray: GoalArray
     upgradeManager: UpgradeManager
     upgradeSelect: UpgradeSelect
+    restartSelect: RestartSelect
 
     constructor(width: number = 1000, height: number = 1000, autoControl: boolean = false) {
         this.stage = new PIXI.Container()
         this.upgradeSelect = null
+        this.restartSelect = null
 
         this.width = width
         this.height = height
@@ -137,9 +149,11 @@ class GameState {
                     break
                 case "gameover":
                     console.log("Game over!")
+                    this.restartSelect.activate()
                     this.setRunning(false)
+                    let cc = this.continues
                     if (this.autoControl) this.timing.createTimer("continue", 5000, (state: GameState) => {
-                        state.enqueueEvent(new ContinueGame(state.continues + 1))
+                        autoContinue(cc, state)
                     })
                     break
                 case "continue":
