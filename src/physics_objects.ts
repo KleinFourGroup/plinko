@@ -41,8 +41,9 @@ class PhysicsObject {
         parent.addChild(this.graphics)
     }
 
-    removeFrom(parent: PIXI.Container) {
+    removeFrom(parent: PIXI.Container, destroy: boolean = true) {
         parent.removeChild(this.graphics)
+        if (destroy) this.graphics.destroy()
     }
     
     delete() {

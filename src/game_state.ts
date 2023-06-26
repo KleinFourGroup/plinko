@@ -25,9 +25,8 @@ function selectRandom(level: number, gameState: GameState) {
 }
 
 function autoContinue(cc: number, gameState: GameState) {
-    if (gameState.continues === cc) {
-        gameState.enqueueEvent(new ContinueGame(gameState.continues + 1))
-        gameState.restartSelect.deactivate()
+    if (gameState.continues === cc && gameState.restartSelect.activated) {
+        gameState.restartSelect.continueWorld()
     } else {
         console.error(`Skipping auto continue: choice already made`)
     }
@@ -95,7 +94,22 @@ class GameState {
     }
 
     destroy() {
-        // TODO
+        for (let wall of this.walls) {
+            wall.removeFrom(this.stage)
+            wall.delete()
+        }
+        for (let goal of this.goalArray.goals) {
+            goal.removeFrom(this.stage)
+            goal.delete()
+        }
+        for (let peg of this.pegArray.pegs) {
+            peg.removeFrom(this.stage)
+            peg.delete()
+        }
+        for (let orb of this.orbs) {
+            orb.removeFrom(this.stage)
+            orb.delete()
+        }
     }
 
     setRunning(shouldRun: boolean) {
