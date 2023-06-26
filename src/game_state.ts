@@ -15,7 +15,7 @@ import { AppState } from './app'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
-    if (gameState.upgradeSelect.choices.length > 0 && gameState.levelState.level === level) {
+    if (gameState.upgradeSelect.choices.length > 0 && gameState.levelState.level === level && gameState.upgradeSelect.isActive) {
         let index = Math.floor(Math.random() * gameState.upgradeSelect.choices.length)
         let choice = gameState.upgradeSelect.choices[index]
         gameState.upgradeSelect.select(choice)
@@ -25,7 +25,7 @@ function selectRandom(level: number, gameState: GameState) {
 }
 
 function autoContinue(cc: number, gameState: GameState) {
-    if (gameState.continues === cc && gameState.restartSelect.activated) {
+    if (gameState.continues === cc && gameState.restartSelect.isActive) {
         gameState.restartSelect.continueWorld()
     } else {
         console.error(`Skipping auto continue: choice already made`)
@@ -94,6 +94,9 @@ class GameState {
     }
 
     destroy() {
+        if (this.upgradeSelect.isActive) this.upgradeSelect.clear()
+        if (this.restartSelect.isActive) this.restartSelect.deactivate()
+        
         for (let wall of this.walls) {
             wall.removeFrom(this.stage)
             wall.delete()

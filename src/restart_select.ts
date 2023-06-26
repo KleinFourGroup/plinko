@@ -30,7 +30,7 @@ class RestartSelect {
         })
     }
 
-    get activated() {
+    get isActive() {
         return this.box.height !== 0
     }
 

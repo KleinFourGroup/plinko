@@ -17,6 +17,10 @@ class UpgradeSelect {
         this.prompt = makePromptCard("Select an upgrade!")
     }
 
+    get isActive() {
+        return this.box.height !== 0
+    }
+
     addChoices(...upgrades: Array<Upgrade>) {
         if (this.box.height === 0) {
             this.box.addChild(this.prompt)

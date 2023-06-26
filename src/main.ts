@@ -4,6 +4,7 @@ import * as Matter from 'matter-js'
 import { COLORS } from './colors'
 import { AppState } from './app'
 import { initWorld } from './game_state'
+import { keydownHandler } from './keyboard'
 
 // Create the application
 let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal black"], antialias: true });
@@ -49,8 +50,7 @@ function update(delta: number) {
 }
 
 // Keyboard input listener
-// TODO: Move to UI
-addEventListener("keydown", (event) => {game.gameState.spawn = true})
+addEventListener("keydown", (event) => {keydownHandler(event, game)})
 
 // Run the game loop
 app.ticker.add(update);
