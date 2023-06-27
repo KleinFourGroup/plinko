@@ -3,9 +3,11 @@ import * as PIXI from 'pixi.js'
 import { DisplayState, UserInterface } from './ui'
 import { GameState, WorldInitializer } from './game_state'
 import { TimingManager } from './timing'
+import { InputHandler } from './keyboard'
 
 class AppState {
     app: PIXI.Application
+    inputs: InputHandler
     gameState: GameState
     ui: UserInterface
     display: DisplayState
@@ -13,6 +15,9 @@ class AppState {
 
     constructor(app: PIXI.Application) {
         this.app = app
+        
+        this.inputs = new InputHandler()
+
         //  Create the actual game state
         this.gameState = new GameState(this)
 

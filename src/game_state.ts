@@ -4,7 +4,7 @@ import * as Matter from 'matter-js'
 import { getCollisionHandler } from './collision'
 import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent } from './events'
 import { UpgradeSelect } from './upgrade_select'
 import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
@@ -12,6 +12,7 @@ import { LevelManager } from './level_manager'
 import { PegArray, GoalArray } from './arrays'
 import { RestartSelect } from './restart_select'
 import { AppState } from './app'
+import { AppInteraction } from './keyboard'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
@@ -112,6 +113,16 @@ class GameState {
         for (let orb of this.orbs) {
             orb.removeFrom(this.stage)
             orb.delete()
+        }
+    }
+
+    parseInput() {
+        if (this.gameApp.inputs.poll(AppInteraction.SPAWN)) {
+            this.spawn = true
+        }
+
+        if (this.gameApp.inputs.poll(AppInteraction.RESTART)) {
+            this.enqueueEvent(new RestartEvent())
         }
     }
 

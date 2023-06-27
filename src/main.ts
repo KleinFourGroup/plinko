@@ -24,6 +24,9 @@ function update(delta: number) {
 
     game.timing.beginWork()
 
+    game.gameState.parseInput()
+    game.inputs.reset()
+
     // Handle the custom event loop
     game.gameState.parseEvents()
 
