@@ -73,7 +73,7 @@ class UserInterface {
     stage: PIXI.Container
     topBar: TopBar
     bottomBar: StatsBar
-    fpsText: PIXI.Text
+    perfText: PIXI.Text
     upgradeSelect: UpgradeSelect
     restartSelect: RestartSelect
     gameState: GameState
@@ -87,11 +87,11 @@ class UserInterface {
         this.stage.on("pointerdown", (event) => {
             this.gameState.spawn = true
         })
-        this.fpsText = new PIXI.Text()
-        this.fpsText.style.fontFamily = "monospace"
-        this.fpsText.style.fill = COLORS["terminal green"]
-        this.fpsText.position.set(5, 5)
-        this.stage.addChild(this.fpsText)
+        this.perfText = new PIXI.Text()
+        this.perfText.style.fontFamily = "monospace"
+        this.perfText.style.fill = COLORS["terminal green"]
+        this.perfText.position.set(5, 5)
+        this.stage.addChild(this.perfText)
 
         this.topBar = new TopBar(this)
         this.bottomBar = new StatsBar(this)
@@ -118,8 +118,8 @@ class UserInterface {
         this.gameState.restartSelect = this.restartSelect
     }
 
-    fetch(fps: number, load: number) {
-        this.fpsText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%` 
+    fetch(fps: number, load: number, width: number, height: number) {
+        this.perfText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%\ (${width}x${height})` 
 
         this.topBar.fetch()
         this.bottomBar.fetch()

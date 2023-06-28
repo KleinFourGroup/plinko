@@ -152,10 +152,15 @@ class TopBar {
         
         this.progressBar.update(completion)
 
-        this.scoreText.text = `Score: ${this.gameState.levelState.score}`
-        this.nextText.text = `Target: ${this.gameState.levelState.target}`
-        this.levelText.text = `Level: ${this.gameState.levelState.level}`
-        this.ballsText.text = `Balls: ${this.gameState.spawner.balls - this.gameState.spawner.ballsUsed}/${this.gameState.spawner.balls}`
+        let score = this.gameState.config.trackProgress ? this.gameState.levelState.score : "∞"
+        this.scoreText.text = `Score: ${score}`
+        let target = this.gameState.config.trackProgress ? this.gameState.levelState.target : "∞"
+        this.nextText.text = `Target: ${target}`
+        let level = this.gameState.config.trackProgress ? this.gameState.levelState.level : "∞"
+        this.levelText.text = `Level: ${level}`
+        let ballsLeft = ( this.gameState.config.countBalls && this.gameState.config.trackProgress) ? this.gameState.spawner.balls - this.gameState.spawner.ballsUsed : "∞"
+        let balls = ( this.gameState.config.countBalls && this.gameState.config.trackProgress) ? this.gameState.spawner.balls : "∞"
+        this.ballsText.text = `Balls: ${ballsLeft}/${balls}`
     }
 
     draw() {

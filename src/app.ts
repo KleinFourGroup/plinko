@@ -15,7 +15,7 @@ class AppState {
 
     constructor(app: PIXI.Application) {
         this.app = app
-        
+
         this.inputs = new InputHandler()
 
         //  Create the actual game state
@@ -33,7 +33,7 @@ class AppState {
     }
 
     setAuto(onAuto: boolean) {
-        this.gameState.autoControl = onAuto
+        this.gameState.config.autoControl = onAuto
     }
 
     init(initWorld: WorldInitializer) {
@@ -42,14 +42,13 @@ class AppState {
     }
 
     replaceWorld(initWorld: WorldInitializer) {
-        let isAuto = this.gameState.autoControl
-        this.gameState = new GameState(this)
+        let config = this.gameState.config
+        this.gameState = new GameState(this, config)
         this.ui.replaceWorld(this.gameState)
         this.display.replaceWorld(this.gameState)
         this.gameState.timing = this.timing
 
         this.init(initWorld)
-        this.setAuto(isAuto)
     }
 }
 

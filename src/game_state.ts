@@ -33,16 +33,41 @@ function autoContinue(cc: number, gameState: GameState) {
     }
 }
 
+type GameConfig = {
+    autoControl: boolean,
+    checkInput: boolean
+    countBalls: boolean,
+    trackProgress: boolean,
+    width: number,
+    height: number
+}
+
+const PLAY_CONFIG: GameConfig = {
+    autoControl: false,
+    checkInput: true,
+    countBalls: true,
+    trackProgress: true,
+    width: 1000,
+    height: 1000
+}
+
+const PREVIEW_CONFIG: GameConfig = {
+    autoControl: true,
+    checkInput: false,
+    countBalls: false,
+    trackProgress: false,
+    width: 1000,
+    height: 1000
+}
+
 // Main class for holding the game's state
 class GameState {
     gameApp: AppState
+    config: GameConfig
     initializer: WorldInitializer
     stage: PIXI.Container
-    width: number
-    height: number
     running: boolean
     spawn: boolean
-    autoControl: boolean
     continues: number
     timing: TimingManager
     engine: Matter.Engine
@@ -58,16 +83,16 @@ class GameState {
     upgradeSelect: UpgradeSelect
     restartSelect: RestartSelect
 
-    constructor(gameApp: AppState, width: number = 1000, height: number = 1000, autoControl: boolean = false) {
+    constructor(gameApp: AppState, config: Partial<GameConfig> = {}) {
         this.gameApp = gameApp
+
+        this.config = {...PLAY_CONFIG, ...config}
+        
         this.initializer = null
 
         this.stage = new PIXI.Container()
         this.upgradeSelect = null
         this.restartSelect = null
-
-        this.width = width
-        this.height = height
 
         this.timing = null
 
@@ -85,7 +110,6 @@ class GameState {
         this.eventQueue = []
         this.running = true
         this.spawn = false
-        this.autoControl = autoControl
 
         this.levelState = new LevelManager(this)
         this.spawner = new Spawner(this)
@@ -116,12 +140,28 @@ class GameState {
         }
     }
 
+    get width() {
+        return this.config.width
+    }
+
+    get height() {
+        return this.config.height
+    }
+
+    set width(width: number) {
+        this.config.width = width
+    }
+
+    set height(height: number) {
+        this.config.height = height
+    }
+
     parseInput() {
-        if (this.gameApp.inputs.poll(AppInteraction.SPAWN)) {
+        if (this.gameApp.inputs.poll(AppInteraction.SPAWN) && this.config.checkInput) {
             this.spawn = true
         }
 
-        if (this.gameApp.inputs.poll(AppInteraction.RESTART)) {
+        if (this.gameApp.inputs.poll(AppInteraction.RESTART) && this.config.checkInput) {
             this.enqueueEvent(new RestartEvent())
         }
     }
@@ -145,11 +185,11 @@ class GameState {
                     score.orb.removeFrom(this.stage)
                     score.orb.delete()
                     this.orbs.splice(this.orbs.indexOf(score.orb), 1)
-                    this.levelState.add(score.goal.score)
+                    if (this.config.trackProgress) this.levelState.add(score.goal.score)
                     break
                 case "peghit":
                     let peg = (event as PegCollision)
-                    this.levelState.add(this.pegArray.pegValue)
+                    if (this.config.trackProgress) this.levelState.add(this.pegArray.pegValue)
                     break
                 case "bouncerhit":
                     let bounce = (event as BouncerCollision)
@@ -159,10 +199,11 @@ class GameState {
                     let oldVelX = bounce.orb.body.velocity.x
                     let oldVelY = bounce.orb.body.velocity.y
                     Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
-                    this.levelState.add(this.pegArray.bouncerValue)
+                    if (this.config.trackProgress) this.levelState.add(this.pegArray.bouncerValue)
                     // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break
                 case "levelup":
+                    console.assert(this.config.trackProgress)
                     let levelup = (event as LevelUp)
                     if (levelup.level === 1 + this.levelState.level) {
                         this.levelState.levelUp()
@@ -170,7 +211,7 @@ class GameState {
                         this.spawner.addSpeed(1)
                         this.upgradeManager.generate()
                         this.setRunning(false)
-                        if (this.autoControl) this.timing.createTimer("autopick", 5000, (state: GameState) => {
+                        if (this.config.autoControl) this.timing.createTimer("autopick", 5000, (state: GameState) => {
                             selectRandom(levelup.level, state)
                         })
                     } else {
@@ -186,11 +227,12 @@ class GameState {
                     console.error("Orb went out of bounds")
                     break
                 case "gameover":
+                    console.assert(this.config.countBalls && this.config.trackProgress)
                     console.log("Game over!")
                     this.restartSelect.activate()
                     this.setRunning(false)
                     let cc = this.continues
-                    if (this.autoControl) this.timing.createTimer("continue", 5000, (state: GameState) => {
+                    if (this.config.autoControl) this.timing.createTimer("continue", 5000, (state: GameState) => {
                         autoContinue(cc, state)
                     })
                     break
@@ -218,7 +260,7 @@ class GameState {
     }
 
     checkGameOver() {
-        if (this.running) {
+        if (this.running && this.config.countBalls && this.config.trackProgress) {
             let noBalls = (this.spawner.balls === this.spawner.ballsUsed) && (this.orbs.length ===0)
             let noEvents = (this.eventQueue.length === 0)
             let noPending = (this.upgradeSelect.choices.length == 0)
@@ -233,10 +275,10 @@ class GameState {
 
         if (this.running) this.spawner.update(this.timing.delta)
     
-        if (this.autoControl || this.spawn) {
+        if (this.config.autoControl || this.spawn) {
             this.spawn = false
             if (this.running && this.orbs.length == 0) {
-                this.spawner.spawnOrb()
+                this.spawner.spawnOrb(!this.config.countBalls || !this.config.trackProgress)
             }
         }
     }

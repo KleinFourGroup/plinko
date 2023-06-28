@@ -45,7 +45,7 @@ function update(delta: number) {
     game.gameState.updateGraphics()
     
     // Update the UI
-    game.ui.fetch(app.ticker.FPS, game.timing.load)
+    game.ui.fetch(app.ticker.FPS, game.timing.load, app.renderer.width, app.renderer.height)
     game.display.update()
     game.ui.draw()
     
