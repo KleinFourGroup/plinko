@@ -4,15 +4,16 @@ import * as Matter from 'matter-js'
 import { getCollisionHandler } from './collision'
 import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent } from './events'
 import { UpgradeSelect } from './upgrade_select'
 import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
 import { LevelManager } from './level_manager'
 import { PegArray, GoalArray } from './arrays'
 import { RestartSelect } from './restart_select'
-import { AppState } from './app'
+import { AppMode, AppState } from './app'
 import { AppInteraction } from './keyboard'
+import { WorldInitializer } from './worlds'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
@@ -126,18 +127,25 @@ class GameState {
             wall.removeFrom(this.stage)
             wall.delete()
         }
+        this.walls.splice(0, this.walls.length)
+
         for (let goal of this.goalArray.goals) {
             goal.removeFrom(this.stage)
             goal.delete()
         }
+        this.goalArray.goals.splice(0, this.goalArray.goals.length)
+
         for (let peg of this.pegArray.pegs) {
             peg.removeFrom(this.stage)
             peg.delete()
         }
+        this.pegArray.pegs.splice(0, this.pegArray.pegs.length)
+
         for (let orb of this.orbs) {
             orb.removeFrom(this.stage)
             orb.delete()
         }
+        this.orbs.splice(0, this.orbs.length)
     }
 
     get width() {
@@ -163,6 +171,10 @@ class GameState {
 
         if (this.gameApp.inputs.poll(AppInteraction.RESTART) && this.config.checkInput) {
             this.enqueueEvent(new RestartEvent())
+        }
+
+        if (this.gameApp.inputs.poll(AppInteraction.MENU) && this.config.checkInput) {
+            this.enqueueEvent(new GotoMenuEvent())
         }
     }
 
@@ -253,6 +265,12 @@ class GameState {
                     this.gameApp.replaceWorld(this.initializer)
                     return
                     break
+                case "menu":
+                    console.log("Going to menu...")
+                    this.destroy()
+                    this.gameApp.setMode(AppMode.MENU)
+                    return
+                    break
                 default:
                     console.error("Unknown event type: " + event.typeStr)
             }
@@ -313,70 +331,4 @@ class GameState {
     }
 }
 
-type WorldInitializer = (state: GameState) => void
-
-function initWorld(state: GameState) {
-    let rows = 10
-    let cols = 15
-    let bins = 7
-    let wallWidth = 40
-    let toothMinHeight = wallWidth * 3 / 4
-    let toothMaxHeight = wallWidth * 3 / 2
-
-    let goalWidth = (state.width - (bins + 1) * wallWidth) / bins
-
-    let tooth = new Tooth(state.world, wallWidth / 2, state.height, wallWidth, toothMinHeight, toothMaxHeight)
-    tooth.addTo(state.stage)
-    state.walls.push(tooth)
-
-    for (let binNum = 0; binNum < bins; binNum++) {
-        let off = wallWidth + binNum * (wallWidth + goalWidth)
-        let tooth = new Tooth(state.world, off + goalWidth + wallWidth / 2, state.height, wallWidth, toothMinHeight, toothMaxHeight)
-        tooth.addTo(state.stage)
-        state.walls.push(tooth)
-    }
-
-    for (let binNum = 0; binNum < bins; binNum++) {
-        let off = wallWidth + binNum * (wallWidth + goalWidth)
-        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - toothMinHeight / 2, goalWidth, toothMinHeight, 50 + 50 * Math.abs(binNum - (bins - 1) / 2))
-        state.goalArray.add(goal)
-    }
-
-    let leftWallVerts = [
-        {x: 0, y: state.height - toothMinHeight},
-        {x: wallWidth / 2, y: state.height - toothMaxHeight},
-        {x: wallWidth / 4, y: wallWidth / 4},
-        {x: 0, y: 0}
-    ]
-
-    let leftWall = new BarrierPoly(state.world, 0, 0, ...leftWallVerts)
-    leftWall.addTo(state.stage)
-    state.walls.push(leftWall)
-
-    let rightWallVerts = [
-        {x: 0, y: state.height - toothMinHeight},
-        {x: -wallWidth / 2, y: state.height - toothMaxHeight},
-        {x: -wallWidth / 4, y: wallWidth / 4},
-        {x: 0, y: 0}
-    ]
-
-    let rightWall = new BarrierPoly(state.world, state.width, 0, ...rightWallVerts)
-    rightWall.addTo(state.stage)
-    state.walls.push(rightWall)
-
-    let pegWidth = (state.width - 2 * wallWidth) * 0.9  - 10
-
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-            if (col % 2 == row % 2) {
-                let x = (state.width - pegWidth) / 2 + (pegWidth / (cols - 1)) * col
-                let y = state.height - wallWidth * 3 / 2 - 60 - (pegWidth / (cols - 1)) * row
-                let peg = new Peg(state.world, x, y, 5)
-                state.pegArray.add(peg)
-            }
-        }
-    }
-}
-
-export {GameState, WorldInitializer}
-export {initWorld}
+export {GameState}

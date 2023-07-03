@@ -74,4 +74,10 @@ class RestartEvent extends GameEvent {
     }
 }
 
-export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds, RestartEvent}
+class GotoMenuEvent extends GameEvent {
+    constructor() {
+        super("menu")
+    }
+}
+
+export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds, RestartEvent, GotoMenuEvent}

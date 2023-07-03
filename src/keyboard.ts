@@ -23,7 +23,7 @@ class InputHandler {
         this.bindings.set(AppInteraction.RIGHT, ["ArrowRight"])
         this.bindings.set(AppInteraction.SELECT, ["Enter"])
         this.bindings.set(AppInteraction.RESTART, ["q"])
-        this.bindings.set(AppInteraction.MENU, ["m"])
+        this.bindings.set(AppInteraction.MENU, ["Enter"])
         this.bindings.set(AppInteraction.SPAWN, [" "])
         // There has to be a way to automate this
         this.status = new Map<AppInteraction, boolean>()
