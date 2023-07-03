@@ -262,7 +262,7 @@ class GameState {
                 case "restart":
                     console.log("Restarting...")
                     this.destroy()
-                    this.gameApp.replaceWorld(this.initializer)
+                    this.gameApp.replaceWorld()
                     return
                     break
                 case "menu":

@@ -64,6 +64,10 @@ class TimingManager {
         this.timers = this.timers.filter((timer: TimerSignature) => (this.elapsed - timer.start <  timer.duration))
     }
 
+    clearTimers() {
+        this.timers = []
+    }
+
     endWork() {
         this.prevWork = performance.now() - this.startWork
     }

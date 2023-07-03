@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import { DisplayState } from './display'
 import { UserInterface } from './ui'
 import { GameState } from './game_state'
-import { WorldInitializer } from './worlds'
+import { WORLD_LIST, WorldChoice, WorldInitializer } from './worlds'
 import { TimingManager } from './timing'
 import { InputHandler } from './keyboard'
 import { AppMode } from './mode'
@@ -16,6 +16,7 @@ class AppState {
     renderer: PIXI.IRenderer
     mode: AppMode
     inputs: InputHandler
+    currentWorld: WorldChoice
     gameState: GameState
     ui: UserInterface
     previewWorld: GameState
@@ -30,6 +31,8 @@ class AppState {
         this.renderer = app.renderer
 
         this.inputs = new InputHandler()
+
+        this.currentWorld = WORLD_LIST[0]
 
         //  Create the actual game state
         this.gameState = new GameState(this)
@@ -56,7 +59,9 @@ class AppState {
     }
 
     setMode(mode: AppMode) {
+        console.assert(this.mode != mode)
         this.mode = mode
+        this.timing.clearTimers()
         this.display.readMode()
     }
 
@@ -64,19 +69,19 @@ class AppState {
         this.gameState.config.autoControl = onAuto
     }
 
-    init(initWorld: WorldInitializer) {
-        initWorld(this.gameState)
-        this.gameState.initializer = initWorld
+    init() {
+        this.currentWorld.init(this.gameState)
+        this.gameState.initializer = this.currentWorld.init
     }
 
-    replaceWorld(initWorld: WorldInitializer) {
+    replaceWorld() {
         let config = this.gameState.config
         this.gameState = new GameState(this, config)
         this.ui.replaceWorld(this.gameState)
         this.display.replaceWorld(this.gameState)
         this.gameState.timing = this.timing
 
-        this.init(initWorld)
+        this.init()
     }
 
     updatePerf() {

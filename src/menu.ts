@@ -19,9 +19,9 @@ class GameMenu {
 
     parseInput() {
         if (this.gameApp.inputs.poll(AppInteraction.SELECT)) {
-            console.log("Going to game...")
+            console.log(`Going to game '${this.gameApp.currentWorld.title}'`)
             this.gameApp.setMode(AppMode.GAME)
-            this.gameApp.replaceWorld(WORLD_LIST[0].init)
+            this.gameApp.replaceWorld()
         }
     }
 }
