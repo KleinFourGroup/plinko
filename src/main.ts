@@ -14,7 +14,7 @@ let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal 
 document.body.appendChild(app.view);
 
 let game = new AppState(app)
-game.init()
+// game.init()
 game.setAuto(true)
 
 // The main game loop

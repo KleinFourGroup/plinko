@@ -4,6 +4,7 @@ import { GameState } from './game_state'
 import { UserInterface } from './ui'
 import { AppMode } from './mode'
 import { AppState } from './app'
+import { GameMenu } from './menu'
 
 class DisplayState {
     app: AppState
@@ -11,7 +12,8 @@ class DisplayState {
     menuStage: PIXI.Container
     gameState: GameState
     ui: UserInterface
-    constructor(app: AppState, gameState: GameState, ui: UserInterface) {
+    menu: GameMenu
+    constructor(app: AppState, gameState: GameState, ui: UserInterface, menu: GameMenu) {
         this.app = app
 
         this.gameStage = new PIXI.Container()
@@ -26,16 +28,20 @@ class DisplayState {
         this.menuStage = new PIXI.Container()
         this.menuStage.position.set(0, 0)
         this.app.stage.addChild(this.menuStage)
+
+        this.menu = menu
+        this.menuStage.addChild(this.menu.stage)
     }
 
     readMode() {
         switch (this.app.mode) {
             case AppMode.GAME:
+                this.updateGame()
                 this.gameStage.visible = true
                 this.menuStage.visible = false
-                this.updateGame()
                 break
             case AppMode.MENU:
+                this.updateMenu()
                 this.gameStage.visible = false
                 this.menuStage.visible = true
                 break
@@ -89,6 +95,10 @@ class DisplayState {
             (this.app.renderer.width - this.ui.restartSelect.box.width) / 2,
             (this.app.renderer.height - this.ui.restartSelect.box.height) / 2
         )
+    }
+
+    updateMenu() {
+        this.menu.bar.bar.position.set((this.app.renderer.width - this.menu.bar.bar.width) / 2, 0)
     }
 }
 

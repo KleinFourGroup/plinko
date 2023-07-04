@@ -41,6 +41,9 @@ class AppState {
         this.ui = new UserInterface(this.gameState)
 
         this.menu = new GameMenu(this)
+
+        // Create a display manager to handle various resolutions
+        this.display = new DisplayState(this, this.gameState, this.ui, this.menu)
         
         this.perfText = new PIXI.Text()
         this.perfText.style.fontFamily = "monospace"
@@ -48,14 +51,11 @@ class AppState {
         this.perfText.position.set(5, 5)
         this.stage.addChild(this.perfText)
 
-        // Create a display manager to handle various resolutions
-        this.display = new DisplayState(this, this.gameState, this.ui)
-
         // Set up a timing manager
         this.timing = new TimingManager(this.app)
         this.gameState.timing = this.timing
 
-        this.setMode(AppMode.GAME)
+        this.setMode(AppMode.MENU)
     }
 
     setMode(mode: AppMode) {
@@ -134,6 +134,8 @@ class AppState {
     
         this.menu.parseInput()
         this.inputs.reset()
+
+        this.display.updateMenu()
         
         this.updatePerf()
 

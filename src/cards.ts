@@ -93,4 +93,37 @@ function makePromptCard(text: string) {
     return card
 }
 
-export {makeSimpleCard, makeUpgradeCard, makePromptCard}
+function makeWorldCard(text: string) {
+    let displayText = new PIXI.Text(text, titleStyle)
+
+    let height = displayText.height + 2 * margin
+
+    let backBox = new PIXI.Graphics()
+    backBox.beginFill(COLORS["dark terminal green"])
+    backBox.drawRect(0, 0, width, height)
+    backBox.endFill()
+
+    let card = new PIXI.Container()
+    card.addChild(backBox)
+    displayText.position.set(margin, margin)
+    card.addChild(displayText)
+
+    card.eventMode = 'static'
+
+    return card
+}
+
+function makeWorldSelect() {
+    let displayText = new PIXI.Text("?", titleStyle)
+
+    let height = displayText.height + 2 * margin
+
+    let card = new PIXI.Graphics()
+    card.lineStyle(3, COLORS["terminal green"])
+    card.drawRect(0, 0, width, height)
+    // card.endFill()
+
+    return card
+}
+
+export {makeSimpleCard, makeUpgradeCard, makePromptCard, makeWorldCard, makeWorldSelect}
