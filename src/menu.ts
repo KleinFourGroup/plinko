@@ -5,6 +5,8 @@ import { WORLD_LIST, WorldChoice } from './worlds'
 import { AppInteraction } from './keyboard'
 import { makePromptCard, makeWorldCard, drawWorldSelect } from './cards'
 
+type SelectorCallback = (app: AppState) => void
+
 class SelectorBar {
     menu: GameMenu
     bar: PIXI.Container
@@ -12,6 +14,7 @@ class SelectorBar {
     subBar: PIXI.Container
     choices: Array<PIXI.Container>
     activeChoice: PIXI.Container
+    onSelect: Array<SelectorCallback>
     selector: PIXI.Graphics
 
     constructor(menu: GameMenu) {
@@ -29,6 +32,7 @@ class SelectorBar {
         this.bar.addChild(this.subBar)
 
         this.choices = []
+        this.onSelect = []
 
         for (let world of WORLD_LIST) {
             let choice = makeWorldCard(world.title)
@@ -39,6 +43,19 @@ class SelectorBar {
             choice.on("pointerenter", (event) => {
                 event.stopPropagation()
                 this.highlight(choice)
+            })
+            choice.on("pointerdown", (event) => {
+                event.stopPropagation()
+                // Might be redundant
+                this.highlight(choice)
+                this.select()
+            })
+
+            this.onSelect.push((gameApp: AppState) => {
+                gameApp.currentWorld = world
+                console.log(`Going to game '${gameApp.currentWorld.title}'`)
+                gameApp.replaceWorld()
+                gameApp.setMode(AppMode.GAME)
             })
         }
 
@@ -65,6 +82,12 @@ class SelectorBar {
         index = Math.min(index + 1, this.choices.length - 1)
         this.highlight(this.choices[index])
     }
+
+    select() {
+        let index = this.choices.indexOf(this.activeChoice)
+        let selectCallback = this.onSelect[index];
+        selectCallback(this.menu.gameApp)
+    }
 }
 
 class GameMenu {
@@ -83,9 +106,7 @@ class GameMenu {
 
     parseInput() {
         if (this.gameApp.inputs.poll(AppInteraction.SELECT)) {
-            console.log(`Going to game '${this.gameApp.currentWorld.title}'`)
-            this.gameApp.replaceWorld()
-            this.gameApp.setMode(AppMode.GAME)
+            this.bar.select()
         }
 
         if (this.gameApp.inputs.poll(AppInteraction.UP)) {
