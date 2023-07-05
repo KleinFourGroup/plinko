@@ -82,8 +82,22 @@ let classicWorld: WorldChoice = {
     description: "A classic plinko board, with a diagonally aligned lattice of pegs over a row of goals."
 }
 
+let classicWorld2: WorldChoice = {
+    init: classicWorldInit,
+    title: "Classic 2",
+    description: "A classic plinko board, with a diagonally aligned lattice of pegs over a row of goals."
+}
+
+let classicWorld3: WorldChoice = {
+    init: classicWorldInit,
+    title: "Classic 3",
+    description: "A classic plinko board, with a diagonally aligned lattice of pegs over a row of goals."
+}
+
 const WORLD_LIST = [
-    classicWorld
+    classicWorld,
+    classicWorld2,
+    classicWorld3
 ]
 
 export {WorldInitializer, WorldChoice}

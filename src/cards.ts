@@ -113,17 +113,11 @@ function makeWorldCard(text: string) {
     return card
 }
 
-function makeWorldSelect() {
-    let displayText = new PIXI.Text("?", titleStyle)
-
-    let height = displayText.height + 2 * margin
-
-    let card = new PIXI.Graphics()
-    card.lineStyle(3, COLORS["terminal green"])
-    card.drawRect(0, 0, width, height)
-    // card.endFill()
-
-    return card
+function drawWorldSelect(select: PIXI.Graphics, x: number, y: number, width: number, height: number) {
+    select.clear()
+    select.lineStyle(3, COLORS["terminal green"])
+    select.drawRect(x, y, width, height)
+    // select.endFill()
 }
 
-export {makeSimpleCard, makeUpgradeCard, makePromptCard, makeWorldCard, makeWorldSelect}
+export {makeSimpleCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}
