@@ -47,9 +47,13 @@ class InputHandler {
         return this.status.get(interaction)
     }
 
-    reset() {
-        for (let interaction of this.status.keys()) {
+    reset(interaction: AppInteraction = null) {
+        if (interaction !== null) {
             this.status.set(interaction, false)
+        } else {
+            for (let interaction of this.status.keys()) {
+                this.status.set(interaction, false)
+            }
         }
     }
 }

@@ -98,7 +98,7 @@ class DisplayState {
     }
 
     updateMenu() {
-        this.menu.bar.bar.position.set((this.app.renderer.width - this.menu.bar.bar.width) / 2, 0)
+        this.menu.bar.box.position.set((this.app.renderer.width - this.menu.bar.box.width) / 2, 0)
     }
 }
 
