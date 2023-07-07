@@ -41,6 +41,7 @@ class SelectorBase {
     parseInput() {
         if (this.app.inputs.poll(AppInteraction.SELECT)) {
             this.app.inputs.reset(AppInteraction.SELECT)
+            this.app.inputs.reset(AppInteraction.MENU) // Hacky
             this.select()
         }
 

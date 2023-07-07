@@ -20,7 +20,8 @@ function selectRandom(level: number, gameState: GameState) {
     if (gameState.upgradeSelect.choices.length > 0 && gameState.levelState.level === level && gameState.upgradeSelect.isActive) {
         let index = Math.floor(Math.random() * gameState.upgradeSelect.choices.length)
         let choice = gameState.upgradeSelect.choices[index]
-        gameState.upgradeSelect.select(choice)
+        gameState.upgradeSelect.highlight(choice)
+        gameState.upgradeSelect.select()
     } else {
         console.error(`Skipping random upgrade selection: choice for level ${level} already made`)
     } 
@@ -165,6 +166,9 @@ class GameState {
     }
 
     parseInput() {
+        if (this.upgradeSelect.isActive) this.upgradeSelect.parseInput()
+        if (this.restartSelect.isActive) this.restartSelect.parseInput()
+
         if (this.gameApp.inputs.poll(AppInteraction.SPAWN) && this.config.checkInput) {
             this.spawn = true
         }

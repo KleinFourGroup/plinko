@@ -33,7 +33,7 @@ function makeSimpleCard(text: string) {
     let height = displayText.height + 2 * margin
 
     let backBox = new PIXI.Graphics()
-    backBox.lineStyle(3, COLORS["terminal green"])
+    // backBox.lineStyle(3, COLORS["terminal green"])
     backBox.beginFill(COLORS["dark terminal green"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
@@ -56,7 +56,7 @@ function makeUpgradeCard(title: string, description: string) {
 
     let backBox = new PIXI.Graphics()
 
-    backBox.lineStyle(3, COLORS["terminal green"])
+    // backBox.lineStyle(3, COLORS["terminal green"])
     backBox.beginFill(COLORS["dark terminal green"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
