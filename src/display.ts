@@ -5,6 +5,7 @@ import { UserInterface } from './ui'
 import { AppMode } from './mode'
 import { AppState } from './app'
 import { GameMenu } from './menu'
+import { MARGIN } from './cards'
 
 class DisplayState {
     app: AppState
@@ -98,7 +99,15 @@ class DisplayState {
     }
 
     updateMenu() {
-        this.menu.bar.box.position.set((this.app.renderer.width - this.menu.bar.box.width) / 2, 0)
+        let height = this.app.renderer.height
+        let width = Math.max(Math.min(this.app.renderer.width, height * 16 / 9), 600)
+        this.menu.stage.position.set((this.app.renderer.width - width) / 2, 0)
+        this.menu.bar.box.position.set(0, 0)
+        this.menu.description.update(
+            this.menu.bar.box.width + MARGIN,
+            height, 
+            width - (this.menu.bar.box.width + MARGIN),
+        )
     }
 }
 

@@ -24,13 +24,13 @@ let promptStyle = new PIXI.TextStyle({
     fill: COLORS["terminal amber"]
 })
 
-let margin = 10
-let width = 400 + 2 * margin
+const MARGIN = 10
+let width = 400 + 2 * MARGIN
 
 function makeSimpleCard(text: string) {
     let displayText = new PIXI.Text(text, titleStyle)
 
-    let height = displayText.height + 2 * margin
+    let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
     // backBox.lineStyle(3, COLORS["terminal green"])
@@ -40,7 +40,7 @@ function makeSimpleCard(text: string) {
 
     let card = new PIXI.Container()
     card.addChild(backBox)
-    displayText.position.set(margin, margin)
+    displayText.position.set(MARGIN, MARGIN)
     card.addChild(displayText)
 
     card.eventMode = 'static'
@@ -52,7 +52,7 @@ function makeUpgradeCard(title: string, description: string) {
     let titleText = new PIXI.Text(title, titleStyle)
     let descriptionText = new PIXI.Text(description, descStyle)
 
-    let height = titleText.height + descriptionText.height + 3 * margin
+    let height = titleText.height + descriptionText.height + 3 * MARGIN
 
     let backBox = new PIXI.Graphics()
 
@@ -64,9 +64,9 @@ function makeUpgradeCard(title: string, description: string) {
     let card = new PIXI.Container()
     card.addChild(backBox)
     card.addChild(titleText)
-    titleText.position.set(margin, margin)
+    titleText.position.set(MARGIN, MARGIN)
     card.addChild(descriptionText)
-    descriptionText.position.set(margin, titleText.height + 2 * margin)
+    descriptionText.position.set(MARGIN, titleText.height + 2 * MARGIN)
     card.eventMode = "static"
 
     return card
@@ -75,7 +75,7 @@ function makeUpgradeCard(title: string, description: string) {
 function makePromptCard(text: string) {
     let displayText = new PIXI.Text(text, promptStyle)
 
-    let height = displayText.height + 2 * margin
+    let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
     backBox.lineStyle(3, COLORS["terminal amber"])
@@ -85,7 +85,7 @@ function makePromptCard(text: string) {
 
     let card = new PIXI.Container()
     card.addChild(backBox)
-    displayText.position.set(margin, margin)
+    displayText.position.set(MARGIN, MARGIN)
     card.addChild(displayText)
 
     card.eventMode = 'static'
@@ -96,7 +96,7 @@ function makePromptCard(text: string) {
 function makeWorldCard(text: string) {
     let displayText = new PIXI.Text(text, titleStyle)
 
-    let height = displayText.height + 2 * margin
+    let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
     backBox.beginFill(COLORS["dark terminal green"])
@@ -105,7 +105,7 @@ function makeWorldCard(text: string) {
 
     let card = new PIXI.Container()
     card.addChild(backBox)
-    displayText.position.set(margin, margin)
+    displayText.position.set(MARGIN, MARGIN)
     card.addChild(displayText)
 
     card.eventMode = 'static'
@@ -120,4 +120,5 @@ function drawWorldSelect(select: PIXI.Graphics, x: number, y: number, width: num
     // select.endFill()
 }
 
+export {MARGIN}
 export {makeSimpleCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}

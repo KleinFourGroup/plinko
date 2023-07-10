@@ -26,7 +26,9 @@ class SelectorBar extends SelectorBase {
                 gameApp.replaceWorld()
                 gameApp.setMode(AppMode.GAME)
             })
-            onHighlights.push(null)
+            onHighlights.push((gameApp: AppState) => {
+                this.menu.activeSelection = world
+            })
         }
 
         super(menu.gameApp, choices, onSelects, onHighlights)
