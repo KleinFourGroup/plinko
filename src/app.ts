@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import { DisplayState } from './display'
 import { UserInterface } from './ui'
-import { GameState } from './game_state'
+import { GameState, PREVIEW_CONFIG } from './game_state'
 import { WORLD_LIST, WorldChoice, WorldInitializer } from './worlds'
 import { TimingManager } from './timing'
 import { InputHandler } from './keyboard'
@@ -40,10 +40,12 @@ class AppState {
         // Create the UI and link it to the gamestate
         this.ui = new UserInterface(this.gameState)
 
+        this.previewWorld = new GameState(this, PREVIEW_CONFIG)
+
         this.menu = new GameMenu(this)
 
         // Create a display manager to handle various resolutions
-        this.display = new DisplayState(this, this.gameState, this.ui, this.menu)
+        this.display = new DisplayState(this, this.gameState, this.ui, this.previewWorld, this.menu)
         
         this.perfText = new PIXI.Text()
         this.perfText.style.fontFamily = "monospace"
@@ -74,6 +76,11 @@ class AppState {
         this.gameState.initializer = this.currentWorld.init
     }
 
+    initPreview() {
+        this.menu.activeSelection.init(this.previewWorld)
+        this.previewWorld.initializer = this.menu.activeSelection.init
+    }
+
     replaceWorld() {
         let config = this.gameState.config
         this.gameState = new GameState(this, config)
@@ -82,6 +89,15 @@ class AppState {
         this.gameState.timing = this.timing
 
         this.init()
+    }
+
+    replacePreview() {
+        let config = this.previewWorld.config
+        this.previewWorld = new GameState(this, config)
+        this.display.replacePreview(this.previewWorld)
+        this.previewWorld.timing = this.timing
+
+        this.initPreview()
     }
 
     updatePerf() {
@@ -134,6 +150,17 @@ class AppState {
     
         this.menu.parseInput()
         this.inputs.reset()
+
+        if (this.menu.activeSelection.init !== this.previewWorld.initializer) {
+            console.log("New preview!")
+            this.replacePreview()
+        }
+
+        this.previewWorld.parseEvents()
+        this.previewWorld.updateFrame(this.timing.delta)
+        let stepped = this.previewWorld.updateStep()
+        if (stepped) this.timing.step()
+        this.previewWorld.updateGraphics()
 
         this.display.updateMenu()
         

@@ -334,5 +334,5 @@ class GameState {
         }
     }
 }
-
+export {PREVIEW_CONFIG}
 export {GameState}

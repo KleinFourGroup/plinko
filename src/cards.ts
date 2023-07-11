@@ -25,6 +25,7 @@ let promptStyle = new PIXI.TextStyle({
 })
 
 const MARGIN = 10
+const BIG_MARGIN = 20
 let width = 400 + 2 * MARGIN
 
 function makeSimpleCard(text: string) {
@@ -120,5 +121,5 @@ function drawWorldSelect(select: PIXI.Graphics, x: number, y: number, width: num
     // select.endFill()
 }
 
-export {MARGIN}
+export {MARGIN, BIG_MARGIN}
 export {makeSimpleCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}

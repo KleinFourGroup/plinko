@@ -5,7 +5,7 @@ import { UserInterface } from './ui'
 import { AppMode } from './mode'
 import { AppState } from './app'
 import { GameMenu } from './menu'
-import { MARGIN } from './cards'
+import { BIG_MARGIN, MARGIN } from './cards'
 
 class DisplayState {
     app: AppState
@@ -14,7 +14,8 @@ class DisplayState {
     gameState: GameState
     ui: UserInterface
     menu: GameMenu
-    constructor(app: AppState, gameState: GameState, ui: UserInterface, menu: GameMenu) {
+    previewWorld: GameState
+    constructor(app: AppState, gameState: GameState, ui: UserInterface, previewWorld: GameState, menu: GameMenu) {
         this.app = app
 
         this.gameStage = new PIXI.Container()
@@ -29,6 +30,9 @@ class DisplayState {
         this.menuStage = new PIXI.Container()
         this.menuStage.position.set(0, 0)
         this.app.stage.addChild(this.menuStage)
+
+        this.previewWorld = previewWorld
+        this.menuStage.addChild(this.previewWorld.stage)
 
         this.menu = menu
         this.menuStage.addChild(this.menu.stage)
@@ -59,6 +63,16 @@ class DisplayState {
 
         this.gameStage.addChild(this.gameState.stage)
         this.gameStage.addChild(this.ui.stage)
+    }
+
+    replacePreview(previewWorld: GameState) {
+        this.menuStage.removeChild(this.previewWorld.stage)
+        this.menuStage.removeChild(this.menu.stage)
+
+        this.previewWorld = previewWorld
+
+        this.menuStage.addChild(this.previewWorld.stage)
+        this.menuStage.addChild(this.menu.stage)
     }
 
     updateGame() {
@@ -104,10 +118,22 @@ class DisplayState {
         this.menu.stage.position.set((this.app.renderer.width - width) / 2, 0)
         this.menu.bar.box.position.set(0, 0)
         this.menu.description.update(
-            this.menu.bar.box.width + MARGIN,
+            this.menu.bar.box.width + BIG_MARGIN,
             height, 
             width - (this.menu.bar.box.width + MARGIN),
         )
+
+        let areaX = this.menu.stage.x + this.menu.bar.box.width + MARGIN
+        let areaY = this.menu.stage.y + BIG_MARGIN
+        let areaW = width - (this.menu.bar.box.width + MARGIN)
+        let areaH = height - (this.menu.description.box.height + MARGIN + 2 * BIG_MARGIN)
+
+        let scale = Math.min(areaW / this.previewWorld.width, areaH / this.previewWorld.height)
+        this.previewWorld.stage.scale.set(scale, scale)
+
+        let stageX = areaX + (areaW - scale * this.previewWorld.width) / 2
+        let stageY = areaY + (areaH - scale * this.previewWorld.height) / 2
+        this.previewWorld.stage.position.set(stageX, stageY)
     }
 }
 
