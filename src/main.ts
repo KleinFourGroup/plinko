@@ -3,7 +3,7 @@ import * as Matter from 'matter-js'
 
 import { COLORS } from './colors'
 import { AppMode, AppState } from './app'
-import { WORLD_LIST } from './worlds'
+import { WORLD_LIST } from './worlds/worlds'
 import { keydownHandler } from './keyboard'
 
 // Create the application

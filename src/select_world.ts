@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import { AppMode, AppState } from './app'
-import { WORLD_LIST, WorldChoice } from './worlds'
+import { WORLD_LIST, WorldChoice } from './worlds/worlds'
 import { makePromptCard, makeWorldCard, drawWorldSelect } from './cards'
 import { GameMenu } from './menu'
 import { SelectorCallback, SelectorBase } from './select'

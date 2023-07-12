@@ -13,7 +13,7 @@ import { PegArray, GoalArray } from './arrays'
 import { RestartSelect } from './select_restart'
 import { AppMode, AppState } from './app'
 import { AppInteraction } from './keyboard'
-import { WorldInitializer } from './worlds'
+import { WorldInitializer } from './worlds/worlds'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
