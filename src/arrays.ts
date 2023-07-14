@@ -1,21 +1,31 @@
 import { GoalRect, Peg, Bouncer } from './physics_objects'
 import { GameState } from './game_state'
+import { TimedPath } from './point'
+import Matter from 'matter-js'
 
 class PegArray {
     gameState: GameState
     pegs: Array<Peg | Bouncer>
+    paths: Array<TimedPath>
     pegValue: number
     bouncerValue: number
     constructor(gameState: GameState) {
         this.gameState = gameState
         this.pegs = []
+        this.paths = []
         this.pegValue = 1
         this.bouncerValue = 1
     }
 
-    add(peg: Peg | Bouncer) {
+    add(peg: Peg | Bouncer, path: TimedPath = null, startTime: number = 0) {
         peg.addTo(this.gameState.stage)
         this.pegs.push(peg)
+        this.paths.push(path)
+        if (path !== null) {
+            path.setTime(startTime)
+            let newPoint = path.position()
+            Matter.Body.setPosition(peg.body, newPoint)
+        }
     }
 
     replace(index: number, newPeg: Peg | Bouncer) {
@@ -24,6 +34,18 @@ class PegArray {
         oldPeg.delete()
         newPeg.addTo(this.gameState.stage)
         this.pegs[index] = newPeg
+    }
+
+    update(deltaMS: number) {
+        for (let index = 0; index < this.pegs.length; index++) {
+            let path = this.paths[index]
+            if (path !== null) {
+                path.update(deltaMS)
+                let newPoint = path.position()
+                let peg = this.pegs[index]
+                Matter.Body.setPosition(peg.body, newPoint)
+            }
+        }
     }
 
     get pegCount() {

@@ -1,7 +1,7 @@
 import * as Matter from 'matter-js'
 
 import { GameState } from './game_state'
-import { Point, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
+import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 import { BouncerCollision, PegCollision, ScoreCollision } from './events'
 
 function collisionHandler(event: Matter.IEventCollision<Matter.Engine>, labelMap: Map<string, PhysicsObject>, gameState: GameState) {

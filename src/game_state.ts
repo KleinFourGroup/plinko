@@ -306,8 +306,11 @@ class GameState {
     }
 
     updateStep() {
+        const STEP = 16.67
         if (this.running) {
-            Matter.Engine.update(this.engine, 16.67)
+            this.pegArray.update(STEP)
+
+            Matter.Engine.update(this.engine, STEP)
             
             for (let orb of this.orbs) {
                 if (orb.body.position.x < -10 || orb.body.position.x > this.width + 10 || orb.body.position.y < -10 || orb.body.position.y > this.height + 10) {

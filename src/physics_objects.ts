@@ -2,11 +2,7 @@ import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
 import { COLORS } from './colors'
-
-type Point = {
-    x: number,
-    y: number
-}
+import { Point } from './point'
 
 const labelMap: Map<string, PhysicsObject> = new Map<string, PhysicsObject>()
 let objCount = 0
@@ -224,6 +220,5 @@ class Bouncer extends PhysicsObject {
     }
 }
 
-export {Point}
 export {labelMap}
 export {PhysicsObject, BarrierRect, BarrierPoly, Tooth, GoalRect, Orb, Peg, Bouncer}

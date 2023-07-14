@@ -2,7 +2,8 @@ import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
 import { COLORS } from './colors'
-import { Point, labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth } from './physics_objects'
+import { Point } from './point'
 import { GameState } from './game_state'
 
 const MAX_SPEED = 20

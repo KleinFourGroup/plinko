@@ -1,5 +1,5 @@
 import { GameState } from './game_state'
-import { Point, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
+import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
 
 class GameEvent {
     typeStr: string
