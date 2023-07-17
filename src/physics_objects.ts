@@ -167,8 +167,9 @@ class Orb extends PhysicsObject {
 
     constructor(world: Matter.World, x: number, y: number, radius: number) {
         let options: Matter.IBodyDefinition = {
-            restitution: 0.5,
-            friction: 0.02
+            restitution: 0.55,
+            friction: 0.02,
+            mass: 0.1
         }
         let body = Matter.Bodies.circle(x, y, radius, options)
 
@@ -187,7 +188,9 @@ class Peg extends PhysicsObject {
 
     constructor(world: Matter.World, x: number, y: number, radius: number) {
         let options: Matter.IBodyDefinition = {
-            isStatic: true
+            isStatic: true,
+            restitution: 0.5,
+            mass: 1
         }
         let body = Matter.Bodies.circle(x, y, radius, options)
 
@@ -206,7 +209,9 @@ class Bouncer extends PhysicsObject {
 
     constructor(world: Matter.World, x: number, y: number, radius: number) {
         let options: Matter.IBodyDefinition = {
-            isStatic: true
+            isStatic: true,
+            restitution: 0.5,
+            mass: 1
         }
         let body = Matter.Bodies.circle(x, y, radius, options)
 

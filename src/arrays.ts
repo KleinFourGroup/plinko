@@ -43,7 +43,13 @@ class PegArray {
                 path.update(deltaMS)
                 let newPoint = path.position()
                 let peg = this.pegs[index]
-                Matter.Body.setPosition(peg.body, newPoint)
+                // @ts-ignore
+                Matter.Body.setPosition(peg.body, newPoint, true)
+                // Rescale to account for actual delta
+                let scale = deltaMS * 60 / 1000
+                let newVx = peg.body.velocity.x * scale
+                let newVy = peg.body.velocity.y * scale
+                Matter.Body.setVelocity(peg.body, {x: newVx, y: newVy})
             }
         }
     }
