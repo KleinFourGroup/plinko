@@ -7,8 +7,9 @@ import { WorldChoice } from './worlds'
 import { ParametricFn, TimedPath } from '../point'
 
 function wheelWorldInit(state: GameState) {
-    let numPegs = 16
-    let period = 3000
+    let numPegs = 24
+    let rungs = 4
+    let period = 6000
     let bins = 7
     let wallWidth = 40
     let toothMinHeight = wallWidth * 3 / 4
@@ -29,7 +30,7 @@ function wheelWorldInit(state: GameState) {
 
     for (let binNum = 0; binNum < bins; binNum++) {
         let off = wallWidth + binNum * (wallWidth + goalWidth)
-        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - toothMinHeight / 2, goalWidth, toothMinHeight, 50 + 50 * Math.abs(binNum - (bins - 1) / 2))
+        let goal = new GoalRect(state.world, off + goalWidth / 2, state.height - toothMinHeight / 2, goalWidth, toothMinHeight, 50 * (bins + 1) / 2 - 50 * Math.abs(binNum - (bins - 1) / 2))
         state.goalArray.add(goal)
     }
 
@@ -61,24 +62,32 @@ function wheelWorldInit(state: GameState) {
     let pegX = state.width / 2
     let pegY = 200 + pegHeight / 2
 
-    let orbit: ParametricFn = (time: number) => {
+    let orbit = (radius:number, time: number) => {
         let x = pegX + radius * Math.sin(time *  2 * Math.PI / period)
         let y = pegY - radius * Math.cos(time *  2 * Math.PI / period)
         return {x: x, y: y}
     }
 
-    for (let num = 0; num < numPegs; num++) {
-        let startTime = num * period / numPegs
-        let path = new TimedPath(orbit)
-        let peg = new Peg(state.world, pegX, pegY, 5)
-        state.pegArray.add(peg, path, startTime)
+    let dist = Math.floor((2 * Math.PI * radius) / numPegs)
+
+    for (let rung = rungs; rung > 0; rung--) {
+        let pegs = Math.floor((2 * Math.PI * radius * rung) / (dist * rungs))
+        for (let num = 0; num < pegs; num++) {
+            let startTime = num * period / pegs
+            let direction = ((rungs - rung) % 2 == 0) ? 1 : -1
+            let path = new TimedPath((time: number) => {
+                return orbit(radius * rung / rungs, direction * time)
+            })
+            let peg = new Peg(state.world, pegX, pegY, 5)
+            state.pegArray.add(peg, path, startTime)
+        }
     }
 }
 
 let wheelWorld: WorldChoice = {
     init: wheelWorldInit,
-    title: "Ferris Wheel",
-    description: "A ferris wheel of pegs rotating over a row of goals."
+    title: "Thresher",
+    description: "Concentric rings of pegs rotating over a row of goals."
 }
 
 export {wheelWorld}
