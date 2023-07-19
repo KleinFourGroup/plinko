@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import { AppState } from './app'
 import { WorldChoice } from './worlds/worlds'
-import { SelectorBar } from './select_world'
+import { SelectorBar } from './selector/select_world'
 import { COLORS } from './colors'
 import { MARGIN } from './cards'
 

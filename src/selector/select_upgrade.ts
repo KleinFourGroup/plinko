@@ -1,11 +1,11 @@
 import * as PIXI from 'pixi.js'
 
-import { COLORS } from './colors'
-import { GameState } from './game_state'
-import { Upgrade } from './upgrade'
-import { makePromptCard } from './cards'
+import { COLORS } from '../colors'
+import { GameState } from '../game_state'
+import { Upgrade } from '../upgrade'
+import { makePromptCard } from '../cards'
 import { SelectorBase } from './select'
-import { AppState } from './app'
+import { AppState } from '../app'
 
 class UpgradeSelect extends SelectorBase {
     box: PIXI.Container

@@ -3,8 +3,8 @@ import * as PIXI from 'pixi.js'
 import { COLORS } from './colors'
 import { GameState } from './game_state'
 import { TopBar, StatsBar } from './bars'
-import { UpgradeSelect } from './select_upgrade'
-import { RestartSelect } from './select_restart'
+import { UpgradeSelect } from './selector/select_upgrade'
+import { RestartSelect } from './selector/select_restart'
 
 class UserInterface {
     stage: PIXI.Container

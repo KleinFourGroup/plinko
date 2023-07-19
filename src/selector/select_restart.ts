@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js'
 
-import { GameState } from './game_state'
-import { ContinueGame, RestartEvent } from './events'
-import { makePromptCard, makeSimpleCard } from './cards'
+import { GameState } from '../game_state'
+import { ContinueGame, RestartEvent } from '../events'
+import { makePromptCard, makeSimpleCard } from '../cards'
 import { SelectorBase, SelectorCallback } from './select'
-import { AppState } from './app'
+import { AppState } from '../app'
 
 class RestartSelect extends SelectorBase {
     box: PIXI.Container
