@@ -119,14 +119,14 @@ class AppState {
         // Handle the custom event loop
         this.gameState.parseEvents()
     
-        // Update timing sensative game logic
-        this.gameState.updateFrame(this.timing.delta)
-    
         // Update the key game logic
         // if (timing.needsStep(20)) {
             let stepped = this.gameState.updateStep()
             if (stepped) this.timing.step()
         // }
+    
+        // Update timing sensative game logic
+        this.gameState.updateFrame(this.timing.delta)
     
         this.gameState.checkGameOver()
     
@@ -157,9 +157,9 @@ class AppState {
         }
 
         this.previewWorld.parseEvents()
-        this.previewWorld.updateFrame(this.timing.delta)
         let stepped = this.previewWorld.updateStep()
         if (stepped) this.timing.step()
+        this.previewWorld.updateFrame(this.timing.delta)
         this.previewWorld.updateGraphics()
 
         this.display.updateMenu()

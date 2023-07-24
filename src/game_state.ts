@@ -14,6 +14,7 @@ import { RestartSelect } from './selector/select_restart'
 import { AppMode, AppState } from './app'
 import { AppInteraction } from './keyboard'
 import { WorldInitializer } from './worlds/worlds'
+import { FXStage, ScoreFX } from './effects'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
@@ -67,6 +68,7 @@ class GameState {
     gameApp: AppState
     config: GameConfig
     initializer: WorldInitializer
+    box: PIXI.Container
     stage: PIXI.Container
     running: boolean
     spawn: boolean
@@ -84,6 +86,7 @@ class GameState {
     upgradeManager: UpgradeManager
     upgradeSelect: UpgradeSelect
     restartSelect: RestartSelect
+    vfx: FXStage
 
     constructor(gameApp: AppState, config: Partial<GameConfig> = {}) {
         this.gameApp = gameApp
@@ -92,7 +95,11 @@ class GameState {
         
         this.initializer = null
 
+        this.box = new PIXI.Container()
+
         this.stage = new PIXI.Container()
+        this.box.addChild(this.stage)
+
         this.upgradeSelect = null
         this.restartSelect = null
 
@@ -118,6 +125,8 @@ class GameState {
         this.pegArray = new PegArray(this)
         this.goalArray = new GoalArray(this)
         this.upgradeManager = new UpgradeManager(this)
+
+        this.vfx = new FXStage(this)
     }
 
     destroy() {
@@ -147,6 +156,8 @@ class GameState {
             orb.delete()
         }
         this.orbs.splice(0, this.orbs.length)
+
+        this.vfx.destroy()
     }
 
     get width() {
@@ -199,13 +210,19 @@ class GameState {
                 case "score":
                     let score = (event as ScoreCollision)
                     score.orb.removeFrom(this.stage)
-                    score.orb.delete()
                     this.orbs.splice(this.orbs.indexOf(score.orb), 1)
-                    if (this.config.trackProgress) this.levelState.add(score.goal.score)
+                    if (this.config.trackProgress) {
+                        this.levelState.add(score.goal.score)
+                        this.vfx.register(new ScoreFX(`+${score.goal.score}`, score.orb.x, score.orb.y))
+                    }
+                    score.orb.delete()
                     break
                 case "peghit":
                     let peg = (event as PegCollision)
-                    if (this.config.trackProgress) this.levelState.add(this.pegArray.pegValue)
+                    if (this.config.trackProgress) {
+                        this.levelState.add(this.pegArray.pegValue)
+                        this.vfx.register(new ScoreFX(`+${this.pegArray.pegValue}`, peg.orb.x, peg.orb.y))
+                    }
                     break
                 case "bouncerhit":
                     let bounce = (event as BouncerCollision)
@@ -215,7 +232,10 @@ class GameState {
                     let oldVelX = bounce.orb.body.velocity.x
                     let oldVelY = bounce.orb.body.velocity.y
                     Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
-                    if (this.config.trackProgress) this.levelState.add(this.pegArray.bouncerValue)
+                    if (this.config.trackProgress) {
+                        this.levelState.add(this.pegArray.bouncerValue)
+                        this.vfx.register(new ScoreFX(`+${this.pegArray.bouncerValue}`, bounce.orb.x, bounce.orb.y))
+                    }
                     // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break
                 case "levelup":
@@ -295,7 +315,12 @@ class GameState {
     updateFrame(deltaMS: number) {
         this.timing.runTimers(this)
 
-        if (this.running) this.spawner.update(this.timing.delta)
+        this.vfx.update(this.timing.delta)
+    }
+
+    updateStep() {
+        const STEP = 16.67
+        if (this.running) this.spawner.update(STEP)
     
         if (this.config.autoControl || this.spawn) {
             this.spawn = false
@@ -303,10 +328,7 @@ class GameState {
                 this.spawner.spawnOrb(!this.config.countBalls || !this.config.trackProgress)
             }
         }
-    }
 
-    updateStep() {
-        const STEP = 16.67
         if (this.running) {
             this.pegArray.update(STEP)
 

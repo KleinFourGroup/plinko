@@ -23,7 +23,7 @@ class DisplayState {
         this.app.stage.addChild(this.gameStage)
 
         this.gameState = gameState
-        this.gameStage.addChild(this.gameState.stage)
+        this.gameStage.addChild(this.gameState.box)
         this.ui = ui
         this.gameStage.addChild(this.ui.stage)
 
@@ -32,7 +32,7 @@ class DisplayState {
         this.app.stage.addChild(this.menuStage)
 
         this.previewWorld = previewWorld
-        this.menuStage.addChild(this.previewWorld.stage)
+        this.menuStage.addChild(this.previewWorld.box)
 
         this.menu = menu
         this.menuStage.addChild(this.menu.stage)
@@ -56,22 +56,22 @@ class DisplayState {
     }
 
     replaceWorld(gameState: GameState) {
-        this.gameStage.removeChild(this.gameState.stage)
+        this.gameStage.removeChild(this.gameState.box)
         this.gameStage.removeChild(this.ui.stage)
 
         this.gameState = gameState
 
-        this.gameStage.addChild(this.gameState.stage)
+        this.gameStage.addChild(this.gameState.box)
         this.gameStage.addChild(this.ui.stage)
     }
 
     replacePreview(previewWorld: GameState) {
-        this.menuStage.removeChild(this.previewWorld.stage)
+        this.menuStage.removeChild(this.previewWorld.box)
         this.menuStage.removeChild(this.menu.stage)
 
         this.previewWorld = previewWorld
 
-        this.menuStage.addChild(this.previewWorld.stage)
+        this.menuStage.addChild(this.previewWorld.box)
         this.menuStage.addChild(this.menu.stage)
     }
 
