@@ -213,7 +213,8 @@ class GameState {
                     this.orbs.splice(this.orbs.indexOf(score.orb), 1)
                     if (this.config.trackProgress) {
                         this.levelState.add(score.goal.score)
-                        this.vfx.register(new ScoreFX(`+${score.goal.score}`, score.orb.x, score.orb.y))
+                        this.spawner.addScore(score.goal.score)
+                        this.vfx.register(new ScoreFX(`${this.spawner.dropScore}`, score.orb.x, score.orb.y))
                     }
                     score.orb.delete()
                     break
@@ -221,7 +222,8 @@ class GameState {
                     let peg = (event as PegCollision)
                     if (this.config.trackProgress) {
                         this.levelState.add(this.pegArray.pegValue)
-                        this.vfx.register(new ScoreFX(`+${this.pegArray.pegValue}`, peg.orb.x, peg.orb.y))
+                        this.spawner.addScore(this.pegArray.pegValue)
+                        this.vfx.register(new ScoreFX(`${this.spawner.dropScore}`, peg.orb.x, peg.orb.y))
                     }
                     break
                 case "bouncerhit":
@@ -234,7 +236,8 @@ class GameState {
                     Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
                     if (this.config.trackProgress) {
                         this.levelState.add(this.pegArray.bouncerValue)
-                        this.vfx.register(new ScoreFX(`+${this.pegArray.bouncerValue}`, bounce.orb.x, bounce.orb.y))
+                        this.spawner.addScore(this.pegArray.bouncerValue)
+                        this.vfx.register(new ScoreFX(`${this.spawner.dropScore}`, bounce.orb.x, bounce.orb.y))
                     }
                     // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break

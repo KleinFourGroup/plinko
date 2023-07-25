@@ -15,6 +15,7 @@ class Spawner {
     time: number
     speed: number
     dropCount: number
+    dropScore: number
     velocity: number
     accuracy: number
     balls: number
@@ -27,6 +28,7 @@ class Spawner {
         this.state = gameState
         this.time = 0.0
         this.dropCount = 1
+        this.dropScore = 0
         this.accuracy = 0
         this.velocity = 0
         this.speed = 0
@@ -62,7 +64,12 @@ class Spawner {
         this.accuracy = Math.max(Math.min(this.accuracy, MAX_ACCURACY), 0)
     }
 
+    addScore(score: number) {
+        this.dropScore += score
+    }
+
     spawnOrb(override: boolean = false) {
+        this.dropScore = 0
         for (let count = 0; count < this.dropCount && (this.ballsUsed < this.balls || override); count++) {
             let newOrb = new Orb(this.state.world,  this.spawnPoint.x + (2 * Math.random() - 1), this.spawnPoint.y + (2 * Math.random() - 1), 15)
             let sigVel = Math.sign(this.velocity) * (2 * MAX_VELOCITY / (1 + Math.exp(-2 * Math.abs(this.velocity) / MAX_VELOCITY)) - MAX_VELOCITY)
