@@ -247,7 +247,8 @@ class GameState {
                     if (levelup.level === 1 + this.levelState.level) {
                         this.levelState.levelUp()
                         this.spawner.ballsUsed = 0
-                        this.spawner.addSpeed(1)
+                        // this.spawner.addSpeed(1)
+                        this.spawner.addBalls(3)
                         this.upgradeManager.generate()
                         this.setRunning(false)
                         if (this.config.autoControl) this.timing.createTimer("autopick", 5000, (state: GameState) => {

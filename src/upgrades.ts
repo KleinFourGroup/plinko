@@ -32,7 +32,7 @@ function addBouncers(times: number, gameState: GameState) {
 }
 
 let bouncerCreateUpgrade: UpgradeSignature = {
-    weight: 10,
+    weight: 15,
     magnitude: (state: GameState) => {
         return 2 + getUpgradeLevel(2 / 3, 3)
     },
@@ -49,10 +49,28 @@ let bouncerCreateUpgrade: UpgradeSignature = {
     }
 }
 
-let speedUpgrade: UpgradeSignature = {
-    weight: 10,
+let speedIncUpgrade: UpgradeSignature = {
+    weight: 5,
     magnitude: (state: GameState) => {
-        return 2 + getUpgradeLevel(2 / 3, 3)
+        return 1 + getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Speed +${magnitude}`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Increase the spawner's speed by ${magnitude}`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.spawner.addSpeed(magnitude)
+        }
+    }
+}
+
+let speedDecUpgrade: UpgradeSignature = {
+    weight: 5,
+    magnitude: (state: GameState) => {
+        return 1 + getUpgradeLevel(2 / 3, 3)
     },
     title: (magnitude: number, state: GameState) => {
         return `Speed -${magnitude}`
@@ -67,8 +85,8 @@ let speedUpgrade: UpgradeSignature = {
     }
 }
 
-let accuracyUpgrade: UpgradeSignature = {
-    weight: 10,
+let accuracyIncUpgrade: UpgradeSignature = {
+    weight: 5,
     magnitude: (state: GameState) => {
         return 10 * getUpgradeLevel(2 / 3, 3)
     },
@@ -85,8 +103,26 @@ let accuracyUpgrade: UpgradeSignature = {
     }
 }
 
+let accuracyDecUpgrade: UpgradeSignature = {
+    weight: 5,
+    magnitude: (state: GameState) => {
+        return 10 * getUpgradeLevel(2 / 3, 3)
+    },
+    title: (magnitude: number, state: GameState) => {
+        return `Accuracy -${magnitude}%`
+    },
+    description: (magnitude: number, state: GameState) => {
+        return `Decrease the spawner's accuracy by ${magnitude}%`
+    },
+    effect: (magnitude: number, state: GameState) => {
+        return (state: GameState) => {
+            state.spawner.addAccuracy(-magnitude)
+        }
+    }
+}
+
 let pegValueUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 7.5,
     magnitude: (state: GameState) => {
         return 1 + 2 * getUpgradeLevel(2 / 3, 3)
     },
@@ -104,7 +140,7 @@ let pegValueUpgrade: UpgradeSignature = {
 }
 
 let bouncerValueUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 7.5,
     magnitude: (state: GameState) => {
         return 1 + 2 * getUpgradeLevel(2 / 3, 3)
     },
@@ -122,7 +158,7 @@ let bouncerValueUpgrade: UpgradeSignature = {
 }
 
 let goalAddUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 2.5,
     magnitude: (state: GameState) => {
         return 50 * getUpgradeLevel(2 / 3, 3)
     },
@@ -140,7 +176,7 @@ let goalAddUpgrade: UpgradeSignature = {
 }
 
 let goalMultiplyUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 2.5,
     magnitude: (state: GameState) => {
         return 5 * getUpgradeLevel(2 / 3, 3)
     },
@@ -158,7 +194,7 @@ let goalMultiplyUpgrade: UpgradeSignature = {
 }
 
 let goalShuffleUpgrade: UpgradeSignature = {
-    weight: 1,
+    weight: 2.5,
     magnitude: (state: GameState) => {
         return 1
     },
@@ -212,9 +248,9 @@ let freePointsUpgrade: UpgradeSignature = {
 }
 
 let ballExtraUpgrade: UpgradeSignature = {
-    weight: 10,
+    weight: 5,
     magnitude: (state: GameState) => {
-        return 1 + getUpgradeLevel(2 / 3, 3)
+        return 4 + getUpgradeLevel(2 / 3, 6)
     },
     title: (magnitude: number, state: GameState) => {
         return `Balls +${magnitude}`
@@ -231,8 +267,10 @@ let ballExtraUpgrade: UpgradeSignature = {
 
 const UPGRADE_LIST = [
     bouncerCreateUpgrade,
-    speedUpgrade,
-    accuracyUpgrade,
+    speedIncUpgrade,
+    speedDecUpgrade,
+    accuracyIncUpgrade,
+    accuracyDecUpgrade,
     pegValueUpgrade,
     bouncerValueUpgrade,
     goalAddUpgrade,

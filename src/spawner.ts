@@ -29,9 +29,9 @@ class Spawner {
         this.time = 0.0
         this.dropCount = 1
         this.dropScore = 0
-        this.accuracy = 0
+        this.accuracy = MAX_ACCURACY / 2
         this.velocity = 0
-        this.speed = 0
+        this.speed = Math.round(MAX_SPEED / 2)
         
         this.balls = 5
         this.ballsUsed = 0
@@ -64,6 +64,10 @@ class Spawner {
         this.accuracy = Math.max(Math.min(this.accuracy, MAX_ACCURACY), 0)
     }
 
+    addBalls(extra: number) {
+        this.balls += extra
+    }
+
     addScore(score: number) {
         this.dropScore += score
     }
@@ -80,16 +84,32 @@ class Spawner {
         }
     }
 
+    // update(delta: number) {
+    //     let progress = this.speed / MAX_SPEED
+
+    //     let off = Math.abs(Math.sin(this.time)) * (1 + 1.5 * progress)
+    
+    //     this.time += (0.1 + 0.9 * off * off) * 3 * delta / 1000
+
+    //     let oldX = this.spawnPoint.x
+    
+    //     this.spawnPoint.x = this.state.width / 2 + Math.sin(this.time) * (this.state.width - 70) / 2
+
+    //     this.velocity = ((this.spawnPoint.x - oldX) / delta) * 16.67
+
+    //     this.spawnDot.position.set(this.spawnPoint.x, this.spawnPoint.y)
+    // }
+
     update(delta: number) {
         let progress = this.speed / MAX_SPEED
 
-        let off = Math.abs(Math.sin(this.time)) * (1 + 1.5 * progress)
+        let off = Math.abs(Math.sin(this.time)) * (0.5 + progress)
     
-        this.time += (0.1 + 0.9 * off * off) * 3 * delta / 1000
+        this.time += (0.2 + 0.8 * off * off) * 3 * delta / 1000
 
         let oldX = this.spawnPoint.x
     
-        this.spawnPoint.x = this.state.width / 2 + Math.sin(this.time) * (this.state.width - 70) / 2
+        this.spawnPoint.x = this.spawnBase.x + Math.sin(this.time) * (this.state.width - 70) / 2
 
         this.velocity = ((this.spawnPoint.x - oldX) / delta) * 16.67
 

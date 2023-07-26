@@ -3,7 +3,7 @@ import { GameState } from "./game_state"
 
 
 function nextLevel(level: number) {
-    return Math.round(Math.pow(level, 2) * 250)
+    return Math.round(Math.pow(level, 2.025) * 250)
 }
 
 class LevelManager {

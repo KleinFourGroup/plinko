@@ -105,6 +105,7 @@ class FXStage {
         for (let effect of this.effects) {
             effect.destroy()
         }
+        this.effects.splice(0, this.effects.length)
     }
 }
 
