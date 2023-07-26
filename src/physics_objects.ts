@@ -114,6 +114,38 @@ class GoalRect extends PhysicsObject {
     }
 }
 
+class HiddenBoundary extends PhysicsObject {
+    width: number
+    height: number
+
+    constructor(world: Matter.World, x: number, y: number, width: number, height: number) {
+        let options: Matter.IBodyDefinition = {
+            isStatic: true
+        }
+        let body = Matter.Bodies.rectangle(x, y, width, height, options)
+
+        let graphics = new PIXI.Graphics()
+        graphics.pivot.set(width / 2, height / 2)
+
+        super(world, body, graphics)
+        this.width = width
+        this.height = height
+    }
+
+    show() {
+        let graphics = this.graphics as PIXI.Graphics
+        graphics.clear()
+        graphics.beginFill(COLORS["dark neon red"])
+        graphics.drawRect(0, 0, this.width, this.height)
+        graphics.endFill()
+    }
+
+    hide() {
+        let graphics = this.graphics as PIXI.Graphics
+        graphics.clear()
+    }
+}
+
 class BarrierPoly extends PhysicsObject {
     points: Array<Point>
 
@@ -226,4 +258,4 @@ class Bouncer extends PhysicsObject {
 }
 
 export {labelMap}
-export {PhysicsObject, BarrierRect, BarrierPoly, Tooth, GoalRect, Orb, Peg, Bouncer}
+export {PhysicsObject, BarrierRect, BarrierPoly, HiddenBoundary, Tooth, GoalRect, Orb, Peg, Bouncer}

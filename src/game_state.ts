@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
 import { getCollisionHandler } from './collision'
-import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './physics_objects'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from './physics_objects'
 import { Spawner } from './spawner'
 import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent } from './events'
 import { UpgradeSelect } from './selector/select_upgrade'
@@ -79,7 +79,7 @@ class GameState {
     eventQueue: Array<GameEvent>
     spawner: Spawner
     levelState: LevelManager
-    walls: Array<BarrierRect | BarrierPoly>
+    walls: Array<BarrierRect | BarrierPoly | HiddenBoundary>
     orbs: Array<Orb>
     pegArray: PegArray
     goalArray: GoalArray

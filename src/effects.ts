@@ -103,6 +103,7 @@ class FXStage {
 
     destroy() {
         for (let effect of this.effects) {
+            this.stage.removeChild(effect.box)
             effect.destroy()
         }
         this.effects.splice(0, this.effects.length)

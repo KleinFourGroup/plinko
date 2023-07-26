@@ -1,5 +1,5 @@
 import { GameState } from '../game_state'
-import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from '../physics_objects'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from '../physics_objects'
 import { WorldChoice } from './worlds'
 
 type binValsFn = (binInd: number, binCount: number) => number
@@ -13,7 +13,8 @@ const inBins: binValsFn = (binInd: number, binCount: number) => {
 }
 
 function baseWorldInit(state: GameState, bins: number, binVals: binValsFn) {
-    let wallWidth = 40
+    const boundsWidth = 250
+    const wallWidth = 40
     let toothMinHeight = wallWidth * 3 / 4
     let toothMaxHeight = wallWidth * 3 / 2
 
@@ -57,6 +58,26 @@ function baseWorldInit(state: GameState, bins: number, binVals: binValsFn) {
     let rightWall = new BarrierPoly(state.world, state.width, 0, ...rightWallVerts)
     rightWall.addTo(state.stage)
     state.walls.push(rightWall)
+
+    let topBound = new HiddenBoundary(state.world, state.width / 2, -boundsWidth / 2, state.width + 2 * boundsWidth, boundsWidth)
+    topBound.addTo(state.stage)
+    state.walls.push(topBound)
+    // topBound.show()
+
+    let bottomBound = new HiddenBoundary(state.world, state.width / 2, state.height + boundsWidth / 2, state.width + 2 * boundsWidth, boundsWidth)
+    bottomBound.addTo(state.stage)
+    state.walls.push(bottomBound)
+    // bottomBound.show()
+
+    let leftBound = new HiddenBoundary(state.world, -boundsWidth / 2, state.height / 2, boundsWidth, state.height)
+    leftBound.addTo(state.stage)
+    state.walls.push(leftBound)
+    // leftBound.show()
+
+    let rightBound = new HiddenBoundary(state.world, state.width + boundsWidth / 2, state.height / 2, boundsWidth, state.height)
+    rightBound.addTo(state.stage)
+    state.walls.push(rightBound)
+    // rightBound.show()
 
     return wallWidth
 }

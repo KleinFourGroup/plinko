@@ -50,7 +50,10 @@ class AppState {
         this.perfText = new PIXI.Text()
         this.perfText.style.fontFamily = "monospace"
         this.perfText.style.fill = COLORS["terminal green"]
-        this.perfText.position.set(5, 5)
+        this.perfText.style.align = "right"
+        this.perfText.alpha = 0.5
+        this.perfText.anchor.set(1, 0)
+        this.perfText.position.set(this.app.renderer.width - 5, 5)
         this.stage.addChild(this.perfText)
 
         // Set up a timing manager
@@ -105,7 +108,8 @@ class AppState {
         let load = this.timing.load
         let width = this.app.renderer.width
         let height = this.app.renderer.height
-        this.perfText.text = `${Math.round(fps)} - ${Math.round((load * 100))}%\ (${width}x${height})` 
+        this.perfText.text = `${Math.round(fps)}\n${(Math.round((load * 1000)) / 10).toFixed(1)}%\n${width}x${height}`
+        this.perfText.position.set(this.app.renderer.width - 5, 5)
     }
 
     gameUpdate(delta: number) {
