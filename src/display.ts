@@ -84,8 +84,8 @@ class DisplayState {
         let bottonBarHeight = this.ui.bottomBar.height + 20
 
         let height = this.app.renderer.height - topBarHeight - bottonBarHeight
-        this.ui.topBar.setWidth(height)
-        this.ui.bottomBar.setWidth(height)
+        this.ui.topBar.setWidth(Math.min(height, this.app.renderer.width))
+        this.ui.bottomBar.setWidth(Math.min(height, this.app.renderer.width))
         let width = Math.max(this.ui.topBar.width, this.ui.bottomBar.width)
 
         let areaX = (this.app.renderer.width - width) / 2
@@ -95,7 +95,7 @@ class DisplayState {
         this.gameState.stage.scale.set(scale, scale)
 
         let stageX = areaX + (width - scale * this.gameState.width) / 2
-        let stageY = areaY
+        let stageY = areaY + (height - scale * this.gameState.height) / 2
 
         this.gameState.stage.position.set(stageX, stageY)
         this.ui.topBar.stage.position.set((this.app.renderer.width - this.ui.topBar.width) / 2, 0)
