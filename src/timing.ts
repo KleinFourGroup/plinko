@@ -72,12 +72,13 @@ class TimingManager {
         this.prevWork = performance.now() - this.startWork
     }
 
-    needsStep(rate: number) {
-        return (this.elapsed - this.lastStep >= rate)
+    getSteps(STEP: number) {
+        let steps = Math.floor((this.elapsed - this.lastStep) / STEP)
+        return steps
     }
 
-    step() {
-        this.lastStep = Math.floor(this.elapsed)
+    step(steps: number, STEP: number) {
+        this.lastStep += steps * STEP
     }
 
     createTimer(id: string, duration: number, callback: (state: GameState) => void = null) {

@@ -10,6 +10,8 @@ import { AppMode } from './mode'
 import { GameMenu } from './menu'
 import { COLORS } from './colors'
 
+const STEP = 1000 / 240
+
 class AppState {
     app: PIXI.Application
     stage: PIXI.Container
@@ -103,12 +105,12 @@ class AppState {
         this.initPreview()
     }
 
-    updatePerf() {
+    updatePerf(steps: number) {
         let fps = this.app.ticker.FPS
         let load = this.timing.load
         let width = this.app.renderer.width
         let height = this.app.renderer.height
-        this.perfText.text = `${Math.round(fps)}\n${(Math.round((load * 1000)) / 10).toFixed(1)}%\n${width}x${height}`
+        this.perfText.text = `${Math.round(fps)}\n${(Math.round((load * 1000)) / 10).toFixed(1)}%\n${steps}\n${width}x${height}`
         this.perfText.position.set(this.app.renderer.width - 5, 5)
     }
 
@@ -123,11 +125,9 @@ class AppState {
         // Handle the custom event loop
         this.gameState.parseEvents()
     
-        // Update the key game logic
-        // if (timing.needsStep(20)) {
-            let stepped = this.gameState.updateStep()
-            if (stepped) this.timing.step()
-        // }
+        let steps = this.timing.getSteps(STEP)
+        if (steps > 0) this.gameState.updateStep(steps, STEP)
+        this.timing.step(steps, STEP)
     
         // Update timing sensative game logic
         this.gameState.updateFrame(this.timing.delta)
@@ -142,7 +142,7 @@ class AppState {
         this.display.updateGame()
         this.ui.draw()
         
-        this.updatePerf()
+        this.updatePerf(steps)
 
         this.timing.endWork()
     }
@@ -161,14 +161,17 @@ class AppState {
         }
 
         this.previewWorld.parseEvents()
-        let stepped = this.previewWorld.updateStep()
-        if (stepped) this.timing.step()
+        
+        let steps = this.timing.getSteps(STEP)
+        if (steps > 0) this.previewWorld.updateStep(steps, STEP)
+        this.timing.step(steps, STEP)
+
         this.previewWorld.updateFrame(this.timing.delta)
         this.previewWorld.updateGraphics()
 
         this.display.updateMenu()
         
-        this.updatePerf()
+        this.updatePerf(steps)
 
         this.timing.endWork()
     }

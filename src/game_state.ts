@@ -322,9 +322,8 @@ class GameState {
         this.vfx.update(this.timing.delta)
     }
 
-    updateStep() {
-        const STEP = 16.67
-        if (this.running) this.spawner.update(STEP)
+    updateStep(steps: number, STEP: number) {
+        if (this.running) this.spawner.update(steps * STEP)
     
         if (this.config.autoControl || this.spawn) {
             this.spawn = false
@@ -334,9 +333,9 @@ class GameState {
         }
 
         if (this.running) {
-            this.pegArray.update(STEP)
+            this.pegArray.update(steps * STEP)
 
-            Matter.Engine.update(this.engine, STEP)
+            Matter.Engine.update(this.engine, steps * STEP)
             
             for (let orb of this.orbs) {
                 if (orb.body.position.x < -10 || orb.body.position.x > this.width + 10 || orb.body.position.y < -10 || orb.body.position.y > this.height + 10) {
