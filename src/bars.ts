@@ -182,8 +182,8 @@ class StatsBar {
     width: number
     minWidth: number
     speedText: PIXI.Text
-    accuracyText: PIXI.Text
     multiText: PIXI.Text
+    continueText: PIXI.Text
     pegValText: PIXI.Text
     bounceValText: PIXI.Text
     pegCountText: PIXI.Text
@@ -218,15 +218,15 @@ class StatsBar {
         this.speedText.position.set(0, 0)
         this.left.addChild(this.speedText)
 
-        this.accuracyText = new PIXI.Text("", textStyle)
-        this.accuracyText.anchor.set(0, 0)
-        this.accuracyText.position.set(0, this.speedText.height + 10)
-        this.left.addChild(this.accuracyText)
-
         this.multiText = new PIXI.Text("", textStyle)
         this.multiText.anchor.set(0, 0)
-        this.multiText.position.set(0, this.accuracyText.y + this.accuracyText.height + 10)
+        this.multiText.position.set(0, this.speedText.height + 10)
         this.left.addChild(this.multiText)
+
+        this.continueText = new PIXI.Text("", textStyle)
+        this.continueText.anchor.set(0, 0)
+        this.continueText.position.set(0, this.multiText.y + this.multiText.height + 10)
+        this.left.addChild(this.continueText)
         
         this.pegValText = new PIXI.Text("", textStyle)
         this.pegValText.anchor.set(1, 0)
@@ -253,9 +253,9 @@ class StatsBar {
     }
 
     fetch() {
-        this.speedText.text = `Speed: ${this.gameState.spawner.speed}`
-        this.accuracyText.text = `Accuracy: ${this.gameState.spawner.accuracy}%`
+        this.speedText.text = `Speed: ${this.gameState.spawner.speed}%`
         this.multiText.text = `Drop Count: ${this.gameState.spawner.dropCount}`
+        this.continueText.text = `Continues: ${this.gameState.continues}`
         this.pegValText.text = `Peg Value: ${this.gameState.pegArray.pegValue}`
         this.bounceValText.text = `Bouncer Value: ${this.gameState.pegArray.bouncerValue}`
         this.pegCountText.text = `Pegs/Bouncers: ${this.gameState.pegArray.pegCount}/${this.gameState.pegArray.bouncerCount}`

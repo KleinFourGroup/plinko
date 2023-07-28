@@ -6,8 +6,7 @@ import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, 
 import { Point } from './point'
 import { GameState } from './game_state'
 
-const MAX_SPEED = 20
-const MAX_ACCURACY = 100
+const MAX_SPEED = 100
 const MAX_VELOCITY = 15
 
 class Spawner {
@@ -17,7 +16,6 @@ class Spawner {
     dropCount: number
     dropScore: number
     velocity: number
-    accuracy: number
     balls: number
     ballsUsed: number
     spawnBase: Point
@@ -29,7 +27,6 @@ class Spawner {
         this.time = 0.0
         this.dropCount = 1
         this.dropScore = 0
-        this.accuracy = MAX_ACCURACY / 2
         this.velocity = 0
         this.speed = Math.round(MAX_SPEED / 2)
         
@@ -59,11 +56,6 @@ class Spawner {
         this.speed = Math.max(Math.min(this.speed, MAX_SPEED), 0)
     }
 
-    addAccuracy(difference: number) {
-        this.accuracy += difference
-        this.accuracy = Math.max(Math.min(this.accuracy, MAX_ACCURACY), 0)
-    }
-
     addBalls(extra: number) {
         this.balls += extra
     }
@@ -77,7 +69,8 @@ class Spawner {
         for (let count = 0; count < this.dropCount && (this.ballsUsed < this.balls || override); count++) {
             let newOrb = new Orb(this.state.world,  this.spawnPoint.x + (2 * Math.random() - 1), this.spawnPoint.y + (2 * Math.random() - 1), 15)
             let sigVel = Math.sign(this.velocity) * (2 * MAX_VELOCITY / (1 + Math.exp(-2 * Math.abs(this.velocity) / MAX_VELOCITY)) - MAX_VELOCITY)
-            Matter.Body.setVelocity(newOrb.body, {x: sigVel * (0.95 + 0.05 * Math.random()) * (MAX_ACCURACY - this.accuracy) / MAX_ACCURACY, y: 0})
+            let inaccuracy = this.speed / MAX_SPEED
+            Matter.Body.setVelocity(newOrb.body, {x: sigVel * (0.95 + 0.05 * Math.random()) * inaccuracy, y: 0})
             newOrb.addTo(this.state.stage)
             this.state.orbs.push(newOrb)
             this.ballsUsed++
