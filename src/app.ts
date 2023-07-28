@@ -110,7 +110,7 @@ class AppState {
         let load = this.timing.load
         let width = this.app.renderer.width
         let height = this.app.renderer.height
-        this.perfText.text = `${Math.round(fps)}\n${(Math.round((load * 1000)) / 10).toFixed(1)}%\n${steps}\n${width}x${height}`
+        this.perfText.text = `${Math.round(fps)} FPS\n${(Math.round((load * 1000)) / 10).toFixed(1)}% load\n${steps} ticks\n${width}x${height}`
         this.perfText.position.set(this.app.renderer.width - 5, 5)
     }
 
