@@ -9,6 +9,7 @@ import { InputHandler } from './keyboard'
 import { AppMode } from './mode'
 import { GameMenu } from './menu'
 import { COLORS } from './colors'
+import { SoundManager } from './sounds'
 
 const STEP = 1000 / 240
 
@@ -16,6 +17,7 @@ class AppState {
     app: PIXI.Application
     stage: PIXI.Container
     renderer: PIXI.IRenderer
+    soundManager: SoundManager
     mode: AppMode
     inputs: InputHandler
     currentWorld: WorldChoice
@@ -33,6 +35,7 @@ class AppState {
         this.renderer = app.renderer
 
         this.inputs = new InputHandler()
+        this.soundManager = new SoundManager()
 
         this.currentWorld = WORLD_LIST[0]
 

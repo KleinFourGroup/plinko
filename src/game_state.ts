@@ -88,7 +88,6 @@ class GameState {
     upgradeSelect: UpgradeSelect
     restartSelect: RestartSelect
     vfx: FXStage
-    plink: Howl
 
     constructor(gameApp: AppState, config: Partial<GameConfig> = {}) {
         this.gameApp = gameApp
@@ -129,10 +128,6 @@ class GameState {
         this.upgradeManager = new UpgradeManager(this)
 
         this.vfx = new FXStage(this)
-
-        this.plink = new Howl({
-            src: ["../sounds/170141__timgormly__8-bit-bump.mp3"]
-        })
     }
 
     destroy() {
@@ -226,7 +221,7 @@ class GameState {
                     break
                 case "peghit":
                     let peg = (event as PegCollision)
-                    this.plink.play()
+                    this.gameApp.soundManager.play("peghit")
                     if (this.config.trackProgress) {
                         this.levelState.add(this.pegArray.pegValue)
                         this.spawner.addScore(this.pegArray.pegValue)
