@@ -53,7 +53,7 @@ class SelectorBar extends SelectorBase {
 
         this.subBar.addChild(this.selector)
 
-        this.highlight(this.choices[0])
+        this.highlight(this.choices[0], false)
     }
 }
 

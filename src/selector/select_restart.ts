@@ -44,7 +44,7 @@ class RestartSelect extends SelectorBase {
         this.continueGraphics = continueGraphics
         this.continueGraphics.position.set(0, 15 + this.restartGraphics.y + this.restartGraphics.height)
 
-        this.highlight(this.restartGraphics)
+        this.highlight(this.restartGraphics, false)
     }
 
     get isActive() {

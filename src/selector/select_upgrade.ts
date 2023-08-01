@@ -54,7 +54,7 @@ class UpgradeSelect extends SelectorBase {
         }
 
         if (this.box.children.indexOf(this.selector) < 0) this.box.addChild(this.selector)
-        this.highlight(this.choices[0])
+        this.highlight(this.choices[0], false)
     }
 
     clear() {

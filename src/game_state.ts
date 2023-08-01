@@ -22,7 +22,7 @@ function selectRandom(level: number, gameState: GameState) {
     if (gameState.upgradeSelect.choices.length > 0 && gameState.levelState.level === level && gameState.upgradeSelect.isActive) {
         let index = Math.floor(Math.random() * gameState.upgradeSelect.choices.length)
         let choice = gameState.upgradeSelect.choices[index]
-        gameState.upgradeSelect.highlight(choice)
+        gameState.upgradeSelect.highlight(choice, false)
         gameState.upgradeSelect.select()
     } else {
         console.error(`Skipping random upgrade selection: choice for level ${level} already made`)
@@ -31,6 +31,7 @@ function selectRandom(level: number, gameState: GameState) {
 
 function autoContinue(cc: number, gameState: GameState) {
     if (gameState.continues === cc && gameState.restartSelect.isActive) {
+        gameState.gameApp.soundManager.play("select", true)
         gameState.restartSelect.continueWorld()
     } else {
         console.error(`Skipping auto continue: choice already made`)
@@ -42,6 +43,7 @@ type GameConfig = {
     checkInput: boolean
     countBalls: boolean,
     trackProgress: boolean,
+    playSound: boolean,
     width: number,
     height: number
 }
@@ -51,6 +53,7 @@ const PLAY_CONFIG: GameConfig = {
     checkInput: true,
     countBalls: true,
     trackProgress: true,
+    playSound: true,
     width: 1000,
     height: 1000
 }
@@ -60,6 +63,7 @@ const PREVIEW_CONFIG: GameConfig = {
     checkInput: false,
     countBalls: false,
     trackProgress: false,
+    playSound: false,
     width: 1000,
     height: 1000
 }
@@ -210,6 +214,7 @@ class GameState {
             switch (event.typeStr) {
                 case "score":
                     let score = (event as ScoreCollision)
+                    this.gameApp.soundManager.play("score", this.config.playSound)
                     score.orb.removeFrom(this.stage)
                     this.orbs.splice(this.orbs.indexOf(score.orb), 1)
                     if (this.config.trackProgress) {
@@ -221,7 +226,7 @@ class GameState {
                     break
                 case "peghit":
                     let peg = (event as PegCollision)
-                    this.gameApp.soundManager.play("peghit")
+                    this.gameApp.soundManager.play("peghit", this.config.playSound)
                     if (this.config.trackProgress) {
                         this.levelState.add(this.pegArray.pegValue)
                         this.spawner.addScore(this.pegArray.pegValue)
@@ -230,6 +235,7 @@ class GameState {
                     break
                 case "bouncerhit":
                     let bounce = (event as BouncerCollision)
+                    this.gameApp.soundManager.play("bouncerhit", this.config.playSound)
                     let dirX = bounce.orb.body.position.x - bounce.bouncer.body.position.x
                     let dirY = bounce.orb.body.position.y - bounce.bouncer.body.position.y
                     let dist = Math.hypot(dirX, dirY)

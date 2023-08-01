@@ -32,7 +32,7 @@ class SelectorBase {
             choice.on("pointerdown", (event) => {
                 event.stopPropagation()
                 // Might be redundant
-                this.highlight(choice)
+                this.highlight(choice, false)
                 this.select()
             })
         }
@@ -56,9 +56,10 @@ class SelectorBase {
         }
     }
 
-    highlight(choice: PIXI.Container) {
+    highlight(choice: PIXI.Container, playSound: boolean = true) {
         // console.assert(this.choices.indexOf(choice) >= 0)
         if (this.activeChoice !== choice) {
+            this.app.soundManager.play("highlight", playSound)
             this.activeChoice = choice
             let index = this.choices.indexOf(this.activeChoice)
             let highlightCallback = this.onHighlights[index];
@@ -80,6 +81,7 @@ class SelectorBase {
     }
 
     select() {
+        this.app.soundManager.play("select", true)
         let index = this.choices.indexOf(this.activeChoice)
         let selectCallback = this.onSelects[index];
         selectCallback(this.app)
