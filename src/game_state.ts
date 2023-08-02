@@ -253,6 +253,7 @@ class GameState {
                     console.assert(this.config.trackProgress)
                     let levelup = (event as LevelUp)
                     if (levelup.level === 1 + this.levelState.level) {
+                        this.gameApp.soundManager.play("levelup", true)
                         this.levelState.levelUp()
                         this.spawner.ballsUsed = 0
                         // this.spawner.addSpeed(1)

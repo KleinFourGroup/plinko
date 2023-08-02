@@ -22,3 +22,8 @@ License: http://creativecommons.org/publicdomain/zero/1.0/
 Source: https://freesound.org/people/MATRIXXX_/sounds/657945/
 Modifications: None
 License: http://creativecommons.org/publicdomain/zero/1.0/
+
+**** sounds\528958__beetlemuse__level-up-mission-complete.wav
+Source: https://freesound.org/people/Beetlemuse/sounds/528958/
+Modifications: None
+License: http://creativecommons.org/publicdomain/zero/1.0/

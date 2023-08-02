@@ -20,6 +20,11 @@ class SoundManager {
                 src: ["../sounds/170141__timgormly__8-bit-bump.mp3"]
             })
         )
+        this.sounds.set("levelup", 
+            new Howl({
+                src: ["../sounds/528958__beetlemuse__level-up-mission-complete.wav"]
+            })
+        )
         this.sounds.set("highlight", 
             new Howl({
                 src: ["../sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.wav"]
