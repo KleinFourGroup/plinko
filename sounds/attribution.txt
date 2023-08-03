@@ -1,14 +1,14 @@
-**** sounds\170141__timgormly__8-bit-bump.mp3
+**** sounds/170141__timgormly__8-bit-bump.mp3
 Source: https://freesound.org/people/timgormly/sounds/170141/
 Modifications: Converted to .mp3
 License: http://creativecommons.org/licenses/by/3.0/
 
-**** sounds\495650__matrixxx__short-ping-or-short-notification.wav
+**** sounds/495650__matrixxx__short-ping-or-short-notification.wav
 Source: https://freesound.org/people/MATRIXXX_/sounds/495650/
 Modifications: None
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds\109662__grunz__success.wav
+**** sounds/109662__grunz__success.wav
 Source: https://freesound.org/people/grunz/sounds/109662/
 Modifications: None
 License: http://creativecommons.org/licenses/by/3.0/
@@ -18,12 +18,27 @@ Source: https://freesound.org/people/MATRIXXX_/sounds/657948/
 Modifications: None
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds\657945__matrixxx__scifi-inspect-sound-ui-or-in-game-notification-01.wav
+**** sounds/657945__matrixxx__scifi-inspect-sound-ui-or-in-game-notification-01.wav
 Source: https://freesound.org/people/MATRIXXX_/sounds/657945/
 Modifications: None
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds\528958__beetlemuse__level-up-mission-complete.wav
+**** sounds/528958__beetlemuse__level-up-mission-complete.wav
 Source: https://freesound.org/people/Beetlemuse/sounds/528958/
+Modifications: None
+License: http://creativecommons.org/publicdomain/zero/1.0/
+
+**** sounds/423166__plasterbrain__minimalist-sci-fi-ui-error.mp3
+Source: https://freesound.org/people/plasterbrain/sounds/423166/
+Modifications: Converted to .mp3
+License: http://creativecommons.org/publicdomain/zero/1.0/
+
+**** sounds/350986__cabled_mess__lose_c_01.wav
+Source: https://freesound.org/people/cabled_mess/sounds/350986/
+Modifications: None
+License: http://creativecommons.org/publicdomain/zero/1.0/
+
+**** sounds/215162__otisjames__thud.wav
+Source: https://freesound.org/people/OtisJames/sounds/215162/
 Modifications: None
 License: http://creativecommons.org/publicdomain/zero/1.0/

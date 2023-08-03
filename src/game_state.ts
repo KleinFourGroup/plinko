@@ -5,7 +5,7 @@ import {Howl, Howler} from 'howler'
 import { getCollisionHandler } from './collision'
 import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent, OrbCollision, MiscCollision } from './events'
 import { UpgradeSelect } from './selector/select_upgrade'
 import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
@@ -249,6 +249,14 @@ class GameState {
                     }
                     // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break
+                case "orbhit":
+                    let orbs = (event as OrbCollision)
+                    this.gameApp.soundManager.play("mischit", this.config.playSound)
+                    break
+                case "mischit":
+                    let misc = (event as MiscCollision)
+                    this.gameApp.soundManager.play("mischit", this.config.playSound)
+                    break
                 case "levelup":
                     console.assert(this.config.trackProgress)
                     let levelup = (event as LevelUp)
@@ -270,6 +278,7 @@ class GameState {
                     break
                 case "outofbounds":
                     let bounds = (event as OutOfBounds)
+                    this.gameApp.soundManager.play("error", this.config.playSound)
                     bounds.orb.removeFrom(this.stage)
                     bounds.orb.delete()
                     this.orbs.splice(this.orbs.indexOf(bounds.orb), 1)
@@ -278,6 +287,7 @@ class GameState {
                 case "gameover":
                     console.assert(this.config.countBalls && this.config.trackProgress)
                     console.log("Game over!")
+                    this.gameApp.soundManager.play("gameover", true)
                     this.restartSelect.activate()
                     this.setRunning(false)
                     let cc = this.continues
@@ -304,6 +314,7 @@ class GameState {
                     break
                 case "menu":
                     console.log("Going to menu...")
+                    this.gameApp.soundManager.play("select", true)
                     this.destroy()
                     this.gameApp.setMode(AppMode.MENU)
                     return

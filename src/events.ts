@@ -60,6 +60,26 @@ class BouncerCollision extends GameEvent {
     }
 }
 
+class OrbCollision extends GameEvent {
+    orbA: Orb
+    orbB: Orb
+    constructor(orbA: Orb, orbB: Orb) {
+        super("orbhit")
+        this.orbA = orbA
+        this.orbB = orbB
+    }
+}
+
+class MiscCollision extends GameEvent {
+    orb: Orb
+    other: PhysicsObject
+    constructor(orb: Orb, other: PhysicsObject) {
+        super("mischit")
+        this.orb = orb
+        this.other = other
+    }
+}
+
 class OutOfBounds extends GameEvent {
     orb: Orb
     constructor(orb: Orb) {
@@ -80,4 +100,4 @@ class GotoMenuEvent extends GameEvent {
     }
 }
 
-export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OutOfBounds, RestartEvent, GotoMenuEvent}
+export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OrbCollision, MiscCollision, OutOfBounds, RestartEvent, GotoMenuEvent}
