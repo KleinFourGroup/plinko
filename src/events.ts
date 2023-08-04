@@ -8,6 +8,14 @@ class GameEvent {
     }
 }
 
+class GameWin extends GameEvent {
+    goal: number
+    constructor(goal: number) {
+        super("gamewin")
+        this.goal = goal
+    }
+}
+
 class GameOver extends GameEvent {
     constructor() {
         super("gameover")
@@ -94,10 +102,31 @@ class RestartEvent extends GameEvent {
     }
 }
 
+class EndlessEvent extends GameEvent {
+    constructor() {
+        super("endless")
+    }
+}
+
 class GotoMenuEvent extends GameEvent {
     constructor() {
         super("menu")
     }
 }
 
-export {GameEvent, GameOver, ContinueGame, LevelUp, ScoreCollision, PegCollision, BouncerCollision, OrbCollision, MiscCollision, OutOfBounds, RestartEvent, GotoMenuEvent}
+export {
+    GameEvent,
+    GameWin,
+    GameOver,
+    ContinueGame,
+    LevelUp,
+    ScoreCollision,
+    PegCollision,
+    BouncerCollision,
+    OrbCollision,
+    MiscCollision,
+    OutOfBounds,
+    RestartEvent,
+    EndlessEvent,
+    GotoMenuEvent
+}
