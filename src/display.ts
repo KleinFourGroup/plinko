@@ -110,6 +110,11 @@ class DisplayState {
             (this.app.renderer.width - this.ui.restartSelect.box.width) / 2,
             (this.app.renderer.height - this.ui.restartSelect.box.height) / 2
         )
+
+        this.ui.winSelect.box.position.set(
+            (this.app.renderer.width - this.ui.winSelect.box.width) / 2,
+            (this.app.renderer.height - this.ui.winSelect.box.height) / 2
+        )
     }
 
     updateMenu() {

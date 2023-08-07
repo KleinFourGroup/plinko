@@ -5,6 +5,7 @@ import { GameState } from './game_state'
 import { TopBar, StatsBar } from './bars'
 import { UpgradeSelect } from './selector/select_upgrade'
 import { RestartSelect } from './selector/select_restart'
+import { WinSelect } from './selector/select_win'
 
 class UserInterface {
     stage: PIXI.Container
@@ -12,6 +13,7 @@ class UserInterface {
     bottomBar: StatsBar
     upgradeSelect: UpgradeSelect
     restartSelect: RestartSelect
+    winSelect: WinSelect
     gameState: GameState
 
     constructor(gameState: GameState) {
@@ -34,6 +36,10 @@ class UserInterface {
         this.restartSelect = new RestartSelect(gameState)
         this.gameState.restartSelect = this.restartSelect
         this.stage.addChild(this.restartSelect.box)
+
+        this.winSelect = new WinSelect(gameState)
+        this.gameState.winSelect = this.winSelect
+        this.stage.addChild(this.winSelect.box)
     }
 
     replaceWorld(gameState: GameState) {
@@ -47,6 +53,9 @@ class UserInterface {
         
         this.restartSelect.gameState = this.gameState
         this.gameState.restartSelect = this.restartSelect
+        
+        this.winSelect.gameState = this.gameState
+        this.gameState.winSelect = this.winSelect
     }
 
     fetch() {

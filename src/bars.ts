@@ -157,7 +157,8 @@ class TopBar {
         let target = this.gameState.config.trackProgress ? this.gameState.levelState.target : "∞"
         this.nextText.text = `Target: ${target}`
         let level = this.gameState.config.trackProgress ? this.gameState.levelState.level : "∞"
-        this.levelText.text = `Level: ${level}`
+        let endLevel = this.gameState.config.trackProgress && !this.gameState.levelState.endless ? this.gameState.levelState.endLevel : "∞"
+        this.levelText.text = `Level: ${level}/${endLevel}`
         let ballsLeft = ( this.gameState.config.countBalls && this.gameState.config.trackProgress) ? this.gameState.spawner.balls - this.gameState.spawner.ballsUsed : "∞"
         let balls = ( this.gameState.config.countBalls && this.gameState.config.trackProgress) ? this.gameState.spawner.balls : "∞"
         this.ballsText.text = `Balls: ${ballsLeft}/${balls}`

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import { GameState } from '../game_state'
-import { ContinueGame, RestartEvent } from '../events'
+import { ContinueGame, EndlessEvent, GotoMenuEvent, RestartEvent } from '../events'
 import { makePromptCard, makeSimpleCard } from '../cards'
 import { SelectorBase, SelectorCallback } from './select'
 import { AppState } from '../app'
@@ -81,7 +81,7 @@ class WinSelect extends SelectorBase {
     }
 
     newWorld() {
-        // TODO
+        this.gameState.enqueueEvent(new GotoMenuEvent())
         this.deactivate()
     }
 
@@ -91,7 +91,7 @@ class WinSelect extends SelectorBase {
     }
 
     continueWorld() {
-        this.gameState.enqueueEvent(new ContinueGame(this.gameState.continues + 1))
+        this.gameState.enqueueEvent(new EndlessEvent(this.gameState.levelState.level))
         this.deactivate()
     }
 }

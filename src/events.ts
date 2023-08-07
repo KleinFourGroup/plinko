@@ -103,8 +103,10 @@ class RestartEvent extends GameEvent {
 }
 
 class EndlessEvent extends GameEvent {
-    constructor() {
+    level: number
+    constructor(level: number) {
         super("endless")
+        this.level = level
     }
 }
 

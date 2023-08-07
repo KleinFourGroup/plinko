@@ -1,4 +1,4 @@
-import { LevelUp } from "./events"
+import { GameWin, LevelUp } from "./events"
 import { GameState } from "./game_state"
 
 
@@ -10,6 +10,8 @@ class LevelManager {
     gameState: GameState
     score: number
     level: number
+    endLevel: number
+    endless: boolean
     lastTarget: number
     target: number
 
@@ -17,6 +19,8 @@ class LevelManager {
         this.gameState = gameState
         this.score = 0
         this.level = 1
+        this.endLevel = 2
+        this.endless = false
         this.lastTarget = 0
         this.target = nextLevel(this.level)
     }
@@ -26,13 +30,21 @@ class LevelManager {
         this.score += score
 
         if (this.score >= this.target && oldScore < this.target) {
-            this.gameState.enqueueEvent(new LevelUp(this.level + 1))
+            if (!this.endless && this.level >= this.endLevel) {
+                this.gameState.enqueueEvent(new GameWin(this.endLevel))
+            } else {
+                this.gameState.enqueueEvent(new LevelUp(this.level + 1))
+            }
         }
     }
 
     check() {
         if (this.score >= this.target) {
-            this.gameState.enqueueEvent(new LevelUp(this.level + 1))
+            if (!this.endless && this.level >= this.endLevel) {
+                this.gameState.enqueueEvent(new GameWin(this.endLevel))
+            } else {
+                this.gameState.enqueueEvent(new LevelUp(this.level + 1))
+            }
         }
     }
 

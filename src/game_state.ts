@@ -5,7 +5,7 @@ import {Howl, Howler} from 'howler'
 import { getCollisionHandler } from './collision'
 import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from './physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent, OrbCollision, MiscCollision } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent, OrbCollision, MiscCollision, EndlessEvent } from './events'
 import { UpgradeSelect } from './selector/select_upgrade'
 import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
@@ -16,6 +16,7 @@ import { AppMode, AppState } from './app'
 import { AppInteraction } from './keyboard'
 import { WorldInitializer } from './worlds/worlds'
 import { FXStage, ScoreFX } from './effects'
+import { WinSelect } from './selector/select_win'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
@@ -35,6 +36,15 @@ function autoContinue(cc: number, gameState: GameState) {
         gameState.restartSelect.continueWorld()
     } else {
         console.error(`Skipping auto continue: choice already made`)
+    }
+}
+
+function autoEndless(level: number, gameState: GameState) {
+    if (gameState.levelState.level === level && gameState.winSelect.isActive) {
+        gameState.gameApp.soundManager.play("select", true)
+        gameState.winSelect.continueWorld()
+    } else {
+        console.error(`Skipping auto endless: choice already made`)
     }
 }
 
@@ -91,6 +101,7 @@ class GameState {
     upgradeManager: UpgradeManager
     upgradeSelect: UpgradeSelect
     restartSelect: RestartSelect
+    winSelect: WinSelect
     vfx: FXStage
 
     constructor(gameApp: AppState, config: Partial<GameConfig> = {}) {
@@ -107,6 +118,7 @@ class GameState {
 
         this.upgradeSelect = null
         this.restartSelect = null
+        this.winSelect = null
 
         this.timing = null
 
@@ -137,6 +149,7 @@ class GameState {
     destroy() {
         if (this.upgradeSelect.isActive) this.upgradeSelect.clear()
         if (this.restartSelect.isActive) this.restartSelect.deactivate()
+        if (this.winSelect.isActive) this.winSelect.deactivate()
         
         for (let wall of this.walls) {
             wall.removeFrom(this.stage)
@@ -184,6 +197,7 @@ class GameState {
     parseInput() {
         if (this.upgradeSelect.isActive) this.upgradeSelect.parseInput()
         if (this.restartSelect.isActive) this.restartSelect.parseInput()
+        if (this.winSelect.isActive) this.winSelect.parseInput()
 
         if (this.gameApp.inputs.poll(AppInteraction.SPAWN) && this.config.checkInput) {
             this.spawn = true
@@ -283,6 +297,26 @@ class GameState {
                     bounds.orb.delete()
                     this.orbs.splice(this.orbs.indexOf(bounds.orb), 1)
                     console.error("Orb went out of bounds")
+                    break
+                case "gamewin":
+                    console.log("Game won!")
+                    this.winSelect.activate()
+                    this.setRunning(false)
+                    let endLevel = this.levelState.level
+                    if (this.config.autoControl) this.timing.createTimer("endless", 5000, (state: GameState) => {
+                        autoEndless(endLevel, state)
+                    })
+                    break
+                case "endless":
+                    console.log("Endless mode...")
+                    let endless = (event as EndlessEvent)
+                    if (!this.levelState.endless && this.levelState.level == endless.level) {
+                        this.levelState.endless = true
+                        this.setRunning(true)
+                        this.levelState.check()
+                    } else {
+                        console.error("EndlessEvent mismatch - already in endless mode or level mismatch")
+                    }
                     break
                 case "gameover":
                     console.assert(this.config.countBalls && this.config.trackProgress)
