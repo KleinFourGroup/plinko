@@ -17,6 +17,14 @@ let descStyle = new PIXI.TextStyle({
     fontSize: 20
 })
 
+let smallStyle = new PIXI.TextStyle({
+    wordWrap: true,
+    wordWrapWidth: 100,
+    fontFamily: "monospace",
+    fill: COLORS["terminal green"],
+    fontSize: 16
+})
+
 let promptStyle = new PIXI.TextStyle({
     wordWrap: true,
     wordWrapWidth: 400,
@@ -31,6 +39,28 @@ let width = 400 + 2 * MARGIN
 function makeSimpleCard(text: string) {
     let displayText = new PIXI.Text(text, titleStyle)
 
+    let height = displayText.height + 2 * MARGIN
+
+    let backBox = new PIXI.Graphics()
+    // backBox.lineStyle(3, COLORS["terminal green"])
+    backBox.beginFill(COLORS["dark terminal green"])
+    backBox.drawRect(0, 0, width, height)
+    backBox.endFill()
+
+    let card = new PIXI.Container()
+    card.addChild(backBox)
+    displayText.position.set(MARGIN, MARGIN)
+    card.addChild(displayText)
+
+    card.eventMode = 'static'
+
+    return card
+}
+
+function makeSmallCard(text: string) {
+    let displayText = new PIXI.Text(text, smallStyle)
+
+    let width = 100 + 2 * MARGIN
     let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
@@ -122,4 +152,4 @@ function drawWorldSelect(select: PIXI.Graphics, x: number, y: number, width: num
 }
 
 export {MARGIN, BIG_MARGIN}
-export {makeSimpleCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}
+export {makeSimpleCard, makeSmallCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}

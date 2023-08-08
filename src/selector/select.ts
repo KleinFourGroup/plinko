@@ -7,6 +7,11 @@ import { AppInteraction } from '../keyboard'
 
 type SelectorCallback = (app: AppState) => void
 
+enum SelectorDirection {
+    VERTICAL,
+    HORIZONTAL
+}
+
 class SelectorBase {
     app: AppState
     choices: Array<PIXI.Container>
@@ -14,14 +19,20 @@ class SelectorBase {
     onHighlights: Array<SelectorCallback>
     activeChoice: PIXI.Container
     selector: PIXI.Graphics
+    direction: SelectorDirection
 
-    constructor(app: AppState, choices: Array<PIXI.Container>, onSelects: Array<SelectorCallback>, onHighlights: Array<SelectorCallback>) {
+    constructor(app: AppState,
+        choices: Array<PIXI.Container>,
+        onSelects: Array<SelectorCallback>,
+        onHighlights: Array<SelectorCallback>,
+        direction: SelectorDirection = SelectorDirection.VERTICAL) {
         this.app = app
         this.choices = choices
         this.onSelects = onSelects
         this.onHighlights = onHighlights
         this.activeChoice = null
         this.selector = new PIXI.Graphics()
+        this.direction = direction
         // this.highlight(this.choices[0])
 
         for (let choice of this.choices) {
@@ -45,13 +56,23 @@ class SelectorBase {
             this.select()
         }
 
-        if (this.app.inputs.poll(AppInteraction.UP)) {
+        if (this.direction == SelectorDirection.VERTICAL && this.app.inputs.poll(AppInteraction.UP)) {
             this.app.inputs.reset(AppInteraction.UP)
             this.moveUp()
         }
 
-        if (this.app.inputs.poll(AppInteraction.DOWN)) {
+        if (this.direction == SelectorDirection.VERTICAL && this.app.inputs.poll(AppInteraction.DOWN)) {
             this.app.inputs.reset(AppInteraction.DOWN)
+            this.moveDown()
+        }
+
+        if (this.direction == SelectorDirection.HORIZONTAL && this.app.inputs.poll(AppInteraction.LEFT)) {
+            this.app.inputs.reset(AppInteraction.LEFT)
+            this.moveUp()
+        }
+
+        if (this.direction == SelectorDirection.HORIZONTAL && this.app.inputs.poll(AppInteraction.RIGHT)) {
+            this.app.inputs.reset(AppInteraction.RIGHT)
             this.moveDown()
         }
     }
