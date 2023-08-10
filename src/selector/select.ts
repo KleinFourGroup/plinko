@@ -109,4 +109,4 @@ class SelectorBase {
     }
 }
 
-export {SelectorCallback, SelectorBase}
+export {SelectorCallback, SelectorDirection, SelectorBase}

@@ -5,6 +5,7 @@ import { WorldChoice } from './worlds/worlds'
 import { SelectorBar } from './selector/select_world'
 import { COLORS } from './colors'
 import { MARGIN } from './cards'
+import { DifficultySelect } from './selector/select_difficulty'
 
 const worldDescStyle = new PIXI.TextStyle({
     wordWrap: true,
@@ -61,6 +62,7 @@ class GameMenu {
     stage: PIXI.Container
     bar: SelectorBar
     activeSelection: WorldChoice
+    difficulty: DifficultySelect
     description: WorldDescription
 
     constructor(gameApp: AppState) {
@@ -68,11 +70,13 @@ class GameMenu {
         this.stage = new PIXI.Container()
         this.activeSelection = null
         this.bar = new SelectorBar(this)
+        this.difficulty = new DifficultySelect(this)
         this.description = new WorldDescription(this)
     }
 
     parseInput() {
         this.bar.parseInput()
+        this.difficulty.parseInput()
     }
 }
 

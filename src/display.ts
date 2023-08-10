@@ -120,7 +120,9 @@ class DisplayState {
     updateMenu() {
         let height = this.app.renderer.height
         let width = Math.max(Math.min(this.app.renderer.width, height * 16 / 9), 600)
+
         this.menu.stage.position.set((this.app.renderer.width - width) / 2, 0)
+
         this.menu.bar.box.position.set(0, 0)
         this.menu.description.update(
             this.menu.bar.box.width + BIG_MARGIN,
@@ -128,10 +130,22 @@ class DisplayState {
             width - (this.menu.bar.box.width + MARGIN),
         )
 
-        let areaX = this.menu.stage.x + this.menu.bar.box.width + MARGIN
-        let areaY = this.menu.stage.y + BIG_MARGIN
-        let areaW = width - (this.menu.bar.box.width + MARGIN)
-        let areaH = height - (this.menu.description.box.height + MARGIN + 2 * BIG_MARGIN)
+        const barWidth = this.menu.bar.box.width
+
+        let difficultyX = barWidth + MARGIN
+        let difficultyW = width - (barWidth + MARGIN)
+
+        this.menu.difficulty.box.position.set(
+            difficultyX + (difficultyW - this.menu.difficulty.box.width) / 2,
+            MARGIN
+        )
+
+        const difficultyHeight = this.menu.difficulty.box.height
+
+        let areaX = this.menu.stage.x + barWidth + MARGIN
+        let areaY = this.menu.stage.y + difficultyHeight + MARGIN + BIG_MARGIN
+        let areaW = width - (barWidth + MARGIN)
+        let areaH = height - (this.menu.description.box.height + difficultyHeight + 2 * MARGIN + 2 * BIG_MARGIN)
 
         let scale = Math.min(areaW / this.previewWorld.width, areaH / this.previewWorld.height)
         this.previewWorld.stage.scale.set(scale, scale)
