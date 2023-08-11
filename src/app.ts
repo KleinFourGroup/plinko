@@ -21,6 +21,7 @@ class AppState {
     mode: AppMode
     inputs: InputHandler
     currentWorld: WorldChoice
+    levels: number
     gameState: GameState
     ui: UserInterface
     previewWorld: GameState
@@ -38,6 +39,7 @@ class AppState {
         this.soundManager = new SoundManager()
 
         this.currentWorld = WORLD_LIST[0]
+        this.levels = 999
 
         //  Create the actual game state
         this.gameState = new GameState(this)
@@ -91,6 +93,7 @@ class AppState {
 
     replaceWorld() {
         let config = this.gameState.config
+        config.levels = this.levels
         this.gameState = new GameState(this, config)
         this.ui.replaceWorld(this.gameState)
         this.display.replaceWorld(this.gameState)

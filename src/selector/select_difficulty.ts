@@ -18,7 +18,6 @@ const DIFFICULTIES = [
 class DifficultySelect extends SelectorBase {
     box: PIXI.Container
     menu: GameMenu
-    level: number
     constructor(menu: GameMenu) {
         let choices: Array<PIXI.Container> = []
         let onSelects: Array<SelectorCallback> = []
@@ -28,7 +27,7 @@ class DifficultySelect extends SelectorBase {
             let graphics = makeSmallCard(`${level}`)
             choices.push(graphics)
             onSelects.push(null)
-            onHighlights.push((gameApp: AppState) => {this.level = level})
+            onHighlights.push((gameApp: AppState) => {gameApp.levels = level})
         }
 
         super(menu.gameApp, choices, onSelects, onHighlights, SelectorDirection.HORIZONTAL)

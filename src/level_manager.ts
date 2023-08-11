@@ -19,7 +19,7 @@ class LevelManager {
         this.gameState = gameState
         this.score = 0
         this.level = 1
-        this.endLevel = 2
+        this.endLevel = gameState.config.levels
         this.endless = false
         this.lastTarget = 0
         this.target = nextLevel(this.level)

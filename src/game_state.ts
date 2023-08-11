@@ -55,7 +55,8 @@ type GameConfig = {
     trackProgress: boolean,
     playSound: boolean,
     width: number,
-    height: number
+    height: number,
+    levels: number
 }
 
 const PLAY_CONFIG: GameConfig = {
@@ -65,7 +66,8 @@ const PLAY_CONFIG: GameConfig = {
     trackProgress: true,
     playSound: true,
     width: 1000,
-    height: 1000
+    height: 1000,
+    levels: 999 // Should never appear
 }
 
 const PREVIEW_CONFIG: GameConfig = {
@@ -75,7 +77,8 @@ const PREVIEW_CONFIG: GameConfig = {
     trackProgress: false,
     playSound: false,
     width: 1000,
-    height: 1000
+    height: 1000,
+    levels: 999 // Should never appear
 }
 
 // Main class for holding the game's state
