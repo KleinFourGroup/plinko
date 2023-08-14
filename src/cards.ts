@@ -20,6 +20,7 @@ let descStyle = new PIXI.TextStyle({
 let smallStyle = new PIXI.TextStyle({
     wordWrap: true,
     wordWrapWidth: 100,
+    align: "center",
     fontFamily: "monospace",
     fill: COLORS["terminal green"],
     fontSize: 16
@@ -59,6 +60,7 @@ function makeSimpleCard(text: string) {
 
 function makeSmallCard(text: string) {
     let displayText = new PIXI.Text(text, smallStyle)
+    displayText.anchor.set(0.5, 0.5)
 
     let width = 100 + 2 * MARGIN
     let height = displayText.height + 2 * MARGIN
@@ -71,7 +73,7 @@ function makeSmallCard(text: string) {
 
     let card = new PIXI.Container()
     card.addChild(backBox)
-    displayText.position.set(MARGIN, MARGIN)
+    displayText.position.set(width / 2, height / 2)
     card.addChild(displayText)
 
     card.eventMode = 'static'

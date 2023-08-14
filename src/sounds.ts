@@ -50,6 +50,11 @@ class SoundManager {
                 src: ["../sounds/423166__plasterbrain__minimalist-sci-fi-ui-error.mp3"]
             })
         )
+        this.sounds.set("gamewin", 
+            new Howl({
+                src: ["../sounds/456966__funwithsound__success-fanfare-trumpets.mp3"]
+            })
+        )
     }
 
     play(soundName: string, playSound: boolean = true) {

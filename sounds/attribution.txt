@@ -40,5 +40,10 @@ License: http://creativecommons.org/publicdomain/zero/1.0/
 
 **** sounds/215162__otisjames__thud.wav
 Source: https://freesound.org/people/OtisJames/sounds/215162/
+Modifications: Converted from stereo to mono (right channel was much louder)
+License: http://creativecommons.org/publicdomain/zero/1.0/
+
+**** sounds/456966__funwithsound__success-fanfare-trumpets.mp3
+Source: https://freesound.org/people/FunWithSound/sounds/456966/
 Modifications: None
 License: http://creativecommons.org/publicdomain/zero/1.0/

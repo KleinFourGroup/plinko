@@ -303,6 +303,7 @@ class GameState {
                     break
                 case "gamewin":
                     console.log("Game won!")
+                    this.gameApp.soundManager.play("gamewin", true)
                     this.winSelect.activate()
                     this.setRunning(false)
                     let endLevel = this.levelState.level
