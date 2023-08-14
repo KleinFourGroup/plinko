@@ -12,6 +12,7 @@ import { COLORS } from './colors'
 import { SoundManager } from './sounds'
 
 const STEP = 1000 / 240
+const MAX_STEPS = Math.round((1000 / 30) / STEP)
 
 class AppState {
     app: PIXI.Application
@@ -132,7 +133,7 @@ class AppState {
         this.gameState.parseEvents()
     
         let steps = this.timing.getSteps(STEP)
-        if (steps > 0) this.gameState.updateStep(steps, STEP)
+        if (steps > 0) this.gameState.updateStep(Math.min(steps, MAX_STEPS), STEP)
         this.timing.step(steps, STEP)
     
         // Update timing sensative game logic
@@ -169,7 +170,7 @@ class AppState {
         this.previewWorld.parseEvents()
         
         let steps = this.timing.getSteps(STEP)
-        if (steps > 0) this.previewWorld.updateStep(steps, STEP)
+        if (steps > 0) this.previewWorld.updateStep(Math.min(steps, MAX_STEPS), STEP)
         this.timing.step(steps, STEP)
 
         this.previewWorld.updateFrame(this.timing.delta)
