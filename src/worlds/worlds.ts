@@ -6,6 +6,7 @@ import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, 
 import { classicWorld } from './classic'
 import { squareWorld } from './square'
 import { wheelWorld } from './wheel'
+import { helixWorld } from './helix'
 
 type WorldInitializer = (state: GameState) => void
 
@@ -18,7 +19,8 @@ type WorldChoice = {
 const WORLD_LIST = [
     classicWorld,
     squareWorld,
-    wheelWorld
+    wheelWorld,
+    helixWorld
 ]
 
 export {WorldInitializer, WorldChoice}
