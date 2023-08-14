@@ -7,17 +7,20 @@ class SoundManager {
         this.sounds = new Map<string, Howl>()
         this.sounds.set("score", 
             new Howl({
-                src: ["../sounds/109662__grunz__success.wav"]
+                src: ["../sounds/109662__grunz__success.wav"],
+                volume: 0.5
             })
         )
         this.sounds.set("peghit", 
             new Howl({
-                src: ["../sounds/495650__matrixxx__short-ping-or-short-notification.wav"]
+                src: ["../sounds/495650__matrixxx__short-ping-or-short-notification.wav"],
+                volume: 0.4
             })
         )
         this.sounds.set("bouncerhit", 
             new Howl({
-                src: ["../sounds/170141__timgormly__8-bit-bump.mp3"]
+                src: ["../sounds/170141__timgormly__8-bit-bump.mp3"],
+                volume: 0.5
             })
         )
         this.sounds.set("mischit", 
@@ -32,7 +35,8 @@ class SoundManager {
         )
         this.sounds.set("highlight", 
             new Howl({
-                src: ["../sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.wav"]
+                src: ["../sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.wav"],
+                volume: 0.5
             })
         )
         this.sounds.set("select", 
