@@ -7,9 +7,7 @@ import { WorldChoice } from './worlds'
 import { ParametricFn, TimedPath } from '../point'
 import { baseWorldInit, inBins } from './common'
 
-function helixWorldInit(state: GameState) {
-    const rungs = 32
-    const period = 4000
+function helixBuilerWorldInit(state: GameState, helixCount: number, rungs: number, rotations: number, period: number) {
     const bins = 7
     
     let wallWidth = baseWorldInit(state, bins, inBins)
@@ -20,17 +18,17 @@ function helixWorldInit(state: GameState) {
     let pegsX = (state.width - pegsWidth) / 2
     let pegsY = 200
 
-    for (let index = 0; index < 4; index++) {
-        let helixX = pegsX + pegsWidth * (2 * index + 1) / 8
+    for (let index = 0; index < helixCount; index++) {
+        let helixX = pegsX + pegsWidth * (2 * index + 1) / (2 * helixCount)
         for (let rung = 0; rung < rungs; rung++) {
             let helixY = pegsY + pegsHeight * rung / (rungs - 1)
             let orbit = (time: number) => {
-                let x = helixX + (0.75 * pegsWidth / 8) * Math.sin(time *  2 * Math.PI / period)
+                let x = helixX + (pegsWidth / (2 * helixCount) - 20) * Math.sin(time *  2 * Math.PI / period)
                 let y = helixY
                 return {x: x, y: y}
             }
 
-            let startTime = period * 4 * rung / (rungs - 1)
+            let startTime = period * rotations * rung / (rungs - 1)
             let path = new TimedPath(orbit)
             let peg = new Peg(state.world, helixX, helixY, 5)
             state.pegArray.add(peg, path, startTime)
@@ -38,10 +36,24 @@ function helixWorldInit(state: GameState) {
     }
 }
 
+function helixWorldInit(state: GameState) {
+    helixBuilerWorldInit(state, 1, 48, 2, 6000)
+}
+
+function helixesWorldInit(state: GameState) {
+    helixBuilerWorldInit(state, 4, 32, 4, 3000)
+}
+
 let helixWorld: WorldChoice = {
     init: helixWorldInit,
+    title: "Helix",
+    description: "A helix rotating over a row of goals."
+}
+
+let helixesWorld: WorldChoice = {
+    init: helixesWorldInit,
     title: "Helixes",
     description: "Four helixes rotating over a row of goals."
 }
 
-export {helixWorld}
+export {helixWorld, helixesWorld}
