@@ -7,13 +7,13 @@ class SoundManager {
         this.sounds = new Map<string, Howl>()
         this.sounds.set("score", 
             new Howl({
-                src: ["../sounds/109662__grunz__success.wav"],
+                src: ["../sounds/109662__grunz__success.mp3"],
                 volume: 0.5
             })
         )
         this.sounds.set("peghit", 
             new Howl({
-                src: ["../sounds/495650__matrixxx__short-ping-or-short-notification.wav"],
+                src: ["../sounds/495650__matrixxx__short-ping-or-short-notification.mp3"],
                 volume: 0.4
             })
         )
@@ -25,28 +25,28 @@ class SoundManager {
         )
         this.sounds.set("mischit", 
             new Howl({
-                src: ["../sounds/215162__otisjames__thud.wav"]
+                src: ["../sounds/215162__otisjames__thud.mp3"]
             })
         )
         this.sounds.set("levelup", 
             new Howl({
-                src: ["../sounds/528958__beetlemuse__level-up-mission-complete.wav"]
+                src: ["../sounds/528958__beetlemuse__level-up-mission-complete.mp3"]
             })
         )
         this.sounds.set("highlight", 
             new Howl({
-                src: ["../sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.wav"],
+                src: ["../sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.mp3"],
                 volume: 0.5
             })
         )
         this.sounds.set("select", 
             new Howl({
-                src: ["../sounds/657945__matrixxx__scifi-inspect-sound-ui-or-in-game-notification-01.wav"]
+                src: ["../sounds/657945__matrixxx__scifi-inspect-sound-ui-or-in-game-notification-01.mp3"]
             })
         )
         this.sounds.set("gameover", 
             new Howl({
-                src: ["../sounds/350986__cabled_mess__lose_c_01.wav"]
+                src: ["../sounds/350986__cabled_mess__lose_c_01.mp3"]
             })
         )
         this.sounds.set("error", 

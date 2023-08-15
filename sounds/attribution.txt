@@ -3,29 +3,29 @@ Source: https://freesound.org/people/timgormly/sounds/170141/
 Modifications: Converted to .mp3
 License: http://creativecommons.org/licenses/by/3.0/
 
-**** sounds/495650__matrixxx__short-ping-or-short-notification.wav
+**** sounds/495650__matrixxx__short-ping-or-short-notification.mp3
 Source: https://freesound.org/people/MATRIXXX_/sounds/495650/
-Modifications: None
+Modifications: Converted to .mp3
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds/109662__grunz__success.wav
+**** sounds/109662__grunz__success.mp3
 Source: https://freesound.org/people/grunz/sounds/109662/
-Modifications: None
+Modifications: Converted to .mp3
 License: http://creativecommons.org/licenses/by/3.0/
 
-**** sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.wav
+**** sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.mp3
 Source: https://freesound.org/people/MATRIXXX_/sounds/657948/
-Modifications: None
+Modifications: Converted to .mp3
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds/657945__matrixxx__scifi-inspect-sound-ui-or-in-game-notification-01.wav
+**** sounds/657945__matrixxx__scifi-inspect-sound-ui-or-in-game-notification-01.mp3
 Source: https://freesound.org/people/MATRIXXX_/sounds/657945/
-Modifications: None
+Modifications: Converted to .mp3
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds/528958__beetlemuse__level-up-mission-complete.wav
+**** sounds/528958__beetlemuse__level-up-mission-complete.mp3
 Source: https://freesound.org/people/Beetlemuse/sounds/528958/
-Modifications: None
+Modifications: Converted to .mp3; converted from stereo to mono
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
 **** sounds/423166__plasterbrain__minimalist-sci-fi-ui-error.mp3
@@ -33,14 +33,14 @@ Source: https://freesound.org/people/plasterbrain/sounds/423166/
 Modifications: Converted to .mp3
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds/350986__cabled_mess__lose_c_01.wav
+**** sounds/350986__cabled_mess__lose_c_01.mp3
 Source: https://freesound.org/people/cabled_mess/sounds/350986/
-Modifications: None
+Modifications: Converted to .mp3
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
-**** sounds/215162__otisjames__thud.wav
+**** sounds/215162__otisjames__thud.mp3
 Source: https://freesound.org/people/OtisJames/sounds/215162/
-Modifications: Converted from stereo to mono (right channel was much louder)
+Modifications: Converted from stereo to mono (right channel was much louder); converted to .mp3
 License: http://creativecommons.org/publicdomain/zero/1.0/
 
 **** sounds/456966__funwithsound__success-fanfare-trumpets.mp3
