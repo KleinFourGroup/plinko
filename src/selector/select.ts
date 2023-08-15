@@ -105,7 +105,7 @@ class SelectorBase {
         this.app.soundManager.play("select", true)
         let index = this.choices.indexOf(this.activeChoice)
         let selectCallback = this.onSelects[index];
-        selectCallback(this.app)
+        if (selectCallback !== null) selectCallback(this.app)
     }
 }
 
