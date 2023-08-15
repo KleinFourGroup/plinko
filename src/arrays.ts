@@ -25,6 +25,8 @@ class PegArray {
             path.setTime(startTime)
             let newPoint = path.position()
             Matter.Body.setPosition(peg.body, newPoint)
+
+            peg.update()
         }
     }
 
