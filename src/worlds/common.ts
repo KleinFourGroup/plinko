@@ -12,6 +12,12 @@ const inBins: binValsFn = (binInd: number, binCount: number) => {
     return 50 * (binCount + 1) / 2 - 50 * Math.abs(binInd - (binCount - 1) / 2)
 }
 
+const midBins: binValsFn = (binInd: number, binCount: number) => {
+    let midBin = (binCount - 1) / 2
+    let dist = Math.min(binInd, Math.abs((binCount - 1) - binInd), Math.abs(midBin - binInd))
+    return 50 + 100 * dist
+}
+
 function baseWorldInit(state: GameState, bins: number, binVals: binValsFn) {
     const boundsWidth = 250
     const wallWidth = 40
@@ -82,5 +88,5 @@ function baseWorldInit(state: GameState, bins: number, binVals: binValsFn) {
     return wallWidth
 }
 
-export {inBins, outBins}
+export {inBins, outBins, midBins}
 export {baseWorldInit}

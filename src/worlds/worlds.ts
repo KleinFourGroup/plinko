@@ -5,7 +5,7 @@ import { GameState } from '../game_state'
 import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from '../physics_objects'
 import { classicWorld } from './classic'
 import { squareWorld } from './square'
-import { wheelWorld } from './wheel'
+import { vortexWorld, wheelWorld } from './wheel'
 import { helixWorld, helixesWorld } from './helix'
 
 type WorldInitializer = (state: GameState) => void
@@ -21,6 +21,7 @@ const WORLD_LIST = [
     squareWorld,
     wheelWorld,
     helixWorld,
+    vortexWorld,
     helixesWorld
 ]
 
