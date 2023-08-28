@@ -12,6 +12,7 @@ class TimingManager {
     app: PIXI.Application
     elapsed: number
     lastStep: number
+    stepCount: number
     startWork: number
     prevWork: number
     intervalsWork: Array<number>
@@ -23,6 +24,7 @@ class TimingManager {
         this.app = app
         this.elapsed = 0.0
         this.lastStep = 0
+        this.stepCount = 0
         this.prevWork = 0
         this.intervalsWork = []
         this.intervalsTotal = []
@@ -79,6 +81,7 @@ class TimingManager {
 
     step(steps: number, STEP: number) {
         this.lastStep += steps * STEP
+        this.stepCount = steps
     }
 
     createTimer(id: string, duration: number, callback: (state: GameState) => void = null) {

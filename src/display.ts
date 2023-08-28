@@ -14,8 +14,7 @@ class DisplayState {
     gameState: GameState
     ui: UserInterface
     menu: LevelSelectMenu
-    previewWorld: GameState
-    constructor(app: AppState, gameState: GameState, ui: UserInterface, previewWorld: GameState, menu: LevelSelectMenu) {
+    constructor(app: AppState, gameState: GameState, ui: UserInterface, menu: LevelSelectMenu) {
         this.app = app
 
         this.gameStage = new PIXI.Container()
@@ -30,9 +29,6 @@ class DisplayState {
         this.menuStage = new PIXI.Container()
         this.menuStage.position.set(0, 0)
         this.app.stage.addChild(this.menuStage)
-
-        this.previewWorld = previewWorld
-        this.menuStage.addChild(this.previewWorld.box)
 
         this.menu = menu
         this.menuStage.addChild(this.menu.stage)
@@ -63,16 +59,6 @@ class DisplayState {
 
         this.gameStage.addChild(this.gameState.box)
         this.gameStage.addChild(this.ui.stage)
-    }
-
-    replacePreview(previewWorld: GameState) {
-        this.menuStage.removeChild(this.previewWorld.box)
-        this.menuStage.removeChild(this.menu.stage)
-
-        this.previewWorld = previewWorld
-
-        this.menuStage.addChild(this.previewWorld.box)
-        this.menuStage.addChild(this.menu.stage)
     }
 
     updateGame() {
@@ -118,41 +104,7 @@ class DisplayState {
     }
 
     updateMenu() {
-        let height = this.app.renderer.height
-        let width = Math.max(Math.min(this.app.renderer.width, height * 16 / 9), 600)
-
-        this.menu.stage.position.set((this.app.renderer.width - width) / 2, 0)
-
-        this.menu.bar.box.position.set(0, 0)
-        this.menu.description.update(
-            this.menu.bar.box.width + BIG_MARGIN,
-            height, 
-            width - (this.menu.bar.box.width + MARGIN),
-        )
-
-        const barWidth = this.menu.bar.box.width
-
-        let difficultyX = barWidth + MARGIN
-        let difficultyW = width - (barWidth + MARGIN)
-
-        this.menu.difficulty.box.position.set(
-            difficultyX + (difficultyW - this.menu.difficulty.box.width) / 2,
-            MARGIN
-        )
-
-        const difficultyHeight = this.menu.difficulty.box.height
-
-        let areaX = this.menu.stage.x + barWidth + MARGIN
-        let areaY = this.menu.stage.y + difficultyHeight + MARGIN + BIG_MARGIN
-        let areaW = width - (barWidth + MARGIN)
-        let areaH = height - (this.menu.description.box.height + difficultyHeight + 2 * MARGIN + 2 * BIG_MARGIN)
-
-        let scale = Math.min(areaW / this.previewWorld.width, areaH / this.previewWorld.height)
-        this.previewWorld.stage.scale.set(scale, scale)
-
-        let stageX = areaX + (areaW - scale * this.previewWorld.width) / 2
-        let stageY = areaY + (areaH - scale * this.previewWorld.height) / 2
-        this.previewWorld.stage.position.set(stageX, stageY)
+        this.menu.updateDisplay(this.app.renderer.width, this.app.renderer.height)
     }
 }
 

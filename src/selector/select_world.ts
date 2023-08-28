@@ -36,7 +36,7 @@ class SelectorBar extends SelectorBase {
         this.menu = menu
 
         this.box = new PIXI.Container()
-        this.menu.stage.addChild(this.box)
+        this.menu.selectStage.addChild(this.box)
 
         this.prompt = makePromptCard("Select level")
         this.prompt.position.set(0, 15)

@@ -35,7 +35,7 @@ class DifficultySelect extends SelectorBase {
         this.menu = menu
         
         this.box = new PIXI.Container()
-        this.menu.stage.addChild(this.box)
+        this.menu.selectStage.addChild(this.box)
         
         for (let choice of this.choices) {
             if (this.box.width === 0) {

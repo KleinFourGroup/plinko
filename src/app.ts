@@ -50,7 +50,7 @@ class AppState {
         this.menu = new LevelSelectMenu(this)
 
         // Create a display manager to handle various resolutions
-        this.display = new DisplayState(this, this.gameState, this.ui, this.menu.previewWorld, this.menu)
+        this.display = new DisplayState(this, this.gameState, this.ui, this.menu)
         
         this.perfText = new PIXI.Text()
         this.perfText.style.fontFamily = "monospace"
@@ -145,26 +145,15 @@ class AppState {
         this.menu.parseInput()
         this.inputs.reset()
 
-        if (this.menu.activeSelection.init !== this.menu.previewWorld.initializer) {
-            console.log("New preview!")
-            this.menu.replacePreview()
-        }
-
-        this.menu.previewWorld.parseEvents()
-        
-        let steps = this.timing.getSteps(STEP)
-        if (steps > 0) this.menu.previewWorld.updateStep(Math.min(steps, MAX_STEPS), STEP)
-        this.timing.step(steps, STEP)
-
-        this.menu.previewWorld.updateFrame(this.timing.delta)
-        this.menu.previewWorld.updateGraphics()
+        this.menu.updateFrame(delta)
 
         this.display.updateMenu()
         
-        this.updatePerf(steps)
+        this.updatePerf(this.timing.stepCount)
 
         this.timing.endWork()
     }
 }
 
+export {STEP, MAX_STEPS}
 export {AppMode, AppState}
