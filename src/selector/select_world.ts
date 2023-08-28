@@ -3,16 +3,16 @@ import * as PIXI from 'pixi.js'
 import { AppMode, AppState } from '../app'
 import { WORLD_LIST, WorldChoice } from '../worlds/worlds'
 import { makePromptCard, makeWorldCard, drawWorldSelect } from '../cards'
-import { GameMenu } from '../menu'
+import { LevelSelectMenu } from '../menu'
 import { SelectorCallback, SelectorBase } from './select'
 
 class SelectorBar extends SelectorBase {
-    menu: GameMenu
+    menu: LevelSelectMenu
     box: PIXI.Container
     prompt: PIXI.Container
     subBar: PIXI.Container
 
-    constructor(menu: GameMenu) {
+    constructor(menu: LevelSelectMenu) {
         let choices: Array<PIXI.Container> = []
         let onSelects: Array<SelectorCallback> = []
         let onHighlights: Array<SelectorCallback> = []

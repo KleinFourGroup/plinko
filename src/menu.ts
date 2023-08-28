@@ -6,6 +6,7 @@ import { SelectorBar } from './selector/select_world'
 import { COLORS } from './colors'
 import { MARGIN } from './cards'
 import { DifficultySelect } from './selector/select_difficulty'
+import { GameState, PREVIEW_CONFIG } from './game_state'
 
 const worldDescStyle = new PIXI.TextStyle({
     wordWrap: true,
@@ -14,14 +15,14 @@ const worldDescStyle = new PIXI.TextStyle({
 })
 
 class WorldDescription {
-    menu: GameMenu
+    menu: LevelSelectMenu
     box: PIXI.Container
     background: PIXI.Graphics
     text: PIXI.Text
     width: number
     height: number
 
-    constructor(menu: GameMenu) {
+    constructor(menu: LevelSelectMenu) {
         this.menu = menu
         this.box = new PIXI.Container()
         this.menu.stage.addChild(this.box)
@@ -57,13 +58,14 @@ class WorldDescription {
     }
 }
 
-class GameMenu {
+class LevelSelectMenu {
     gameApp: AppState
     stage: PIXI.Container
     bar: SelectorBar
     activeSelection: WorldChoice
     difficulty: DifficultySelect
     description: WorldDescription
+    previewWorld: GameState
 
     constructor(gameApp: AppState) {
         this.gameApp = gameApp
@@ -72,12 +74,27 @@ class GameMenu {
         this.bar = new SelectorBar(this)
         this.difficulty = new DifficultySelect(this)
         this.description = new WorldDescription(this)
+        this.previewWorld = new GameState(this.gameApp, PREVIEW_CONFIG)
     }
 
     parseInput() {
         this.bar.parseInput()
         this.difficulty.parseInput()
     }
+
+    initPreview() {
+        this.activeSelection.init(this.previewWorld)
+        this.previewWorld.initializer = this.activeSelection.init
+    }
+
+    replacePreview() {
+        let config = this.previewWorld.config
+        this.previewWorld = new GameState(this.gameApp, config)
+        this.gameApp.display.replacePreview(this.previewWorld)
+        this.previewWorld.timing = this.gameApp.timing
+
+        this.initPreview()
+    }
 }
 
-export {GameMenu}
+export {LevelSelectMenu}

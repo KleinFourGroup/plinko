@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js'
 
 import { AppMode, AppState } from '../app'
 import { makePromptCard, makeWorldCard, drawWorldSelect } from '../cards'
-import { GameMenu } from '../menu'
 import { AppInteraction } from '../keyboard'
 
 type SelectorCallback = (app: AppState) => void

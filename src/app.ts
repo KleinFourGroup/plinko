@@ -7,7 +7,7 @@ import { WORLD_LIST, WorldChoice, WorldInitializer } from './worlds/worlds'
 import { TimingManager } from './timing'
 import { InputHandler } from './keyboard'
 import { AppMode } from './mode'
-import { GameMenu } from './menu'
+import { LevelSelectMenu } from './menu'
 import { COLORS } from './colors'
 import { SoundManager } from './sounds'
 
@@ -25,8 +25,7 @@ class AppState {
     levels: number
     gameState: GameState
     ui: UserInterface
-    previewWorld: GameState
-    menu: GameMenu
+    menu: LevelSelectMenu
     perfText: PIXI.Text
     display: DisplayState
     timing: TimingManager
@@ -48,12 +47,10 @@ class AppState {
         // Create the UI and link it to the gamestate
         this.ui = new UserInterface(this.gameState)
 
-        this.previewWorld = new GameState(this, PREVIEW_CONFIG)
-
-        this.menu = new GameMenu(this)
+        this.menu = new LevelSelectMenu(this)
 
         // Create a display manager to handle various resolutions
-        this.display = new DisplayState(this, this.gameState, this.ui, this.previewWorld, this.menu)
+        this.display = new DisplayState(this, this.gameState, this.ui, this.menu.previewWorld, this.menu)
         
         this.perfText = new PIXI.Text()
         this.perfText.style.fontFamily = "monospace"
@@ -87,11 +84,6 @@ class AppState {
         this.gameState.initializer = this.currentWorld.init
     }
 
-    initPreview() {
-        this.menu.activeSelection.init(this.previewWorld)
-        this.previewWorld.initializer = this.menu.activeSelection.init
-    }
-
     replaceWorld() {
         let config = this.gameState.config
         config.levels = this.levels
@@ -101,15 +93,6 @@ class AppState {
         this.gameState.timing = this.timing
 
         this.init()
-    }
-
-    replacePreview() {
-        let config = this.previewWorld.config
-        this.previewWorld = new GameState(this, config)
-        this.display.replacePreview(this.previewWorld)
-        this.previewWorld.timing = this.timing
-
-        this.initPreview()
     }
 
     updatePerf(steps: number) {
@@ -162,19 +145,19 @@ class AppState {
         this.menu.parseInput()
         this.inputs.reset()
 
-        if (this.menu.activeSelection.init !== this.previewWorld.initializer) {
+        if (this.menu.activeSelection.init !== this.menu.previewWorld.initializer) {
             console.log("New preview!")
-            this.replacePreview()
+            this.menu.replacePreview()
         }
 
-        this.previewWorld.parseEvents()
+        this.menu.previewWorld.parseEvents()
         
         let steps = this.timing.getSteps(STEP)
-        if (steps > 0) this.previewWorld.updateStep(Math.min(steps, MAX_STEPS), STEP)
+        if (steps > 0) this.menu.previewWorld.updateStep(Math.min(steps, MAX_STEPS), STEP)
         this.timing.step(steps, STEP)
 
-        this.previewWorld.updateFrame(this.timing.delta)
-        this.previewWorld.updateGraphics()
+        this.menu.previewWorld.updateFrame(this.timing.delta)
+        this.menu.previewWorld.updateGraphics()
 
         this.display.updateMenu()
         

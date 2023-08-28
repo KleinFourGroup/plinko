@@ -5,7 +5,7 @@ import { ContinueGame, EndlessEvent, GotoMenuEvent, RestartEvent } from '../even
 import { MARGIN, makePromptCard, makeSimpleCard, makeSmallCard } from '../cards'
 import { SelectorBase, SelectorCallback, SelectorDirection } from './select'
 import { AppState } from '../app'
-import { GameMenu } from '../menu'
+import { LevelSelectMenu } from '../menu'
 
 const DIFFICULTIES = [
     5,
@@ -17,8 +17,8 @@ const DIFFICULTIES = [
 
 class DifficultySelect extends SelectorBase {
     box: PIXI.Container
-    menu: GameMenu
-    constructor(menu: GameMenu) {
+    menu: LevelSelectMenu
+    constructor(menu: LevelSelectMenu) {
         let choices: Array<PIXI.Container> = []
         let onSelects: Array<SelectorCallback> = []
         let onHighlights: Array<SelectorCallback> = []

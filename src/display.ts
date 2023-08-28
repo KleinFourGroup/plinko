@@ -4,7 +4,7 @@ import { GameState } from './game_state'
 import { UserInterface } from './ui'
 import { AppMode } from './mode'
 import { AppState } from './app'
-import { GameMenu } from './menu'
+import { LevelSelectMenu } from './menu'
 import { BIG_MARGIN, MARGIN } from './cards'
 
 class DisplayState {
@@ -13,9 +13,9 @@ class DisplayState {
     menuStage: PIXI.Container
     gameState: GameState
     ui: UserInterface
-    menu: GameMenu
+    menu: LevelSelectMenu
     previewWorld: GameState
-    constructor(app: AppState, gameState: GameState, ui: UserInterface, previewWorld: GameState, menu: GameMenu) {
+    constructor(app: AppState, gameState: GameState, ui: UserInterface, previewWorld: GameState, menu: LevelSelectMenu) {
         this.app = app
 
         this.gameStage = new PIXI.Container()
