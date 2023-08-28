@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import { AppMode, AppState } from '../app'
 import { WORLD_LIST, WorldChoice } from '../worlds/worlds'
 import { makePromptCard, makeWorldCard, drawWorldSelect } from '../cards'
-import { LevelSelectMenu } from '../menu'
+import { LevelSelectMenu } from '../menus/level_menu'
 import { SelectorCallback, SelectorBase } from './select'
 
 class SelectorBar extends SelectorBase {

@@ -1,12 +1,13 @@
 import * as PIXI from 'pixi.js'
 
-import { AppState, MAX_STEPS, STEP } from './app'
-import { WorldChoice } from './worlds/worlds'
-import { SelectorBar } from './selector/select_world'
-import { COLORS } from './colors'
-import { BIG_MARGIN, MARGIN } from './cards'
-import { DifficultySelect } from './selector/select_difficulty'
-import { GameState, PREVIEW_CONFIG } from './game_state'
+import { AppState, MAX_STEPS, STEP } from '../app'
+import { WorldChoice } from '../worlds/worlds'
+import { SelectorBar } from '../selector/select_world'
+import { COLORS } from '../colors'
+import { BIG_MARGIN, MARGIN } from '../cards'
+import { DifficultySelect } from '../selector/select_difficulty'
+import { GameState, PREVIEW_CONFIG } from '../game_state'
+import { GameMenuI } from './menu'
 
 const worldDescStyle = new PIXI.TextStyle({
     wordWrap: true,
@@ -58,7 +59,7 @@ class WorldDescription {
     }
 }
 
-class LevelSelectMenu {
+class LevelSelectMenu implements GameMenuI {
     gameApp: AppState
     stage: PIXI.Container
     selectStage: PIXI.Container

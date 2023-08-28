@@ -7,7 +7,7 @@ import { WORLD_LIST, WorldChoice, WorldInitializer } from './worlds/worlds'
 import { TimingManager } from './timing'
 import { InputHandler } from './keyboard'
 import { AppMode } from './mode'
-import { LevelSelectMenu } from './menu'
+import { MenuState } from './menus/menu'
 import { COLORS } from './colors'
 import { SoundManager } from './sounds'
 
@@ -25,7 +25,7 @@ class AppState {
     levels: number
     gameState: GameState
     ui: UserInterface
-    menu: LevelSelectMenu
+    menu: MenuState
     perfText: PIXI.Text
     display: DisplayState
     timing: TimingManager
@@ -47,7 +47,7 @@ class AppState {
         // Create the UI and link it to the gamestate
         this.ui = new UserInterface(this.gameState)
 
-        this.menu = new LevelSelectMenu(this)
+        this.menu = new MenuState(this)
 
         // Create a display manager to handle various resolutions
         this.display = new DisplayState(this, this.gameState, this.ui, this.menu)

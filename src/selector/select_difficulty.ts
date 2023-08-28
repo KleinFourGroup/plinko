@@ -5,7 +5,7 @@ import { ContinueGame, EndlessEvent, GotoMenuEvent, RestartEvent } from '../even
 import { MARGIN, makePromptCard, makeSimpleCard, makeSmallCard } from '../cards'
 import { SelectorBase, SelectorCallback, SelectorDirection } from './select'
 import { AppState } from '../app'
-import { LevelSelectMenu } from '../menu'
+import { LevelSelectMenu } from '../menus/level_menu'
 
 const DIFFICULTIES = [
     5,
