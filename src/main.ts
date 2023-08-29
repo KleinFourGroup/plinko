@@ -5,6 +5,7 @@ import { COLORS } from './colors'
 import { AppMode, AppState } from './app'
 import { WORLD_LIST } from './worlds/worlds'
 import { keydownHandler } from './keyboard'
+import { DEV_BUILD } from './global_consts'
 
 // Create the application
 let app = new PIXI.Application({ resizeTo: window, background: COLORS["terminal black"], antialias: true });
@@ -15,7 +16,9 @@ document.body.appendChild(app.view);
 
 let game = new AppState(app)
 // game.init()
-game.setAuto(true)
+if (DEV_BUILD) {
+    game.setAuto(true)
+}
 
 // The main game loop
 // delta is in frames, not ms =()

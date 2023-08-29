@@ -1,12 +1,11 @@
 import * as PIXI from 'pixi.js'
 
 import { AppState, MAX_STEPS, STEP } from '../app'
-import { SelectorBar } from '../selector/select_world'
 import { COLORS } from '../colors'
 import { BIG_MARGIN, MARGIN } from '../cards'
-import { GameState, PREVIEW_CONFIG } from '../game_state'
 import { GameMenuI, MenuState } from './menu'
 import { AppInteraction } from '../keyboard'
+import { GAME_TITLE } from '../global_consts'
 
 
 let titleStyle = new PIXI.TextStyle({
@@ -41,7 +40,7 @@ class TitleSplashMenu implements GameMenuI {
             this.procede()
         })
 
-        this.title = new PIXI.Text("PachinkOS", titleStyle)
+        this.title = new PIXI.Text(GAME_TITLE, titleStyle)
         this.title.anchor.set(0.5, 1.0)
         this.stage.addChild(this.title)
 
@@ -53,6 +52,7 @@ class TitleSplashMenu implements GameMenuI {
     }
 
     procede() {
+        this.gameApp.soundManager.play("select", true)
         this.menuState.setMenu("levelSelect")
     }
 
