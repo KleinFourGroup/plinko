@@ -7,7 +7,7 @@ import { COLORS } from '../colors'
 import { BIG_MARGIN, MARGIN } from '../cards'
 import { DifficultySelect } from '../selector/select_difficulty'
 import { GameState, PREVIEW_CONFIG } from '../game_state'
-import { GameMenuI } from './menu'
+import { GameMenuI, MenuState } from './menu'
 
 const worldDescStyle = new PIXI.TextStyle({
     wordWrap: true,
@@ -61,6 +61,7 @@ class WorldDescription {
 
 class LevelSelectMenu implements GameMenuI {
     gameApp: AppState
+    menuState: MenuState
     stage: PIXI.Container
     selectStage: PIXI.Container
     bar: SelectorBar
@@ -69,8 +70,9 @@ class LevelSelectMenu implements GameMenuI {
     description: WorldDescription
     previewWorld: GameState
 
-    constructor(gameApp: AppState) {
-        this.gameApp = gameApp
+    constructor(menuState: MenuState) {
+        this.menuState = menuState
+        this.gameApp = this.menuState.gameApp
         this.stage = new PIXI.Container()
         this.selectStage = new PIXI.Container()
 
