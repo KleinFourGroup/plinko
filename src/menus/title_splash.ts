@@ -53,7 +53,7 @@ class TitleSplashMenu implements GameMenuI {
 
     procede() {
         this.gameApp.soundManager.play("select", true)
-        this.menuState.setMenu("levelSelect")
+        this.menuState.setMenu("mainMenu")
     }
 
     parseInput() {
