@@ -1,0 +1,42 @@
+{
+    "score": {
+        "src": "./sounds/109662__grunz__success.mp3",
+        "volume": 0.5
+    },
+    "peghit": {
+        "src": "./sounds/495650__matrixxx__short-ping-or-short-notification.mp3",
+        "volume": 0.4
+    },
+    "bouncerhit": {
+        "src": "./sounds/170141__timgormly__8-bit-bump.mp3",
+        "volume": 0.5
+    },
+    "mischit": {
+        "src": "./sounds/215162__otisjames__thud.mp3",
+        "volume": 1.0
+    },
+    "levelup": {
+        "src": "./sounds/528958__beetlemuse__level-up-mission-complete.mp3",
+        "volume": 1.0
+    },
+    "highlight": {
+        "src": "./sounds/657948__matrixxx__family-friendly-inspect-sound-ui-or-in-game-notification.mp3",
+        "volume": 0.5
+    },
+    "select": {
+        "src": "./sounds/657945__matrixxx__scifi-inspect-sound-ui-or-in-game-notification-01.mp3",
+        "volume": 1.0
+    },
+    "gameover": {
+        "src": "./sounds/350986__cabled_mess__lose_c_01.mp3",
+        "volume": 1.0
+    },
+    "error": {
+        "src": "./sounds/423166__plasterbrain__minimalist-sci-fi-ui-error.mp3",
+        "volume": 1.0
+    },
+    "gamewin": {
+        "src": "./sounds/456966__funwithsound__success-fanfare-trumpets.mp3",
+        "volume": 1.0
+    }
+}
