@@ -1,0 +1,26 @@
+{
+    "Game Design": [
+        "Matthew Kilgore"
+    ],
+    "Programming": [
+        "Matthew Kilgore"
+    ],
+    "User Interface Design": [
+        "Matthew Kilgore"
+    ],
+    "Sound": [
+        "freesound.org"
+    ],
+    "Playtesting": [
+        "Daniel Kilgore",
+        "Richard Kilgore",
+        "Anonymous Tester #1",
+        "Anonymous Tester #2",
+        "Anonymous Tester #3"
+    ],
+    "Technology": [
+        "PixiJS",
+        "Matter.js",
+        "howler.js"
+    ]
+}

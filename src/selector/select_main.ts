@@ -44,7 +44,7 @@ class SelectorMainMenu extends SelectorBase {
 
         let creditsGraphics = makeSimpleCard("Credits")
         let creditsSelect = (gameApp: AppState) => {
-            this.menu.menuState.setMenu("levelSelect")
+            this.menu.menuState.setMenu("credits")
         }
         choices.push(creditsGraphics)
         onSelects.push(creditsSelect)
