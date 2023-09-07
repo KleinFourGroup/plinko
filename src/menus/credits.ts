@@ -42,33 +42,22 @@ let itemStyle = new PIXI.TextStyle({
     fontSize: 20
 })
 
-class CreditMenu implements GameMenuI {
-    gameApp: AppState
-    menuState: MenuState
+class CreditViewPort {
     stage: PIXI.Container
-    title: PIXI.Text
-    prompt: PIXI.Text
     credits: PIXI.Container
     mask: PIXI.Graphics
-    elapsed: number
+    deltaMS: number
+    offset: number
+    pauseTime: number
+    paused: boolean
 
-    constructor(menuState: MenuState) {
-        this.menuState = menuState
-        this.gameApp = this.menuState.gameApp
-        this.stage = new PIXI.Container()
-        this.stage.eventMode = "static"
-        this.stage.hitArea = new PIXI.Rectangle(0, 0)
-        this.stage.on("pointerdown", (event) => {
-            this.procede()
-        })
+    constructor(stage: PIXI.Container) {
+        this.stage = stage
 
-        this.title = new PIXI.Text(GAME_TITLE, titleStyle)
-        this.title.anchor.set(0.5, 0.0)
-        this.stage.addChild(this.title)
-
-        this.prompt = new PIXI.Text("Click anywhere to procede...", proceedStyle)
-        this.prompt.anchor.set(0.5, 1.0)
-        this.stage.addChild(this.prompt)
+        this.deltaMS = 0
+        this.offset = 0
+        this.pauseTime = 0
+        this.paused = true
 
         this.credits = new PIXI.Container()
         for (const [heading, people] of Object.entries(creditsData)) {
@@ -95,6 +84,81 @@ class CreditMenu implements GameMenuI {
         this.mask.endFill()
         this.stage.addChild(this.mask)
         this.credits.mask = this.mask
+    }
+
+    setMask(x: number, y: number, width: number, height: number) {
+        this.mask.clear()
+        this.mask.beginFill(0xFFFFFF)
+        this.mask.drawRect(0, 0, width, height)
+        this.mask.endFill()
+        this.mask.position.set(x, y)
+    }
+
+    placeCredits() {
+        let renderWidth = (this.stage.hitArea as PIXI.Rectangle).width;
+        let renderHeight = (this.stage.hitArea as PIXI.Rectangle).height;
+
+        let deltaH = this.credits.height - this.mask.height
+        // This is janky but better
+        if (deltaH > 0) {
+            if (this.paused) {
+                this.pauseTime += this.deltaMS
+                if (this.pauseTime >= PAUSE_TIME) {
+                    this.pauseTime = 0
+                    if (this.offset === 0) {
+                        this.paused = false
+                    } else {
+                        this.offset = 0
+                    }
+                }
+            } else {
+                this.offset += this.deltaMS * RATE / 1000
+                if (this.offset > deltaH) {
+                    this.paused = true
+                    this.pauseTime = 0
+                }
+            }
+
+            if (this.offset > deltaH) this.offset = deltaH
+
+            this.credits.position.set((renderWidth - CREDITS_WIDTH) / 2, this.mask.y - this.offset)
+        } else {
+            this.credits.position.set((renderWidth - CREDITS_WIDTH) / 2, (renderHeight - this.credits.height) / 2)
+            this.pauseTime = 0
+            this.paused = true
+            this.offset = 0
+        }
+    }
+}
+
+class CreditMenu implements GameMenuI {
+    gameApp: AppState
+    menuState: MenuState
+    stage: PIXI.Container
+    title: PIXI.Text
+    prompt: PIXI.Text
+    creditsView: CreditViewPort
+    elapsed: number
+
+    constructor(menuState: MenuState) {
+        this.menuState = menuState
+        this.gameApp = this.menuState.gameApp
+        this.stage = new PIXI.Container()
+        this.stage.eventMode = "static"
+        this.stage.hitArea = new PIXI.Rectangle(0, 0)
+        this.stage.on("pointerdown", (event) => {
+            this.procede()
+        })
+
+        this.title = new PIXI.Text(GAME_TITLE, titleStyle)
+        this.title.anchor.set(0.5, 0.0)
+        this.stage.addChild(this.title)
+
+        this.prompt = new PIXI.Text("Click anywhere to procede...", proceedStyle)
+        this.prompt.anchor.set(0.5, 1.0)
+        this.stage.addChild(this.prompt)
+
+        this.creditsView = new CreditViewPort(this.stage)
 
         this.elapsed = 0
     }
@@ -117,6 +181,7 @@ class CreditMenu implements GameMenuI {
         this.gameApp.timing.step(steps, STEP)
 
         this.elapsed += this.gameApp.timing.delta
+        this.creditsView.deltaMS = this.gameApp.timing.delta
         this.prompt.alpha = (Math.cos(this.elapsed * 2 * Math.PI / 3000) + 1) / 2
     }
 
@@ -136,28 +201,9 @@ class CreditMenu implements GameMenuI {
         let creditsW = CREDITS_WIDTH
         let creditsH = renderHeight - (this.title.height + this.prompt.height + 4 * BIG_MARGIN)
 
-        let deltaH = this.credits.height - creditsH
-        // TODO: This will NOT survive a resize
-        if (deltaH > 0) {
-            let midTime = (1000 / RATE) * deltaH
-            let cycleTime = 2 * PAUSE_TIME + midTime
-            let progress = this.elapsed % cycleTime
-            if (progress < PAUSE_TIME) {
-                this.credits.position.set((renderWidth - CREDITS_WIDTH) / 2, creditsY)
-            } else if (progress < PAUSE_TIME + midTime) {
-                let midProgress = (progress - PAUSE_TIME) / midTime
-                this.credits.position.set((renderWidth - CREDITS_WIDTH) / 2, creditsY - midProgress * deltaH)
-            } else {
-                this.credits.position.set((renderWidth - CREDITS_WIDTH) / 2, creditsY - deltaH)
-            }
-        } else {
-            this.credits.position.set((renderWidth - CREDITS_WIDTH) / 2, (renderHeight - this.credits.height) / 2)
-        }
+        this.creditsView.setMask(creditsX, creditsY, creditsW, creditsH)
 
-        this.mask.clear()
-        this.mask.beginFill(0xFFFFFF)
-        this.mask.drawRect(creditsX, creditsY, creditsW, creditsH)
-        this.mask.endFill()
+        this.creditsView.placeCredits()
     }
 }
 
