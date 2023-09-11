@@ -5,6 +5,7 @@ import { LevelSelectMenu } from './level_menu'
 import { TitleSplashMenu } from './title_splash'
 import { MainMenu } from './main_menu'
 import { CreditMenu } from './credits'
+import { ControlsMenu } from './controls'
 
 interface GameMenuI {
     gameApp: AppState
@@ -28,6 +29,7 @@ class MenuState {
         this.menus = new Map<string, GameMenuI>()
         this.menus.set("titleSplash", new TitleSplashMenu(this))
         this.menus.set("mainMenu", new MainMenu(this))
+        this.menus.set("controls", new ControlsMenu(this))
         this.menus.set("credits", new CreditMenu(this))
         this.menus.set("levelSelect", new LevelSelectMenu(this))
         this.currMenu = null

@@ -28,7 +28,7 @@ class SelectorMainMenu extends SelectorBase {
 
         let helpGraphics = makeSimpleCard("Controls")
         let helpSelect = (gameApp: AppState) => {
-            this.menu.menuState.setMenu("levelSelect")
+            this.menu.menuState.setMenu("controls")
         }
         choices.push(helpGraphics)
         onSelects.push(helpSelect)
