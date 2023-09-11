@@ -4,7 +4,6 @@ import { AppState, MAX_STEPS, STEP } from '../app'
 import { COLORS } from '../colors'
 import { BIG_MARGIN, MARGIN } from '../cards'
 import { GameMenuI, MenuState } from './menu'
-import { AppInteraction } from '../keyboard'
 import { GAME_TITLE } from '../global_consts'
 import creditsData from './credits.json'
 
@@ -169,9 +168,8 @@ class CreditMenu implements GameMenuI {
     }
 
     parseInput() {
-        if (this.gameApp.inputs.poll(AppInteraction.SELECT)) {
-            this.gameApp.inputs.reset(AppInteraction.SELECT)
-            this.gameApp.inputs.reset(AppInteraction.MENU) // Hacky
+        if (this.gameApp.inputs.poll("SELECT")) {
+            this.gameApp.inputs.reset("SELECT")
             this.procede()
         }
     }

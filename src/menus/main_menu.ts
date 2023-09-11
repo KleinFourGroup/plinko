@@ -4,7 +4,6 @@ import { AppState, MAX_STEPS, STEP } from '../app'
 import { COLORS } from '../colors'
 import { BIG_MARGIN, MARGIN } from '../cards'
 import { GameMenuI, MenuState } from './menu'
-import { AppInteraction } from '../keyboard'
 import { GAME_TITLE } from '../global_consts'
 import { SelectorMainMenu } from '../selector/select_main'
 

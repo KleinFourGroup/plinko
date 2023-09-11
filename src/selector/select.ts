@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js'
 
 import { AppMode, AppState } from '../app'
 import { makePromptCard, makeWorldCard, drawWorldSelect } from '../cards'
-import { AppInteraction } from '../keyboard'
 
 type SelectorCallback = (app: AppState) => void
 
@@ -49,29 +48,28 @@ class SelectorBase {
     }
 
     parseInput() {
-        if (this.app.inputs.poll(AppInteraction.SELECT)) {
-            this.app.inputs.reset(AppInteraction.SELECT)
-            this.app.inputs.reset(AppInteraction.MENU) // Hacky
+        if (this.app.inputs.poll("SELECT")) {
+            this.app.inputs.reset("SELECT")
             this.select()
         }
 
-        if (this.direction == SelectorDirection.VERTICAL && this.app.inputs.poll(AppInteraction.UP)) {
-            this.app.inputs.reset(AppInteraction.UP)
+        if (this.direction == SelectorDirection.VERTICAL && this.app.inputs.poll("UP")) {
+            this.app.inputs.reset("UP")
             this.moveUp()
         }
 
-        if (this.direction == SelectorDirection.VERTICAL && this.app.inputs.poll(AppInteraction.DOWN)) {
-            this.app.inputs.reset(AppInteraction.DOWN)
+        if (this.direction == SelectorDirection.VERTICAL && this.app.inputs.poll("DOWN")) {
+            this.app.inputs.reset("DOWN")
             this.moveDown()
         }
 
-        if (this.direction == SelectorDirection.HORIZONTAL && this.app.inputs.poll(AppInteraction.LEFT)) {
-            this.app.inputs.reset(AppInteraction.LEFT)
+        if (this.direction == SelectorDirection.HORIZONTAL && this.app.inputs.poll("LEFT")) {
+            this.app.inputs.reset("LEFT")
             this.moveUp()
         }
 
-        if (this.direction == SelectorDirection.HORIZONTAL && this.app.inputs.poll(AppInteraction.RIGHT)) {
-            this.app.inputs.reset(AppInteraction.RIGHT)
+        if (this.direction == SelectorDirection.HORIZONTAL && this.app.inputs.poll("RIGHT")) {
+            this.app.inputs.reset("RIGHT")
             this.moveDown()
         }
     }

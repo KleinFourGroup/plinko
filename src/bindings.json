@@ -1,0 +1,10 @@
+{
+    "UP": "ArrowUp",
+    "DOWN": "ArrowDown",
+    "LEFT": "ArrowLeft",
+    "RIGHT": "ArrowRight",
+    "SELECT": "Enter",
+    "RESTART": "q",
+    "MENU": "Enter",
+    "SPAWN": " "
+}

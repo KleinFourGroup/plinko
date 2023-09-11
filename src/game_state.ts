@@ -13,7 +13,6 @@ import { LevelManager } from './level_manager'
 import { PegArray, GoalArray } from './arrays'
 import { RestartSelect } from './selector/select_restart'
 import { AppMode, AppState } from './app'
-import { AppInteraction } from './keyboard'
 import { WorldInitializer } from './worlds/worlds'
 import { FXStage, ScoreFX } from './effects'
 import { WinSelect } from './selector/select_win'
@@ -202,15 +201,15 @@ class GameState {
         if (this.restartSelect.isActive) this.restartSelect.parseInput()
         if (this.winSelect.isActive) this.winSelect.parseInput()
 
-        if (this.gameApp.inputs.poll(AppInteraction.SPAWN) && this.config.checkInput) {
+        if (this.gameApp.inputs.poll("SPAWN") && this.config.checkInput) {
             this.spawn = true
         }
 
-        if (this.gameApp.inputs.poll(AppInteraction.RESTART) && this.config.checkInput) {
+        if (this.gameApp.inputs.poll("RESTART") && this.config.checkInput) {
             this.enqueueEvent(new RestartEvent())
         }
 
-        if (this.gameApp.inputs.poll(AppInteraction.MENU) && this.config.checkInput) {
+        if (this.gameApp.inputs.poll("MENU") && this.config.checkInput) {
             this.enqueueEvent(new GotoMenuEvent())
         }
     }

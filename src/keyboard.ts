@@ -1,59 +1,36 @@
 import { AppState } from "./app";
-import { RestartEvent } from "./events";
+import keyBindings from "./bindings.json"
 
-enum AppInteraction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    SELECT,
-    RESTART,
-    MENU,
-    SPAWN
-}
+
 
 class InputHandler {
-    bindings: Map<AppInteraction, Array<string>>
-    status: Map<AppInteraction, boolean>
+    bindings: Map<string, string>
+    status: Map<string, boolean>
     constructor() {
-        this.bindings = new Map<AppInteraction, Array<string>>()
-        this.bindings.set(AppInteraction.UP, ["ArrowUp"])
-        this.bindings.set(AppInteraction.DOWN, ["ArrowDown"])
-        this.bindings.set(AppInteraction.LEFT, ["ArrowLeft"])
-        this.bindings.set(AppInteraction.RIGHT, ["ArrowRight"])
-        this.bindings.set(AppInteraction.SELECT, ["Enter"])
-        this.bindings.set(AppInteraction.RESTART, ["q"])
-        this.bindings.set(AppInteraction.MENU, ["Enter"])
-        this.bindings.set(AppInteraction.SPAWN, [" "])
-        // There has to be a way to automate this
-        this.status = new Map<AppInteraction, boolean>()
-        this.status.set(AppInteraction.UP, false)
-        this.status.set(AppInteraction.DOWN, false)
-        this.status.set(AppInteraction.LEFT, false)
-        this.status.set(AppInteraction.RIGHT, false)
-        this.status.set(AppInteraction.SELECT, false)
-        this.status.set(AppInteraction.RESTART, false)
-        this.status.set(AppInteraction.MENU, false)
-        this.status.set(AppInteraction.SPAWN, false)
-    }
+        this.bindings = new Map<string, string>()
+        this.status = new Map<string, boolean>()
 
-    parseKey(key: string) {
-        for (let [interaction, bindings] of this.bindings) {
-            if (bindings.indexOf(key) >= 0) this.status.set(interaction, true)
+        for (const [interaction, key] of Object.entries(keyBindings)) {
+            this.bindings.set(interaction, key)
+            this.status.set(interaction, false)
         }
     }
 
-    poll(interaction: AppInteraction) {
+    parseKey(key: string) {
+        for (let [interaction, binding] of this.bindings) {
+            if (binding === key) this.status.set(interaction, true)
+        }
+    }
+
+    poll(interaction: string) {
         return this.status.get(interaction)
     }
 
-    reset(interaction: AppInteraction = null) {
-        if (interaction !== null) {
-            this.status.set(interaction, false)
-        } else {
-            for (let interaction of this.status.keys()) {
-                this.status.set(interaction, false)
-            }
+    reset(interaction: string = null) {
+        let binding = (interaction !== null) ? this.bindings.get(interaction) : null
+        
+        for (let interaction of this.status.keys()) {
+            if (binding === this.bindings.get(interaction) || binding === null) this.status.set(interaction, false)
         }
     }
 }
@@ -62,4 +39,4 @@ function keydownHandler(event: KeyboardEvent, game: AppState) {
     game.inputs.parseKey(event.key)
 }
 
-export {AppInteraction, InputHandler, keydownHandler}
+export {InputHandler, keydownHandler}
