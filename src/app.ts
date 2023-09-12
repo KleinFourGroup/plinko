@@ -10,6 +10,7 @@ import { AppMode } from './mode'
 import { MenuState } from './menus/menu'
 import { COLORS } from './colors'
 import { SoundManager } from './sounds'
+import { ProgressTracker } from './progression'
 
 const STEP = 1000 / 240
 const MAX_STEPS = Math.round((1000 / 30) / STEP)
@@ -18,6 +19,7 @@ class AppState {
     app: PIXI.Application
     stage: PIXI.Container
     renderer: PIXI.IRenderer
+    progressTracker: ProgressTracker
     soundManager: SoundManager
     mode: AppMode
     inputs: InputHandler
@@ -34,6 +36,8 @@ class AppState {
         this.app = app
         this.stage = app.stage
         this.renderer = app.renderer
+
+        this.progressTracker = new ProgressTracker(this)
 
         this.inputs = new InputHandler()
         this.soundManager = new SoundManager()

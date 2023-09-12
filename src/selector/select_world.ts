@@ -17,7 +17,9 @@ class SelectorBar extends SelectorBase {
         let onSelects: Array<SelectorCallback> = []
         let onHighlights: Array<SelectorCallback> = []
 
-        for (let world of WORLD_LIST) {
+        let progress = menu.gameApp.progressTracker
+
+        for (let world of progress.getWorlds()) {
             let choice = makeWorldCard(world.title)
             choices.push(choice)
             onSelects.push((gameApp: AppState) => {
