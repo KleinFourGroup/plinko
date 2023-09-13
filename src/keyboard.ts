@@ -1,8 +1,6 @@
 import { AppState } from "./app";
 import keyBindings from "./bindings.json"
 
-
-
 class InputHandler {
     bindings: Map<string, string>
     status: Map<string, boolean>

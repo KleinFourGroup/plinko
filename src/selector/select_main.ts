@@ -37,6 +37,8 @@ class SelectorMainMenu extends SelectorBase {
         let resetGraphics = makeSimpleCard("Reset Progress")
         let resetSelect = (gameApp: AppState) => {
             this.menu.reset()
+            this.menu.gameApp.progressTracker.clearData()
+            this.menu.gameApp.progressTracker.initData()
         }
         choices.push(resetGraphics)
         onSelects.push(resetSelect)
