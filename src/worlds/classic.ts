@@ -25,8 +25,7 @@ function classicWorldInit(state: GameState) {
 
 let classicWorld: WorldChoice = {
     init: classicWorldInit,
-    title: "Classic",
-    description: "A classic plinko board, with a diagonally aligned lattice of pegs over a row of goals."
+    id: "classic"
 }
 
 export {classicWorld}

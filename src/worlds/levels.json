@@ -1,0 +1,26 @@
+{
+    "classic": {    
+        "title": "Classic",
+        "description": "A classic plinko board, with a diagonally aligned lattice of pegs over a row of goals."
+    },
+    "square": {
+        "title": "Lattice",
+        "description": "A vertically aligned lattice of pegs over a row of goals."
+    },
+    "1helix": {    
+        "title": "Helix",
+        "description": "A helix rotating over a row of goals."
+    },
+    "4helix": {
+        "title": "Helixes",
+        "description": "Four helixes rotating over a row of goals."
+    },
+    "wheel": {
+        "title": "Thresher",
+        "description": "Concentric rings of pegs rotating over a row of goals."
+    },
+    "vortex": {
+        "title": "Whirlpools",
+        "description": "Four eddies of pegs rotating over a row of goals."
+    }
+}

@@ -26,8 +26,7 @@ function squareWorldInit(state: GameState) {
 
 let squareWorld: WorldChoice = {
     init: squareWorldInit,
-    title: "Lattice",
-    description: "A vertically aligned lattice of pegs over a row of goals."
+    id: "square"
 }
 
 export {squareWorld}

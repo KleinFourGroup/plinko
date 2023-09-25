@@ -46,14 +46,12 @@ function helixesWorldInit(state: GameState) {
 
 let helixWorld: WorldChoice = {
     init: helixWorldInit,
-    title: "Helix",
-    description: "A helix rotating over a row of goals."
+    id: "1helix"
 }
 
 let helixesWorld: WorldChoice = {
     init: helixesWorldInit,
-    title: "Helixes",
-    description: "Four helixes rotating over a row of goals."
+    id: "4helix"
 }
 
 export {helixWorld, helixesWorld}

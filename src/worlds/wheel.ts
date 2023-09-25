@@ -45,8 +45,7 @@ function wheelWorldInit(state: GameState) {
 
 let wheelWorld: WorldChoice = {
     init: wheelWorldInit,
-    title: "Thresher",
-    description: "Concentric rings of pegs rotating over a row of goals."
+    id: "wheel"
 }
 
 function vortexWorldInit(state: GameState) {
@@ -115,8 +114,7 @@ function vortexWorldInit(state: GameState) {
 
 let vortexWorld: WorldChoice = {
     init: vortexWorldInit,
-    title: "Whirlpools",
-    description: "Four eddies of pegs rotating over a row of goals."
+    id: "vortex"
 }
 
 export {wheelWorld, vortexWorld}

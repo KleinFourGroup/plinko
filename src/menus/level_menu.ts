@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import { AppState, MAX_STEPS, STEP } from '../app'
-import { WorldChoice } from '../worlds/worlds'
+import { WorldChoice, getLevelData } from '../worlds/worlds'
 import { SelectorBar } from '../selector/select_world'
 import { COLORS } from '../colors'
 import { BIG_MARGIN, MARGIN } from '../cards'
@@ -42,7 +42,7 @@ class WorldDescription {
     update(x: number, y: number, width: number) {
         if (this.width !== width) this.text.style.wordWrapWidth = width - 2 * MARGIN
 
-        this.text.text = this.menu.activeSelection.description
+        this.text.text = getLevelData(this.menu.activeSelection.id, "description")
 
         if (this.width !== width || this.height !== this.text.height + 2 * MARGIN) {
             this.width = width

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import { AppMode, AppState } from '../app'
-import { WORLD_LIST, WorldChoice } from '../worlds/worlds'
+import { WORLD_LIST, WorldChoice, getLevelData } from '../worlds/worlds'
 import { makePromptCard, makeWorldCard, drawWorldSelect } from '../cards'
 import { LevelSelectMenu } from '../menus/level_menu'
 import { SelectorCallback, SelectorBase } from './select'
@@ -20,11 +20,11 @@ class SelectorBar extends SelectorBase {
         let progress = menu.gameApp.progressTracker
 
         for (let world of progress.getWorlds()) {
-            let choice = makeWorldCard(world.title)
+            let choice = makeWorldCard(getLevelData(world.id, "title"))
             choices.push(choice)
             onSelects.push((gameApp: AppState) => {
                 gameApp.currentWorld = world
-                console.log(`Going to game '${gameApp.currentWorld.title}'`)
+                console.log(`Going to game '${getLevelData(gameApp.currentWorld.id, "title")}'`)
                 gameApp.replaceWorld()
                 gameApp.setMode(AppMode.GAME)
             })
