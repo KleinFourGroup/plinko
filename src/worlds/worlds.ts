@@ -26,6 +26,8 @@ const WORLD_LIST = [
     helixesWorld
 ]
 
+const WORLD_IDS = WORLD_LIST.map((world) => world.id)
+
 function isKeyof<T extends object>(obj: T, possibleKey: keyof any): possibleKey is keyof T {
     return possibleKey in obj;
   } 
@@ -42,5 +44,5 @@ function getLevelData(id: string, property: string) {
 }
 
 export {WorldInitializer, WorldChoice}
-export {WORLD_LIST}
+export {WORLD_LIST, WORLD_IDS}
 export {getLevelData}
