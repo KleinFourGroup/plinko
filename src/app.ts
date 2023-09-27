@@ -86,6 +86,7 @@ class AppState {
     init() {
         this.currentWorld.init(this.gameState)
         this.gameState.initializer = this.currentWorld.init
+        this.gameState.id = this.currentWorld.id
     }
 
     replaceWorld() {

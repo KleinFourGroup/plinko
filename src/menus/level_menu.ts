@@ -42,7 +42,9 @@ class WorldDescription {
     update(x: number, y: number, width: number) {
         if (this.width !== width) this.text.style.wordWrapWidth = width - 2 * MARGIN
 
-        this.text.text = getLevelData(this.menu.activeSelection.id, "description")
+        let progress = this.menu.gameApp.progressTracker
+        let id = this.menu.activeSelection.id
+        this.text.text = `${getLevelData(id, "description")}\n\nHigh score: ${progress.getHighScore(id)}`
 
         if (this.width !== width || this.height !== this.text.height + 2 * MARGIN) {
             this.width = width
@@ -94,6 +96,7 @@ class LevelSelectMenu implements GameMenuI {
     initPreview() {
         this.activeSelection.init(this.previewWorld)
         this.previewWorld.initializer = this.activeSelection.init
+        this.previewWorld.id = this.activeSelection.id
     }
 
     replacePreview() {

@@ -1,5 +1,5 @@
 import { AppState } from "./app"
-import { WORLD_LIST } from "./worlds/worlds"
+import { WORLD_LIST, WorldChoice } from "./worlds/worlds"
 import { GAME_TITLE, GAME_VERSION } from "./global_consts"
 import { HighScores, createHighScores, validateHighScores, castHighScores } from "./save_data"
 
@@ -22,11 +22,7 @@ class ProgressTracker {
     }
 
     initData() {
-        let initHighScores: HighScores = {}
-
-        for (let world of WORLD_LIST) {
-            initHighScores[world.id] = 0
-        }
+        let initHighScores = createHighScores()
 
         this.data = {
             version: GAME_VERSION,
@@ -41,16 +37,16 @@ class ProgressTracker {
         if (this.data.highScores === undefined) {
             console.error("No high scores found!")
             this.data.highScores = createHighScores()
-            this.data.lastModified = Date.now()
-            this.writeData()
         } else if (!validateHighScores(this.data.highScores)) {
             console.error("Invalid high scores!")
             castHighScores(this.data.highScores)
-            this.data.lastModified = Date.now()
-            this.writeData()
         } else {
             console.log("Save data looks good!")
+            return
         }
+
+        this.writeData()
+
     }
 
     loadData() {
@@ -65,6 +61,7 @@ class ProgressTracker {
     }
 
     writeData() {
+        this.data.lastModified = Date.now()
         localStorage.setItem(SAVE, JSON.stringify(this.data))
     }
 
@@ -74,6 +71,21 @@ class ProgressTracker {
 
     getWorlds() {
         return WORLD_LIST
+    }
+
+    getHighScore(id: string) {
+        if (id in this.data.highScores) {
+            return this.data.highScores[id]
+        } else {
+            return null
+        }
+    }
+
+    addHighScore(id: string, level: number) {
+        if (id in this.data.highScores && this.data.highScores[id] < level) {
+            this.data.highScores[id] = level
+            this.writeData()
+        }
     }
 }
 

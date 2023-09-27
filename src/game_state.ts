@@ -85,6 +85,7 @@ class GameState {
     gameApp: AppState
     config: GameConfig
     initializer: WorldInitializer
+    id: string
     box: PIXI.Container
     stage: PIXI.Container
     running: boolean
@@ -112,6 +113,7 @@ class GameState {
         this.config = {...PLAY_CONFIG, ...config}
         
         this.initializer = null
+        this.id = ""
 
         this.box = new PIXI.Container()
 
@@ -278,6 +280,7 @@ class GameState {
                     let levelup = (event as LevelUp)
                     if (levelup.level === 1 + this.levelState.level) {
                         this.gameApp.soundManager.play("levelup", true)
+                        this.updateHighScore()
                         this.levelState.levelUp()
                         this.spawner.ballsUsed = 0
                         // this.spawner.addSpeed(1)
@@ -305,6 +308,7 @@ class GameState {
                     this.gameApp.soundManager.play("gamewin", true)
                     this.winSelect.activate()
                     this.setRunning(false)
+                    this.updateHighScore()
                     let endLevel = this.levelState.level
                     if (this.config.autoControl) this.timing.createTimer("endless", 5000, (state: GameState) => {
                         autoEndless(endLevel, state)
@@ -359,6 +363,12 @@ class GameState {
                 default:
                     console.error("Unknown event type: " + event.typeStr)
             }
+        }
+    }
+
+    updateHighScore(onlyCC: boolean = true) {
+        if (!onlyCC || this.continues === 0) {
+            this.gameApp.progressTracker.addHighScore(this.id, this.levelState.level)
         }
     }
 
