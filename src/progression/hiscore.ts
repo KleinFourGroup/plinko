@@ -1,6 +1,6 @@
-import { AppState } from "./app"
-import { WORLD_IDS, WORLD_LIST } from "./worlds/worlds"
-import { GAME_TITLE, GAME_VERSION } from "./global_consts"
+import { AppState } from "../app"
+import { WORLD_IDS, WORLD_LIST } from "../worlds/worlds"
+import { GAME_TITLE, GAME_VERSION } from "../global_consts"
 
 type HighScores = {
     [levelID: string]: number

@@ -1,7 +1,7 @@
 import { AppState } from "./app"
 import { WORLD_LIST, WorldChoice } from "./worlds/worlds"
 import { GAME_TITLE, GAME_VERSION } from "./global_consts"
-import { HighScores, createHighScores, validateHighScores, castHighScores } from "./save_data"
+import { HighScores, createHighScores, validateHighScores, castHighScores } from "./progression/hiscore"
 
 type SaveData = {
     version: string
