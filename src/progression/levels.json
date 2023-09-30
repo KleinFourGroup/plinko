@@ -1,0 +1,23 @@
+{
+    "classic": [],
+    "square": [
+        {
+            "level": "classic",
+            "hiscore": 10
+        }
+    ],
+    "1helix": [],
+    "4helix": [
+        {
+            "level": "1helix",
+            "hiscore": 25
+        }
+    ],
+    "wheel": [],
+    "vortex": [
+        {
+            "level": "wheel",
+            "hiscore": 10
+        }
+    ]
+}
