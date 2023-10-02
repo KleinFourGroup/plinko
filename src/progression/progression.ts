@@ -1,7 +1,8 @@
-import { AppState } from "./app"
-import { WORLD_LIST, WorldChoice } from "./worlds/worlds"
-import { GAME_TITLE, GAME_VERSION } from "./global_consts"
-import { HighScores, createHighScores, validateHighScores, castHighScores } from "./progression/hiscore"
+import { AppState } from "../app"
+import { WORLD_LIST, WorldChoice } from "../worlds/worlds"
+import { GAME_TITLE, GAME_VERSION } from "../global_consts"
+import { HighScores, createHighScores, validateHighScores, castHighScores } from "./hiscore"
+import { LEVEL_REQUIREMENTS, UnlockRequirements, validateRequirements } from "./requirements"
 
 type SaveData = {
     version: string
@@ -14,11 +15,14 @@ const SAVE = `${GAME_TITLE} Save Data`
 class ProgressTracker {
     app: AppState
     data: SaveData
+    unlockRequirements: UnlockRequirements
 
     constructor(app: AppState) {
         this.app = app
         this.loadData()
-        console.log(this.data)
+        this.unlockRequirements = LEVEL_REQUIREMENTS
+        validateRequirements(this.unlockRequirements)
+        // console.log(this.data)
     }
 
     initData() {
@@ -70,7 +74,18 @@ class ProgressTracker {
     }
 
     getWorlds() {
-        return WORLD_LIST
+        let worlds: Array<WorldChoice> = []
+        for (const world of WORLD_LIST) {
+            let unlocked = true
+            let reqs = this.unlockRequirements[world.id]
+            
+            for (const req of reqs) {
+                unlocked = unlocked && (this.data.highScores[req.level] >= req.hiscore)
+            }
+
+            if (unlocked) worlds.push(world)
+        }
+        return worlds
     }
 
     getHighScore(id: string) {

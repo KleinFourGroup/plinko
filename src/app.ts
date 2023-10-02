@@ -10,7 +10,7 @@ import { AppMode } from './mode'
 import { MenuState } from './menus/menu'
 import { COLORS } from './colors'
 import { SoundManager } from './sounds'
-import { ProgressTracker } from './progression'
+import { ProgressTracker } from './progression/progression'
 
 const STEP = 1000 / 240
 const MAX_STEPS = Math.round((1000 / 30) / STEP)
