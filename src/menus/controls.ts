@@ -111,6 +111,8 @@ class ControlsMenu implements GameMenuI {
         }
     }
 
+    refresh() {}
+
     updateFrame(delta: number) {
         let steps = this.gameApp.timing.getSteps(STEP)
         this.gameApp.timing.step(steps, STEP)

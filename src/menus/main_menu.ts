@@ -60,6 +60,8 @@ class MainMenu implements GameMenuI {
         this.bar.parseInput()
     }
 
+    refresh() {}
+
     updateFrame(delta: number) {
         this.elapsed = Math.min(NOTIFY_LENGTH, this.elapsed + this.gameApp.timing.delta)
         this.progress.alpha = Math.sin(this.elapsed * Math.PI / NOTIFY_LENGTH)

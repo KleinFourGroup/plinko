@@ -13,6 +13,7 @@ interface GameMenuI {
     stage: PIXI.Container
 
     parseInput(): void
+    refresh(): void
     updateFrame(delta: number): void
     updateDisplay(renderWidth: number, renderHeight: number): void
 }
@@ -44,6 +45,7 @@ class MenuState {
         }
 
         this.currMenu = newMenu
+        this.currMenu.refresh()
         this.stage.addChild(this.currMenu.stage)
     }
 

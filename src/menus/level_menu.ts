@@ -93,6 +93,10 @@ class LevelSelectMenu implements GameMenuI {
         this.difficulty.parseInput()
     }
 
+    refresh() {
+        this.bar.loadWorlds()
+    }
+
     initPreview() {
         this.activeSelection.init(this.previewWorld)
         this.previewWorld.initializer = this.activeSelection.init

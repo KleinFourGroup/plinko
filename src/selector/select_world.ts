@@ -17,22 +17,6 @@ class SelectorBar extends SelectorBase {
         let onSelects: Array<SelectorCallback> = []
         let onHighlights: Array<SelectorCallback> = []
 
-        let progress = menu.gameApp.progressTracker
-
-        for (let world of progress.getWorlds()) {
-            let choice = makeWorldCard(getLevelData(world.id, "title"))
-            choices.push(choice)
-            onSelects.push((gameApp: AppState) => {
-                gameApp.currentWorld = world
-                console.log(`Going to game '${getLevelData(gameApp.currentWorld.id, "title")}'`)
-                gameApp.replaceWorld()
-                gameApp.setMode(AppMode.GAME)
-            })
-            onHighlights.push((gameApp: AppState) => {
-                this.menu.activeSelection = world
-            })
-        }
-
         super(menu.gameApp, choices, onSelects, onHighlights)
 
         this.menu = menu
@@ -47,6 +31,40 @@ class SelectorBar extends SelectorBase {
         this.subBar = new PIXI.Container()
         this.subBar.position.set(0, this.prompt.y + this.prompt.height + 15)
         this.box.addChild(this.subBar)
+        
+        this.loadWorlds(false)
+    }
+
+    loadWorlds(refresh: boolean = true) {
+        if (refresh) {
+            for (let choice of this.choices) {
+                this.subBar.removeChild(choice)
+            }
+    
+            this.subBar.removeChild(this.selector)
+    
+            this.choices.splice(0, this.choices.length)
+            this.onSelects.splice(0, this.onSelects.length)
+            this.onHighlights.splice(0, this.onHighlights.length)
+        }
+
+        let progress = this.menu.gameApp.progressTracker
+
+        // console.log("Loading available worlds...")
+
+        for (let world of progress.getWorlds()) {
+            let choice = makeWorldCard(getLevelData(world.id, "title"))
+            this.choices.push(choice)
+            this.onSelects.push((gameApp: AppState) => {
+                gameApp.currentWorld = world
+                console.log(`Going to game '${getLevelData(gameApp.currentWorld.id, "title")}'`)
+                gameApp.replaceWorld()
+                gameApp.setMode(AppMode.GAME)
+            })
+            this.onHighlights.push((gameApp: AppState) => {
+                this.menu.activeSelection = world
+            })
+        }
 
         for (let choice of this.choices) {
             choice.position.set(0, this.subBar.height)
