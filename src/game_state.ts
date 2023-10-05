@@ -211,7 +211,7 @@ class GameState {
             this.enqueueEvent(new RestartEvent())
         }
 
-        if (this.gameApp.inputs.poll("MENU") && this.config.checkInput) {
+        if (this.gameApp.inputs.poll("BACK") && this.config.checkInput) {
             this.enqueueEvent(new GotoMenuEvent())
         }
     }

@@ -58,6 +58,11 @@ class MainMenu implements GameMenuI {
 
     parseInput() {
         this.bar.parseInput()
+
+        if (this.gameApp.inputs.poll("BACK")) {
+            this.gameApp.inputs.reset("BACK")
+            this.gameApp.soundManager.play("error", true)
+        }
     }
 
     refresh() {}

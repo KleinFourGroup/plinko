@@ -5,6 +5,6 @@
     "RIGHT": "ArrowRight",
     "SELECT": "Enter",
     "RESTART": "q",
-    "MENU": "Enter",
+    "BACK": "e",
     "SPAWN": " "
 }

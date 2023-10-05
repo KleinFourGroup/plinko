@@ -56,6 +56,18 @@ class TitleSplashMenu implements GameMenuI {
     }
 
     parseInput() {
+        // Should be like this, but sound policy causes issues
+        // let procede = false
+
+        // for (const action of this.gameApp.inputs.bindings.keys()){
+        //     if (this.gameApp.inputs.poll(action)) {
+        //         this.gameApp.inputs.reset(action)
+        //         procede = true
+        //     }
+        // }
+        
+        // if (procede) this.procede()
+
         if (this.gameApp.inputs.poll("SELECT")) {
             this.gameApp.inputs.reset("SELECT")
             this.procede()

@@ -104,6 +104,12 @@ class LevelSelectMenu implements GameMenuI {
     parseInput() {
         this.bar.parseInput()
         this.difficulty.parseInput()
+
+        if (this.gameApp.inputs.poll("BACK")) {
+            this.gameApp.inputs.reset("BACK")
+            this.gameApp.soundManager.play("select", true)
+            this.menuState.setMenu("mainMenu")
+        }
     }
 
     refresh() {

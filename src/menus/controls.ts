@@ -105,10 +105,19 @@ class ControlsMenu implements GameMenuI {
     }
 
     parseInput() {
+        let procede = false
+
         if (this.gameApp.inputs.poll("SELECT")) {
             this.gameApp.inputs.reset("SELECT")
-            this.procede()
+            procede = true
         }
+
+        if (this.gameApp.inputs.poll("BACK")) {
+            this.gameApp.inputs.reset("BACK")
+            procede = true
+        }
+
+        if (procede) this.procede()
     }
 
     refresh() {}
