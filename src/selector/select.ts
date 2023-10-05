@@ -13,6 +13,7 @@ enum SelectorDirection {
 class SelectorBase {
     app: AppState
     choices: Array<PIXI.Container>
+    invalidChoices: Array<PIXI.Container>
     onSelects: Array<SelectorCallback>
     onHighlights: Array<SelectorCallback>
     activeChoice: PIXI.Container
@@ -26,6 +27,7 @@ class SelectorBase {
         direction: SelectorDirection = SelectorDirection.VERTICAL) {
         this.app = app
         this.choices = choices
+        this.invalidChoices = []
         this.onSelects = onSelects
         this.onHighlights = onHighlights
         this.activeChoice = null
@@ -99,10 +101,14 @@ class SelectorBase {
     }
 
     select() {
-        this.app.soundManager.play("select", true)
-        let index = this.choices.indexOf(this.activeChoice)
-        let selectCallback = this.onSelects[index];
-        if (selectCallback !== null) selectCallback(this.app)
+        if (this.invalidChoices.indexOf(this.activeChoice) >= 0) {
+            this.app.soundManager.play("error", true)
+        } else {
+            this.app.soundManager.play("select", true)
+            let index = this.choices.indexOf(this.activeChoice)
+            let selectCallback = this.onSelects[index];
+            if (selectCallback !== null) selectCallback(this.app)
+        }
     }
 }
 

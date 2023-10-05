@@ -73,18 +73,24 @@ class ProgressTracker {
         localStorage.removeItem(SAVE)
     }
 
-    getWorlds() {
-        let worlds: Array<WorldChoice> = []
-        for (const world of WORLD_LIST) {
-            let unlocked = true
-            let reqs = this.unlockRequirements[world.id]
-            
-            for (const req of reqs) {
-                unlocked = unlocked && (this.data.highScores[req.level] >= req.hiscore)
-            }
-
-            if (unlocked) worlds.push(world)
+    isUnlocked(id: string) {
+        let unlocked = true
+        let reqs = this.unlockRequirements[id]
+        
+        for (const req of reqs) {
+            unlocked = unlocked && (this.data.highScores[req.level] >= req.hiscore)
         }
+
+        return unlocked
+    }
+
+    getWorlds() {
+        let worlds: Array<[WorldChoice, boolean]> = []
+
+        for (const world of WORLD_LIST) {
+            worlds.push([world, this.isUnlocked(world.id)])
+        }
+        
         return worlds
     }
 

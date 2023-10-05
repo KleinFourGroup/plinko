@@ -44,7 +44,20 @@ class WorldDescription {
 
         let progress = this.menu.gameApp.progressTracker
         let id = this.menu.activeSelection.id
-        this.text.text = `${getLevelData(id, "description")}\n\nHigh score: ${progress.getHighScore(id)}`
+        if (progress.isUnlocked(id)) {
+            this.text.text = `${getLevelData(id, "description")}\n\nHigh score: ${progress.getHighScore(id)}`
+        } else {
+            let unlockText = "This level has not been unlocked:"
+
+            let reqs = progress.unlockRequirements[id]
+            
+            for (const req of reqs) {
+                let passed = (progress.data.highScores[req.level] >= req.hiscore);
+                unlockText += `\n  ${(passed) ? "✓" : "✗"} Level "${getLevelData(req.level, "title")}" must have a high score of ${req.hiscore} (currently: ${progress.getHighScore(id)})`
+            }
+
+            this.text.text = unlockText
+        }
 
         if (this.width !== width || this.height !== this.text.height + 2 * MARGIN) {
             this.width = width

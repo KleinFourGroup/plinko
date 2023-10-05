@@ -44,17 +44,22 @@ class SelectorBar extends SelectorBase {
             this.subBar.removeChild(this.selector)
     
             this.choices.splice(0, this.choices.length)
+            this.invalidChoices.splice(0, this.invalidChoices.length)
             this.onSelects.splice(0, this.onSelects.length)
             this.onHighlights.splice(0, this.onHighlights.length)
         }
 
         let progress = this.menu.gameApp.progressTracker
 
-        // console.log("Loading available worlds...")
+        console.log("Loading available worlds...")
 
-        for (let world of progress.getWorlds()) {
-            let choice = makeWorldCard(getLevelData(world.id, "title"))
+        for (let [world, unlocked] of progress.getWorlds()) {
+            let lockString = (unlocked) ? "" : "[LOCKED] "
+            let choice = makeWorldCard(lockString + getLevelData(world.id, "title"))
             this.choices.push(choice)
+
+            if (!unlocked) this.invalidChoices.push(choice)
+
             this.onSelects.push((gameApp: AppState) => {
                 gameApp.currentWorld = world
                 console.log(`Going to game '${getLevelData(gameApp.currentWorld.id, "title")}'`)
@@ -63,6 +68,17 @@ class SelectorBar extends SelectorBase {
             })
             this.onHighlights.push((gameApp: AppState) => {
                 this.menu.activeSelection = world
+            })
+
+            choice.on("pointerenter", (event) => {
+                event.stopPropagation()
+                this.highlight(choice)
+            })
+            choice.on("pointerdown", (event) => {
+                event.stopPropagation()
+                // Might be redundant
+                this.highlight(choice)
+                this.select()
             })
         }
 

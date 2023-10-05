@@ -42,6 +42,7 @@ class DisplayState {
                 this.menuStage.visible = false
                 break
             case AppMode.MENU:
+                this.menu.currMenu.refresh()
                 this.updateMenu()
                 this.gameStage.visible = false
                 this.menuStage.visible = true
@@ -104,7 +105,6 @@ class DisplayState {
     }
 
     updateMenu() {
-        this.menu.currMenu.refresh() // TODO: This really should be somewhere else!
         this.menu.updateDisplay(this.app.renderer.width, this.app.renderer.height)
     }
 }
