@@ -47,7 +47,7 @@ class WorldDescription {
         if (progress.isUnlocked(id)) {
             this.text.text = `${getLevelData(id, "description")}\n\nHigh score: ${progress.getHighScore(id)}`
         } else {
-            let unlockText = "This level has not been unlocked:"
+            let unlockText = "This level has not been unlocked:\n"
 
             let reqs = progress.unlockRequirements[id]
             

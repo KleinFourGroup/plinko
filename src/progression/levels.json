@@ -6,18 +6,28 @@
             "hiscore": 10
         }
     ],
-    "1helix": [],
+    "1helix": [
+        {
+            "level": "classic",
+            "hiscore": 5
+        }
+    ],
     "4helix": [
         {
             "level": "1helix",
             "hiscore": 25
         }
     ],
-    "wheel": [],
+    "wheel":  [
+        {
+            "level": "classic",
+            "hiscore": 5
+        }
+    ],
     "vortex": [
         {
             "level": "wheel",
-            "hiscore": 10
+            "hiscore": 25
         }
     ]
 }

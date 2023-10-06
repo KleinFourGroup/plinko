@@ -4,13 +4,21 @@ import { AppState, MAX_STEPS, STEP } from '../app'
 import { COLORS } from '../colors'
 import { BIG_MARGIN, MARGIN } from '../cards'
 import { GameMenuI, MenuState } from './menu'
-import { GAME_TITLE } from '../global_consts'
+import { GAME_TITLE, GAME_VERSION } from '../global_consts'
 
 
 let titleStyle = new PIXI.TextStyle({
     fontFamily: "monospace",
     fill: COLORS["terminal green"],
     fontSize: 64
+})
+
+let versionStyle = new PIXI.TextStyle({
+    wordWrap: true,
+    wordWrapWidth: 1000,
+    fontFamily: "monospace",
+    fill: COLORS["terminal green"],
+    fontSize: 14
 })
 
 let proceedStyle = new PIXI.TextStyle({
@@ -26,6 +34,7 @@ class TitleSplashMenu implements GameMenuI {
     menuState: MenuState
     stage: PIXI.Container
     title: PIXI.Text
+    version: PIXI.Text
     prompt: PIXI.Text
     elapsed: number
 
@@ -40,8 +49,12 @@ class TitleSplashMenu implements GameMenuI {
         })
 
         this.title = new PIXI.Text(GAME_TITLE, titleStyle)
-        this.title.anchor.set(0.5, 1.0)
+        this.title.anchor.set(0.5, 0.0)
         this.stage.addChild(this.title)
+
+        this.version = new PIXI.Text(GAME_VERSION, versionStyle)
+        this.version.anchor.set(1.0, 0.0)
+        this.stage.addChild(this.version)
 
         this.prompt = new PIXI.Text("Click anywhere to procede...", proceedStyle)
         this.prompt.anchor.set(0.5, 0.0)
@@ -91,9 +104,13 @@ class TitleSplashMenu implements GameMenuI {
 
         let width = Math.min(renderWidth, renderHeight * 16 / 9)
         this.prompt.style.wordWrapWidth = width
+        this.version.style.wordWrapWidth = this.title.width - MARGIN
 
-        this.title.position.set(renderWidth / 2, (renderHeight - BIG_MARGIN) / 2)
-        this.prompt.position.set(renderWidth / 2, (renderHeight + BIG_MARGIN) / 2)
+        let splashHeight = this.title.height + MARGIN / 2 + this.version.height + BIG_MARGIN + this.prompt.height
+
+        this.title.position.set(renderWidth / 2, (renderHeight - splashHeight) / 2)
+        this.version.position.set(this.title.x + this.title.width / 2 - MARGIN, this.title.y + this.title.height + MARGIN / 2)
+        this.prompt.position.set(renderWidth / 2, this.version.y + this.version.height + BIG_MARGIN)
     }
 }
 
