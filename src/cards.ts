@@ -44,6 +44,7 @@ let promptStyle = new PIXI.TextStyle({
 
 const MARGIN = 10
 const BIG_MARGIN = 20
+const BORDER = 3
 const width = 400 + 2 * MARGIN
 
 function makeSimpleCard(text: string) {
@@ -52,7 +53,7 @@ function makeSimpleCard(text: string) {
     let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
-    // backBox.lineStyle(3, COLORS["terminal green"])
+    // backBox.lineStyle(BORDER, COLORS["terminal green"])
     backBox.beginFill(COLORS["dark terminal green"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
@@ -75,7 +76,7 @@ function makeSmallCard(text: string) {
     let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
-    // backBox.lineStyle(3, COLORS["terminal green"])
+    // backBox.lineStyle(BORDER, COLORS["terminal green"])
     backBox.beginFill(COLORS["dark terminal green"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
@@ -98,7 +99,7 @@ function makeSmallPromptCard(text: string) {
     let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
-    backBox.lineStyle(3, COLORS["terminal amber"])
+    backBox.lineStyle(BORDER, COLORS["terminal amber"])
     backBox.beginFill(COLORS["dark terminal amber"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
@@ -121,7 +122,7 @@ function makeUpgradeCard(title: string, description: string) {
 
     let backBox = new PIXI.Graphics()
 
-    // backBox.lineStyle(3, COLORS["terminal green"])
+    // backBox.lineStyle(BORDER, COLORS["terminal green"])
     backBox.beginFill(COLORS["dark terminal green"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
@@ -143,7 +144,7 @@ function makePromptCard(text: string) {
     let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
-    backBox.lineStyle(3, COLORS["terminal amber"])
+    backBox.lineStyle(BORDER, COLORS["terminal amber"])
     backBox.beginFill(COLORS["dark terminal amber"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
@@ -180,10 +181,10 @@ function makeWorldCard(text: string) {
 
 function drawWorldSelect(select: PIXI.Graphics, x: number, y: number, width: number, height: number) {
     select.clear()
-    select.lineStyle(3, COLORS["terminal green"])
+    select.lineStyle(BORDER, COLORS["terminal green"])
     select.drawRect(x, y, width, height)
     // select.endFill()
 }
 
-export {MARGIN, BIG_MARGIN}
+export {MARGIN, BIG_MARGIN, BORDER}
 export {makeSimpleCard, makeSmallCard, makeSmallPromptCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}
