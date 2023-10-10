@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import { GameState } from '../game_state'
 import { ContinueGame, EndlessEvent, GotoMenuEvent, RestartEvent } from '../events'
-import { MARGIN, makePromptCard, makeSimpleCard, makeSmallCard } from '../cards'
+import { MARGIN, makePromptCard, makeSimpleCard, makeSmallCard, makeSmallPromptCard } from '../cards'
 import { SelectorBase, SelectorCallback, SelectorDirection } from './select'
 import { AppState } from '../app'
 import { LevelSelectMenu } from '../menus/level_menu'
@@ -17,6 +17,7 @@ const DIFFICULTIES = [
 
 class DifficultySelect extends SelectorBase {
     box: PIXI.Container
+    prompt: PIXI.Container
     menu: LevelSelectMenu
     constructor(menu: LevelSelectMenu) {
         let choices: Array<PIXI.Container> = []
@@ -36,12 +37,17 @@ class DifficultySelect extends SelectorBase {
         
         this.box = new PIXI.Container()
         this.menu.selectStage.addChild(this.box)
+
+        this.prompt = makeSmallPromptCard("Difficulty")
+
+        this.prompt.position.set(0, 0)
+        this.box.addChild(this.prompt)
         
         for (let choice of this.choices) {
             if (this.box.width === 0) {
                 choice.position.set(0, 0)
             } else {
-                choice.position.set(this.box.width + MARGIN, 0)
+                choice.position.set(this.box.width + MARGIN, (this.prompt.height - 6 - choice.height) / 2)
             }
 
             this.box.addChild(choice)

@@ -19,11 +19,20 @@ let descStyle = new PIXI.TextStyle({
 
 let smallStyle = new PIXI.TextStyle({
     wordWrap: true,
-    wordWrapWidth: 100,
+    wordWrapWidth: 75,
     align: "center",
     fontFamily: "monospace",
     fill: COLORS["terminal green"],
     fontSize: 16
+})
+
+let smallPromptStyle = new PIXI.TextStyle({
+    wordWrap: true,
+    wordWrapWidth: 100,
+    align: "center",
+    fontFamily: "monospace",
+    fill: COLORS["terminal amber"],
+    fontSize: 20
 })
 
 let promptStyle = new PIXI.TextStyle({
@@ -35,7 +44,7 @@ let promptStyle = new PIXI.TextStyle({
 
 const MARGIN = 10
 const BIG_MARGIN = 20
-let width = 400 + 2 * MARGIN
+const width = 400 + 2 * MARGIN
 
 function makeSimpleCard(text: string) {
     let displayText = new PIXI.Text(text, titleStyle)
@@ -62,12 +71,35 @@ function makeSmallCard(text: string) {
     let displayText = new PIXI.Text(text, smallStyle)
     displayText.anchor.set(0.5, 0.5)
 
-    let width = 100 + 2 * MARGIN
+    let width = smallStyle.wordWrapWidth + 2 * MARGIN
     let height = displayText.height + 2 * MARGIN
 
     let backBox = new PIXI.Graphics()
     // backBox.lineStyle(3, COLORS["terminal green"])
     backBox.beginFill(COLORS["dark terminal green"])
+    backBox.drawRect(0, 0, width, height)
+    backBox.endFill()
+
+    let card = new PIXI.Container()
+    card.addChild(backBox)
+    displayText.position.set(width / 2, height / 2)
+    card.addChild(displayText)
+
+    card.eventMode = 'static'
+
+    return card
+}
+
+function makeSmallPromptCard(text: string) {
+    let displayText = new PIXI.Text(text, smallPromptStyle)
+    displayText.anchor.set(0.5, 0.5)
+
+    let width = displayText.width + 2 * BIG_MARGIN
+    let height = displayText.height + 2 * MARGIN
+
+    let backBox = new PIXI.Graphics()
+    backBox.lineStyle(3, COLORS["terminal amber"])
+    backBox.beginFill(COLORS["dark terminal amber"])
     backBox.drawRect(0, 0, width, height)
     backBox.endFill()
 
@@ -154,4 +186,4 @@ function drawWorldSelect(select: PIXI.Graphics, x: number, y: number, width: num
 }
 
 export {MARGIN, BIG_MARGIN}
-export {makeSimpleCard, makeSmallCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}
+export {makeSimpleCard, makeSmallCard, makeSmallPromptCard, makeUpgradeCard, makePromptCard, makeWorldCard, drawWorldSelect}
