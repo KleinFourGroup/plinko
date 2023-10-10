@@ -44,7 +44,7 @@ class DifficultySelect extends SelectorBase {
         this.box.addChild(this.prompt)
         
         for (let choice of this.choices) {
-            choice.position.set(this.box.width + MARGIN, (this.prompt.height - 2 * BORDER - choice.height) / 2)
+            choice.position.set(this.box.width + MARGIN, (this.prompt.height - BORDER - choice.height) / 2)
 
             this.box.addChild(choice)
         }
