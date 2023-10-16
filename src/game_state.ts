@@ -3,7 +3,7 @@ import * as Matter from 'matter-js'
 import {Howl, Howler} from 'howler'
 
 import { getCollisionHandler } from './collision'
-import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from './physics_objects'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from './entities/physics_objects'
 import { Spawner } from './spawner'
 import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent, OrbCollision, MiscCollision, EndlessEvent } from './events'
 import { UpgradeSelect } from './selector/select_upgrade'

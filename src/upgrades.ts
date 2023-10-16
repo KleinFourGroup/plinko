@@ -1,5 +1,5 @@
 import { GameState } from "./game_state"
-import { Bouncer, Peg } from "./physics_objects"
+import { Bouncer, Peg } from "./entities/physics_objects"
 import { UpgradeSignature } from "./upgrade"
 
 function getUpgradeLevel(ratio: number, levels: number) {

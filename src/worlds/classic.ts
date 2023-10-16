@@ -1,5 +1,5 @@
 import { GameState } from '../game_state'
-import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from '../physics_objects'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from '../entities/physics_objects'
 import { baseWorldInit, outBins } from './common'
 import { WorldChoice } from './worlds'
 

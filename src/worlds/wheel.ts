@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
 import { GameState } from '../game_state'
-import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from '../physics_objects'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from '../entities/physics_objects'
 import { WorldChoice } from './worlds'
 import { ParametricFn, TimedPath } from '../point'
 import { baseWorldInit, inBins, midBins } from './common'

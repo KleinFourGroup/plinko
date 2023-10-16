@@ -1,8 +1,9 @@
 import * as PIXI from 'pixi.js'
 import * as Matter from 'matter-js'
 
-import { COLORS } from './colors'
-import { Point } from './point'
+import { COLORS } from '../colors'
+import { Point } from '../point'
+import { Component } from './components'
 
 const labelMap: Map<string, PhysicsObject> = new Map<string, PhysicsObject>()
 let objCount = 0
@@ -11,6 +12,7 @@ class PhysicsObject {
     world: Matter.World
     body: Matter.Body
     graphics: PIXI.DisplayObject
+    components: Map<string, Component>
 
     constructor(world: Matter.World, body: Matter.Body, graphics: PIXI.DisplayObject) {
         this.world = world
@@ -23,6 +25,8 @@ class PhysicsObject {
         this.graphics = graphics
         this.graphics.position.set(this.body.position.x, this.body.position.y)
         labelMap.set(this.body.label, this)
+
+        this.components = new Map<string, Component>()
     }
 
     get x(): number {
@@ -45,6 +49,22 @@ class PhysicsObject {
     delete() {
         Matter.World.remove(this.world, this.body)
         labelMap.delete(this.body.label)
+    }
+
+    addComponent(comp: Component) {
+        if (this.components.has(comp.label)) {
+            console.error(`PhysicsObject ${this.body.label} already has a '${comp.label}' component`)
+        }
+
+        this.components.set(comp.label, comp)
+    }
+
+    hasComponent(label: string) {
+        return this.components.has(label)
+    }
+
+    getComponent(label: string) {
+        return this.components.get(label)
     }
 
     update() {

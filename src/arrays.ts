@@ -1,4 +1,4 @@
-import { GoalRect, Peg, Bouncer } from './physics_objects'
+import { GoalRect, Peg, Bouncer } from './entities/physics_objects'
 import { GameState } from './game_state'
 import { TimedPath } from './point'
 import Matter from 'matter-js'

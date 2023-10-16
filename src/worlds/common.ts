@@ -1,5 +1,5 @@
 import { GameState } from '../game_state'
-import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from '../physics_objects'
+import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from '../entities/physics_objects'
 import { WorldChoice } from './worlds'
 
 type binValsFn = (binInd: number, binCount: number) => number
