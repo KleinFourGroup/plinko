@@ -6,4 +6,12 @@ class Component {
     }
 }
 
-export {Component}
+class BouncerComponent extends Component {
+    magnitude: number
+    constructor(magnitude: number) {
+        super("bouncer")
+        this.magnitude = magnitude
+    }
+}
+
+export {Component, BouncerComponent}

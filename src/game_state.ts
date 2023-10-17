@@ -16,6 +16,7 @@ import { AppMode, AppState } from './app'
 import { WorldInitializer } from './worlds/worlds'
 import { FXStage, ScoreFX } from './effects'
 import { WinSelect } from './selector/select_win'
+import { BouncerComponent } from './entities/components'
 
 // Helper function for automatically selecting upgrades
 function selectRandom(level: number, gameState: GameState) {
@@ -259,7 +260,8 @@ class GameState {
                     let dist = Math.hypot(dirX, dirY)
                     let oldVelX = bounce.orb.body.velocity.x
                     let oldVelY = bounce.orb.body.velocity.y
-                    Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + 10 * dirX /dist, y: oldVelY + 10 * dirY / dist})
+                    let magnitude = (bounce.bouncer.getComponent("bouncer") as BouncerComponent).magnitude
+                    Matter.Body.setVelocity(bounce.orb.body, {x: oldVelX + magnitude * dirX /dist, y: oldVelY + magnitude * dirY / dist})
                     if (this.config.trackProgress) {
                         this.levelState.add(this.pegArray.bouncerValue)
                         this.spawner.addScore(this.pegArray.bouncerValue)

@@ -3,7 +3,7 @@ import * as Matter from 'matter-js'
 
 import { COLORS } from '../colors'
 import { Point } from '../point'
-import { Component } from './components'
+import { BouncerComponent, Component } from './components'
 
 const labelMap: Map<string, PhysicsObject> = new Map<string, PhysicsObject>()
 let objCount = 0
@@ -64,6 +64,10 @@ class PhysicsObject {
     }
 
     getComponent(label: string) {
+        if (!this.components.has(label)) {
+            console.error(`PhysicsObject ${this.body.label} has no '${label}' component`)
+        }
+
         return this.components.get(label)
     }
 
@@ -274,6 +278,8 @@ class Bouncer extends PhysicsObject {
 
         super(world, body, graphics)
         this.radius = radius
+
+        this.addComponent(new BouncerComponent(10))
     }
 }
 
