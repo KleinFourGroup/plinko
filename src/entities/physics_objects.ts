@@ -220,6 +220,7 @@ class Tooth extends BarrierPoly {
 
 class Orb extends PhysicsObject {
     radius: number
+    score: number
 
     constructor(world: Matter.World, x: number, y: number, radius: number) {
         let options: Matter.IBodyDefinition = {
@@ -236,6 +237,7 @@ class Orb extends PhysicsObject {
 
         super(world, body, graphics)
         this.radius = radius
+        this.score = 0
     }
 }
 

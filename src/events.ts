@@ -42,7 +42,25 @@ class ScoreCollision extends GameEvent {
     orb: Orb
     goal: GoalRect
     constructor(orb: Orb, goal: GoalRect) {
+        super("scoregoal")
+        this.orb = orb
+        this.goal = goal
+    }
+}
+
+class ScoreEvent extends GameEvent {
+    orb: Orb
+    constructor(orb: Orb) {
         super("score")
+        this.orb = orb
+    }
+}
+
+class GoalCollision extends GameEvent {
+    orb: Orb
+    goal: GoalRect
+    constructor(orb: Orb, goal: GoalRect) {
+        super("goalhit")
         this.orb = orb
         this.goal = goal
     }
@@ -123,6 +141,8 @@ export {
     ContinueGame,
     LevelUp,
     ScoreCollision,
+    ScoreEvent,
+    GoalCollision,
     PegCollision,
     BouncerCollision,
     OrbCollision,

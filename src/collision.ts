@@ -2,18 +2,18 @@ import * as Matter from 'matter-js'
 
 import { GameState } from './game_state'
 import { PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer } from './entities/physics_objects'
-import { BouncerCollision, MiscCollision, OrbCollision, PegCollision, ScoreCollision } from './events'
+import { BouncerCollision, GoalCollision, MiscCollision, OrbCollision, PegCollision, ScoreCollision } from './events'
 
 function getCollisionEvent(objA: PhysicsObject, objB: PhysicsObject) {
     if (objA instanceof GoalRect) {
         if (objB instanceof Orb) {
-            let event = new ScoreCollision(objB, objA)
+            let event = new GoalCollision(objB, objA)
             return event
         }
     }
     if (objB instanceof GoalRect) {
         if (objA instanceof Orb) {
-            let event = new ScoreCollision(objA, objB)
+            let event = new GoalCollision(objA, objB)
             return event
         }
     }

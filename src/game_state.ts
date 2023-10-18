@@ -5,7 +5,7 @@ import {Howl, Howler} from 'howler'
 import { getCollisionHandler } from './collision'
 import { labelMap, PhysicsObject, BarrierRect, BarrierPoly, GoalRect, Orb, Peg, Tooth, Bouncer, HiddenBoundary } from './entities/physics_objects'
 import { Spawner } from './spawner'
-import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent, OrbCollision, MiscCollision, EndlessEvent } from './events'
+import { ScoreCollision, GameEvent, LevelUp, BouncerCollision, PegCollision, OutOfBounds, GameOver, ContinueGame, RestartEvent, GotoMenuEvent, OrbCollision, MiscCollision, EndlessEvent, ScoreEvent, GoalCollision } from './events'
 import { UpgradeSelect } from './selector/select_upgrade'
 import { TimingManager } from './timing'
 import { UpgradeManager } from './upgrade_manager'
@@ -232,16 +232,26 @@ class GameState {
             this.eventQueue.splice(0, 1)
             switch (event.typeStr) {
                 case "score":
-                    let score = (event as ScoreCollision)
-                    this.gameApp.soundManager.play("score", this.config.playSound)
-                    score.orb.removeFrom(this.stage)
-                    this.orbs.splice(this.orbs.indexOf(score.orb), 1)
+                    let score = (event as ScoreEvent)
+                    // Probably a redundant check
                     if (this.config.trackProgress) {
-                        this.levelState.add(score.goal.score)
-                        this.spawner.addScore(score.goal.score)
+                        score.orb.score = 0
                         this.vfx.register(new ScoreFX(`${this.spawner.dropScore}`, score.orb.x, score.orb.y))
                     }
-                    score.orb.delete()
+                    break
+                case "goalhit":
+                    let goal = (event as GoalCollision)
+                    this.gameApp.soundManager.play("score", this.config.playSound)
+                    goal.orb.removeFrom(this.stage)
+                    this.orbs.splice(this.orbs.indexOf(goal.orb), 1)
+                    if (this.config.trackProgress) {
+                        this.levelState.add(goal.goal.score)
+                        this.spawner.addScore(goal.goal.score)
+                        let oldScore = goal.orb.score
+                        goal.orb.score += goal.goal.score
+                        if (oldScore === 0) this.enqueueEvent(new ScoreEvent(goal.orb))
+                    }
+                    goal.orb.delete()
                     break
                 case "peghit":
                     let peg = (event as PegCollision)
@@ -249,7 +259,10 @@ class GameState {
                     if (this.config.trackProgress) {
                         this.levelState.add(this.pegArray.pegValue)
                         this.spawner.addScore(this.pegArray.pegValue)
-                        this.vfx.register(new ScoreFX(`${this.spawner.dropScore}`, peg.orb.x, peg.orb.y))
+                        
+                        let oldScore = peg.orb.score
+                        peg.orb.score += this.pegArray.pegValue
+                        if (oldScore === 0) this.enqueueEvent(new ScoreEvent(peg.orb))
                     }
                     break
                 case "bouncerhit":
@@ -265,7 +278,10 @@ class GameState {
                     if (this.config.trackProgress) {
                         this.levelState.add(this.pegArray.bouncerValue)
                         this.spawner.addScore(this.pegArray.bouncerValue)
-                        this.vfx.register(new ScoreFX(`${this.spawner.dropScore}`, bounce.orb.x, bounce.orb.y))
+                        
+                        let oldScore = bounce.orb.score
+                        bounce.orb.score += this.pegArray.bouncerValue
+                        if (oldScore === 0) this.enqueueEvent(new ScoreEvent(bounce.orb))
                     }
                     // console.log(Math.hypot(bounce.orb.body.velocity.x, bounce.orb.body.velocity.y))
                     break
